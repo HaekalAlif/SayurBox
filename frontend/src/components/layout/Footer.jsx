@@ -1,96 +1,167 @@
 import React from "react";
-import {
-  Facebook,
-  Instagram,
-  Twitter,
-  Mail,
-  Phone,
-  MapPin,
-} from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo dan Deskripsi */}
-          <div className="col-span-1">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">🥬</span>
-              </div>
-              <span className="text-2xl font-serif font-semibold">
-                sayurbox
-              </span>
-            </div>
-            <p className="text-gray-300 text-sm mb-4">
-              Platform belanja sayur dan buah segar langsung dari petani lokal.
-              Kualitas terbaik dengan harga terjangkau.
-            </p>
-            <div className="flex space-x-3">
-              <Facebook className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
-              <Instagram className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
-              <Twitter className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
-            </div>
-          </div>
-
-          {/* Kategori */}
-          <div className="col-span-1">
-            <h3 className="font-semibold mb-4">Kategori</h3>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li className="hover:text-white cursor-pointer">Sayuran Segar</li>
-              <li className="hover:text-white cursor-pointer">Buah-buahan</li>
-              <li className="hover:text-white cursor-pointer">Bumbu Dapur</li>
-              <li className="hover:text-white cursor-pointer">Protein</li>
-              <li className="hover:text-white cursor-pointer">
-                Produk Organik
+    <footer className="text-gray-800" style={{ backgroundColor: "#D1E8DD" }}>
+      <div className="container py-10 px-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {/* Layanan Sayurbox */}
+          <div>
+            <h3 className="text-xl font-bold mb-4 text-gray-800">
+              Layanan Sayurbox
+            </h3>
+            <ul className="space-y-6">
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-800 font-medium hover:text-green-600 transition-colors cursor-pointer"
+                >
+                  Resep Sayurbox
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-800 font-medium hover:text-green-600 transition-colors cursor-pointer"
+                >
+                  SayurPoin
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-800 font-medium hover:text-green-600 transition-colors cursor-pointer"
+                >
+                  SayurPanen
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-800 font-medium hover:text-green-600 transition-colors cursor-pointer"
+                >
+                  Voucher Saya
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-800 font-medium hover:text-green-600 transition-colors cursor-pointer"
+                >
+                  FaQ Sayurbox
+                </a>
               </li>
             </ul>
           </div>
 
-          {/* Bantuan */}
-          <div className="col-span-1">
-            <h3 className="font-semibold mb-4">Bantuan</h3>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li className="hover:text-white cursor-pointer">
-                Cara Berbelanja
-              </li>
-              <li className="hover:text-white cursor-pointer">
-                Kebijakan Pengiriman
-              </li>
-              <li className="hover:text-white cursor-pointer">
-                Kebijakan Pengembalian
-              </li>
-              <li className="hover:text-white cursor-pointer">FAQ</li>
-              <li className="hover:text-white cursor-pointer">Hubungi Kami</li>
-            </ul>
-          </div>
-
-          {/* Kontak */}
-          <div className="col-span-1">
-            <h3 className="font-semibold mb-4">Kontak Kami</h3>
-            <div className="space-y-2 text-sm text-gray-300">
-              <div className="flex items-center space-x-2">
-                <Phone className="w-4 h-4" />
-                <span>+62 812-3456-7890</span>
+          {/* Follow Us! */}
+          <div>
+            <h3 className="text-xl font-bold mb-4 text-gray-800">Follow Us!</h3>
+            <div className="space-y-8">
+              <div className="flex items-center space-x-3">
+                <img
+                  src="/src/assets/footer/facebook.png"
+                  alt="Facebook"
+                  className="w-6 h-6"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+                <a
+                  href="#"
+                  className="text-gray-800 font-medium hover:text-blue-600 transition-colors"
+                >
+                  Facebook
+                </a>
               </div>
-              <div className="flex items-center space-x-2">
-                <Mail className="w-4 h-4" />
-                <span>info@sayurbox.com</span>
+              <div className="flex items-center space-x-3">
+                <img
+                  src="/src/assets/footer/instagram.png"
+                  alt="Instagram"
+                  className="w-6 h-6"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+                <a
+                  href="#"
+                  className="text-gray-800 font-medium hover:text-pink-600 transition-colors"
+                >
+                  Instagram
+                </a>
               </div>
-              <div className="flex items-start space-x-2">
-                <MapPin className="w-4 h-4 mt-0.5" />
-                <span>
-                  Jl. Raya Serpong No. 123, Tangerang Selatan, Banten 15310
-                </span>
+              <div className="flex items-center space-x-3">
+                <img
+                  src="/src/assets/footer/twitter.png"
+                  alt="Twitter"
+                  className="w-6 h-6"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+                <a
+                  href="#"
+                  className="text-gray-800 font-medium hover:text-blue-400 transition-colors"
+                >
+                  Twitter
+                </a>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Copyright */}
-        <div className="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-400">
-          <p>&copy; 2024 SayurBox. All rights reserved.</p>
+          {/* Get Us! */}
+          <div className="flex flex-col items-center text-center">
+            {/* Illustration */}
+            <div className="mb-6">
+              <img
+                src="/src/assets/footer/get-us.png"
+                alt="Sayurbox Illustration"
+                className="w-100 object-contain"
+                onError={(e) => {
+                  e.target.style.display = "none";
+                  e.target.nextSibling.style.display = "flex";
+                }}
+              />
+              <div className="w-64 h-32 bg-green-100 rounded-lg items-center justify-center hidden">
+                <span className="text-4xl">📱🥬</span>
+              </div>
+            </div>
+
+            {/* Download Buttons */}
+            <div className="flex space-x-4 w-full max-w-md">
+              {/* Google Play Button */}
+              <a
+                href="#"
+                className="flex items-center px-4 py-2 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow w-full"
+              >
+                <img
+                  src="/src/assets/footer/google-play.png"
+                  alt="Google Play"
+                  className="w-8 h-8 mr-3"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+                <span className="text-gray-800 font-medium">Google Play</span>
+              </a>
+
+              {/* Web Browser Button */}
+              <a
+                href="#"
+                className="flex items-center px-4 py-2 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow w-full"
+              >
+                <img
+                  src="/src/assets/footer/chrome.png"
+                  alt="Web Browser"
+                  className="w-6 h-6 mr-3"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+                <span className="text-gray-800 font-medium">Web Browser</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
