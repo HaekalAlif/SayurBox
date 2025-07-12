@@ -1,47 +1,38 @@
 import React from "react";
-import ApiTest from "./components/ApiTest.jsx";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+// Import components dan pages
+import Layout from "./components/layout/Layout";
+import Home from "./pages/home/Home.jsx";
+import Login from "./pages/auth/login/login.jsx";
 
 function App() {
   return (
-    <div
-      className="App"
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#f8f9fa",
-        padding: "20px 0",
-      }}
-    >
-      <div
-        style={{
-          textAlign: "center",
-          marginBottom: "30px",
-          padding: "20px",
-          backgroundColor: "white",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-        }}
-      >
-        <h1
-          style={{
-            color: "#212529",
-            margin: 0,
-            fontSize: "2.5rem",
-            fontWeight: "300",
-          }}
-        >
-          🥬 Sayurbox
-        </h1>
-        <p
-          style={{
-            color: "#6c757d",
-            margin: "10px 0 0 0",
-            fontSize: "1.1rem",
-          }}
-        >
-          Laravel + React Integration Demo
-        </p>
-      </div>
-      <ApiTest />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Layout><Home /></Layout>} />
+        <Route path="/login" element={<Layout><Login /></Layout>} />
+
+        {/* 404 Page */}
+        <Route
+          path="*"
+          element={
+            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+              <div className="text-center">
+                <h1 className="text-6xl font-bold text-red-500 mb-4">404</h1>
+                <p className="text-xl text-gray-600 mb-8">Page not found</p>
+                <a
+                  href="/"
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                >
+                  Go Home
+                </a>
+              </div>
+            </div>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 
