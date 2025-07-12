@@ -42,7 +42,7 @@ const Hero = () => {
   ];
 
   return (
-    <div className="py-8 px-4 md:px-8">
+    <div className="pt-8 px-4 md:px-8">
       <div className="max-w-screen-lg mx-auto space-y-8">
         {/* Hero Section - Banner Promo */}
         <section>
@@ -61,7 +61,7 @@ const Hero = () => {
         </section>
 
         {/* Kategori Produk Section */}
-        <section className="w-full bg-white py-8">
+        <section className="w-full bg-white py-2">
           <div className="w-full max-w-screen-xl mx-auto">
             <div className="w-full rounded-2xl border border-green-500 p-6 bg-white shadow-sm">
               {/* Title */}
