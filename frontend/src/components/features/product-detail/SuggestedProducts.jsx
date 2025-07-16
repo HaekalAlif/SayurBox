@@ -1,0 +1,354 @@
+import React, { useRef, useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+
+const SuggestedProducts = () => {
+  const scrollRef1 = useRef(null);
+  const scrollRef2 = useRef(null);
+  const [showLeft1, setShowLeft1] = useState(false);
+  const [showRight1, setShowRight1] = useState(false);
+  const [showLeft2, setShowLeft2] = useState(false);
+  const [showRight2, setShowRight2] = useState(false);
+
+  // Data produk sama...
+  const fruitProducts = [
+    {
+      id: 1,
+      title: "Alpukat Mentega",
+      price: "Rp. 2.500",
+      originalPrice: "Rp. 15.625",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+    {
+      id: 2,
+      title: "Alpukat Mentega Premium",
+      price: "Rp. 3.000",
+      originalPrice: "Rp. 18.750",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+    {
+      id: 3,
+      title: "Alpukat Organik",
+      price: "Rp. 4.500",
+      originalPrice: "Rp. 28.125",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+    {
+      id: 4,
+      title: "Alpukat Segar",
+      price: "Rp. 2.200",
+      originalPrice: "Rp. 13.750",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+    {
+      id: 5,
+      title: "Alpukat Import",
+      price: "Rp. 5.500",
+      originalPrice: "Rp. 34.375",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+    {
+      id: 6,
+      title: "Alpukat Import 2",
+      price: "Rp. 5.500",
+      originalPrice: "Rp. 34.375",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+  ];
+
+  const relatedProducts = [
+    {
+      id: 7,
+      title: "Alpukat Mentega Deluxe",
+      price: "Rp. 6.000",
+      originalPrice: "Rp. 37.500",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+    {
+      id: 8,
+      title: "Alpukat Royal",
+      price: "Rp. 7.500",
+      originalPrice: "Rp. 46.875",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+    {
+      id: 9,
+      title: "Alpukat Gold",
+      price: "Rp. 8.000",
+      originalPrice: "Rp. 50.000",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+    {
+      id: 10,
+      title: "Alpukat Platinum",
+      price: "Rp. 9.000",
+      originalPrice: "Rp. 56.250",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+    {
+      id: 11,
+      title: "Alpukat Diamond",
+      price: "Rp. 10.000",
+      originalPrice: "Rp. 62.500",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+    {
+      id: 12,
+      title: "Alpukat Diamond 2",
+      price: "Rp. 10.000",
+      originalPrice: "Rp. 62.500",
+      discount: "84%",
+      unit: "1 Pcs, 1 Kg",
+      image: "/src/assets/products/produk-1.png",
+      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      badgeLabel: "Best Quality for MASAK!",
+    },
+  ];
+
+  // EXACT SAME LOGIC AS SPECIALOFFER - Section 1
+  const checkScroll1 = () => {
+    const el = scrollRef1.current;
+    if (!el) return;
+    setShowLeft1(el.scrollLeft > 0);
+    setShowRight1(el.scrollLeft + el.clientWidth < el.scrollWidth);
+  };
+
+  // EXACT SAME LOGIC AS SPECIALOFFER - Section 2
+  const checkScroll2 = () => {
+    const el = scrollRef2.current;
+    if (!el) return;
+    setShowLeft2(el.scrollLeft > 0);
+    setShowRight2(el.scrollLeft + el.clientWidth < el.scrollWidth);
+  };
+
+  useEffect(() => {
+    const el1 = scrollRef1.current;
+    const el2 = scrollRef2.current;
+
+    checkScroll1();
+    checkScroll2();
+
+    el1?.addEventListener("scroll", checkScroll1);
+    el2?.addEventListener("scroll", checkScroll2);
+    window.addEventListener("resize", checkScroll1);
+    window.addEventListener("resize", checkScroll2);
+
+    return () => {
+      el1?.removeEventListener("scroll", checkScroll1);
+      el2?.removeEventListener("scroll", checkScroll2);
+      window.removeEventListener("resize", checkScroll1);
+      window.removeEventListener("resize", checkScroll2);
+    };
+  }, []);
+
+  // EXACT SAME SCROLL FUNCTION AS SPECIALOFFER
+  const scrollBy1 = (amount) => {
+    scrollRef1.current.scrollBy({ left: amount, behavior: "smooth" });
+  };
+
+  const scrollBy2 = (amount) => {
+    scrollRef2.current.scrollBy({ left: amount, behavior: "smooth" });
+  };
+
+  const ProductCard = ({ product }) => (
+    <div className="flex-shrink-0">
+      <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
+        {/* Image Area */}
+        <div className="relative w-full h-46">
+          {/* Badge Top */}
+          <div className="absolute top-2 left-2 z-10">
+            <img
+              src={product.badgeTop}
+              alt={product.badgeLabel}
+              className="w-16 h-6 object-contain"
+              onError={(e) => {
+                e.target.style.display = "none";
+              }}
+            />
+          </div>
+
+          {/* Product Image */}
+          <img
+            src={product.image}
+            alt={product.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.style.display = "none";
+              e.target.nextSibling.style.display = "flex";
+            }}
+          />
+          {/* Fallback Image */}
+          <div className="w-full h-full bg-green-50 flex items-center justify-center hidden">
+            <span className="text-6xl">🥑</span>
+          </div>
+
+          {/* Add Icon */}
+          <button className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer">
+            <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
+          </button>
+        </div>
+
+        {/* Price & Info */}
+        <div className="p-3">
+          <div className="mb-1">
+            <span className="text-base font-bold text-gray-800">
+              {product.price}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
+              {product.discount}
+            </span>
+            <span className="line-through text-gray-400 text-xs">
+              {product.originalPrice}
+            </span>
+          </div>
+
+          <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
+            {product.title}
+          </h4>
+          <p className="text-xs text-gray-500">{product.unit}</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="px-4 py-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Section 1: Lainnya dari : Buah */}
+        <div className="mb-4">
+          <h2 className="text-xl font-bold text-gray-900 ">
+            Lainnya dari : Buah
+          </h2>
+
+          <div className="relative">
+            {/* Arrow Left */}
+            {showLeft1 && (
+              <button
+                onClick={() => scrollBy1(-300)}
+                className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+            )}
+
+            {/* Arrow Right */}
+            {showRight1 && (
+              <button
+                onClick={() => scrollBy1(300)}
+                className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+            )}
+
+            <div
+              className="flex items-center gap-4 overflow-x-auto px-2 h-88 md:px-0 scroll-smooth scrollbar-hide"
+              ref={scrollRef1}
+            >
+              {fruitProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Section 2: Yang lain beli juga! */}
+        <div className="mb-4">
+          <h2 className="text-xl font-bold text-gray-900 ">
+            Yang lain beli juga!
+          </h2>
+
+          <div className="relative">
+            {/* Arrow Left*/}
+            {showLeft2 && (
+              <button
+                onClick={() => scrollBy2(-300)}
+                className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+            )}
+
+            {/* Arrow Right*/}
+            {showRight2 && (
+              <button
+                onClick={() => scrollBy2(300)}
+                className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+            )}
+
+            <div
+              className="flex items-center gap-4 overflow-x-auto h-88 px-2 md:px-0 scroll-smooth scrollbar-hide"
+              ref={scrollRef2}
+            >
+              {relatedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Custom CSS untuk hide scrollbar - SAME AS SPECIALOFFER */}
+      <style jsx>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default SuggestedProducts;

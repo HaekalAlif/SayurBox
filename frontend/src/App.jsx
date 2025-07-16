@@ -1,17 +1,39 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Import components dan pages
 import Layout from "./components/layout/Layout";
 import Home from "./pages/home/Home.jsx";
 import Login from "./pages/auth/login/login.jsx";
+import ProductDetail from "./pages/products/ProductDetail.jsx";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Layout><Home /></Layout>} />
-        <Route path="/login" element={<Layout><Login /></Layout>} />
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <Home />
+            </Layout>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <Layout>
+              <Login />
+            </Layout>
+          }
+        />
+        <Route
+          path="/product-detail"
+          element={
+            <Layout>
+              <ProductDetail />
+            </Layout>
+          }
+        />
 
         {/* 404 Page */}
         <Route
