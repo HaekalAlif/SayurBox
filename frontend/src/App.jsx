@@ -5,6 +5,8 @@ import Layout from "./components/layout/Layout";
 import Home from "./pages/home/Home.jsx";
 import Login from "./pages/auth/login/login.jsx";
 import ProductDetail from "./pages/products/ProductDetail.jsx";
+import Category from "./pages/category/Category.jsx";
+import { Cat } from "lucide-react";
 
 function App() {
   return (
@@ -31,6 +33,14 @@ function App() {
           element={
             <Layout>
               <ProductDetail />
+            </Layout>
+          }
+        />
+        <Route
+          path="/category"
+          element={
+            <Layout>
+              <Category />
             </Layout>
           }
         />
