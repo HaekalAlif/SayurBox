@@ -127,3 +127,20 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
 }
+
+.custom-checkbox::after {
+  content: '';
+  display: none;
+  width: 12px;
+  height: 6px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%) rotate(-45deg);
+}
+
+.custom-checkbox:checked::after {
+  display: block;
+}
