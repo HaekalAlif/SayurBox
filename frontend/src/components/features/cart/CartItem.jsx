@@ -479,34 +479,70 @@ const CartItem = () => {
             </div>
           </div>
 
-          {/* Enhanced Select All */}
-          <div
-            className="mt-4 p-6 border-b border-gray-200"
-            style={{ backgroundColor: "#D4E496" }}
-          >
-            <div className="flex items-center space-x-3">
-              <label className="relative w-10 h-10 inline-block">
-                <input
-                  type="checkbox"
-                  checked={selectAll}
-                  onChange={handleSelectAll}
-                  className="custom-checkbox w-10 h-10 appearance-none rounded border-2 border-green-500 bg-white checked:bg-green-500 checked:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
-                />
-              </label>
+          {/* Enhanced Select All - Hide when cart is empty */}
+          {products.length > 0 && (
+            <div
+              className="mt-4 p-6 border-b border-gray-200"
+              style={{ backgroundColor: "#D4E496" }}
+            >
+              <div className="flex items-center space-x-3">
+                <label className="relative w-10 h-10 inline-block">
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={handleSelectAll}
+                    className="custom-checkbox w-10 h-10 appearance-none rounded border-2 border-green-500 bg-white checked:bg-green-500 checked:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
+                  />
+                </label>
 
-              <span className="font-bold text-gray-900">Pilih Semua</span>
-              <span className="text-gray-500 text-md font-medium">
-                ({products.length})
-              </span>
+                <span className="font-bold text-gray-900">Pilih Semua</span>
+                <span className="text-gray-500 text-md font-medium">
+                  ({products.length})
+                </span>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Enhanced Product List */}
-          <div className="space-y-4">
-            {products.map((product) => (
-              <ProductItem key={product.id} product={product} />
-            ))}
-          </div>
+          {products.length === 0 ? (
+            /* Empty Cart UI - Only for product list area */
+            <div className="space-y-4">
+              <div className="flex flex-col items-center justify-center">
+                <div className="text-center">
+                  {/* Empty Cart Image */}
+                  <div className="mb-6">
+                    <img
+                      src="/src/assets/cart/empty-cart.png"
+                      alt="Keranjang Kosong"
+                      className="w-64 mx-auto"
+                    />
+                  </div>
+
+                  {/* Empty Cart Text */}
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">
+                    Yah, keranjang mu kosong nih...
+                  </h3>
+                  <p className="text-md text-gray-600 mb-6">
+                    Yuk belanja sekarang
+                  </p>
+
+                  {/* Shop Now Button */}
+                  <button
+                    onClick={() => window.history.back()}
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg text-md transition-all duration-200 shadow-sm"
+                  >
+                    Belanja Sekarang
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {products.map((product) => (
+                <ProductItem key={product.id} product={product} />
+              ))}
+            </div>
+          )}
 
           <div className="mt-6 p-4 bg-[#D4E496] rounded-lg border border-orange-200">
             <h3 className="px-4 font-bold text-gray-900 mb-4 text-lg">
@@ -585,34 +621,44 @@ const CartItem = () => {
               {/* Total */}
               <div className="flex items-center py-3 ">
                 <span className="font-bold text-gray-900 text-lg">
-                  Total : Rp. 2.025
+                  Total : {products.length === 0 ? "Rp.-" : "Rp. 2.025"}
                 </span>
               </div>
 
-              {/* Points */}
-              <div className="mb-4">
-                <div className="flex items-center text-sm">
-                  <img src="src/assets/cart/point.png" className="w-10 h-10" />
-                  <span className="text-black font-bold ml-3">
-                    +9 SayurPoint
-                  </span>
+              {/* Points - Hide when cart is empty */}
+              {products.length > 0 && (
+                <div className="mb-4">
+                  <div className="flex items-center text-sm">
+                    <img
+                      src="src/assets/cart/point.png"
+                      className="w-10 h-10"
+                    />
+                    <span className="text-black font-bold ml-3">
+                      +9 SayurPoint
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* XP */}
-              <div className="mb-6">
-                <div className="flex items-center text-sm">
-                  <img src="src/assets/cart/xp.png" className="w-10 h-10" />
-                  <span className="text-black font-bold ml-3">+18 XP</span>
+              {/* XP - Hide when cart is empty */}
+              {products.length > 0 && (
+                <div className="mb-6">
+                  <div className="flex items-center text-sm">
+                    <img src="src/assets/cart/xp.png" className="w-10 h-10" />
+                    <span className="text-black font-bold ml-3">+18 XP</span>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Add margin bottom when cart is empty to maintain spacing */}
+              {products.length === 0 && <div className="mb-6"></div>}
 
               {/* Checkout Button */}
               <button
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-sm font-semibold text-lg transition-all duration-200 shadow-sm"
-                disabled={totalItems === 0}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-sm font-semibold text-lg transition-all duration-200 shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                disabled={products.length === 0 || totalItems === 0}
               >
-                Checkout
+                {products.length === 0 ? "Keranjang Kosong" : "Checkout"}
               </button>
             </div>
           </div>
