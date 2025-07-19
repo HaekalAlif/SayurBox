@@ -7,6 +7,7 @@ import Login from "./pages/auth/login/login.jsx";
 import ProductDetail from "./pages/products/ProductDetail.jsx";
 import Category from "./pages/category/Category.jsx";
 import Cart from "./pages/cart/Cart";
+import Payment from "./pages/payment/Payment.jsx";
 
 function App() {
   return (
@@ -53,22 +54,33 @@ function App() {
           }
         />
 
+        <Route
+          path="/payment"
+          element={
+            <Layout>
+              <Payment />
+            </Layout>
+          }
+        />
+
         {/* 404 Page */}
         <Route
           path="*"
           element={
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-              <div className="text-center">
-                <h1 className="text-6xl font-bold text-red-500 mb-4">404</h1>
-                <p className="text-xl text-gray-600 mb-8">Page not found</p>
-                <a
-                  href="/"
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                >
-                  Go Home
-                </a>
+            <Layout>
+              <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+                <div className="text-center">
+                  <h1 className="text-6xl font-bold text-red-500 mb-4">404</h1>
+                  <p className="text-xl text-gray-600 mb-8">Page not found</p>
+                  <a
+                    href="/"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                  >
+                    Go Home
+                  </a>
+                </div>
               </div>
-            </div>
+            </Layout>
           }
         />
       </Routes>
