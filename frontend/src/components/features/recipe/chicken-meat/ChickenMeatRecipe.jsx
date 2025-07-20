@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ChevronLeft, Search, ChevronUp, ChevronDown } from "lucide-react";
 
-const SeafoodRecipe = () => {
+const ChickenMeatRecipe = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -11,28 +11,28 @@ const SeafoodRecipe = () => {
 
   const recipeItems = [
     {
-      image: "assets/recipe/seafood/nasi-salmon.png",
+      image: "assets/recipe/chicken-meat/swike-ayam.png",
     },
     {
-      image: "assets/recipe/seafood/lele-sambal.png",
+      image: "assets/recipe/chicken-meat/kolak-ayam.png",
     },
     {
-      image: "assets/recipe/seafood/cumi-asin.png",
+      image: "assets/recipe/chicken-meat/ayam-katsu.png",
     },
     {
-      image: "assets/recipe/seafood/cumi-krispi.png",
+      image: "assets/recipe/chicken-meat/tumis-ayam.png",
     },
     {
-      image: "assets/recipe/seafood/tuna-steak.png",
+      image: "assets/recipe/chicken-meat/ayam-tangsuyuk.png",
     },
     {
-      image: "assets/recipe/seafood/dori-saus.png",
+      image: "assets/recipe/chicken-meat/ayam-bumbu-kuning.png",
     },
     {
-      image: "assets/recipe/seafood/cumi-saus.png",
+      image: "assets/recipe/chicken-meat/chicken-steak.png",
     },
     {
-      image: "assets/recipe/seafood/moules.png",
+      image: "assets/recipe/chicken-meat/korean-chicken.png",
     },
   ];
 
@@ -50,12 +50,12 @@ const SeafoodRecipe = () => {
       <div>
         <div className="max-w-5xl mx-auto space-y-8">
           <div className="text-2xl font-bold">
-            <h1>RASA - Seafood </h1>
+            <h1>RASA - Daging Ayam </h1>
           </div>
-          <div className="bg-[#CBEAE2] h-278   rounded-sm px-20 items-center">
+          <div className="bg-[#FFC7C5] h-278   rounded-sm px-20 items-center">
             <div className="flex justify-center items-center ">
               <img
-                src="assets/recipe/seafood/seafood.png"
+                src="assets/recipe/chicken-meat/daging-ayam.png"
                 className="w-120 py-6 object-contain rounded-lg ml-2 mb-4"
               />
             </div>
@@ -87,4 +87,4 @@ const SeafoodRecipe = () => {
   );
 };
 
-export default SeafoodRecipe;
+export default ChickenMeatRecipe;

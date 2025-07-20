@@ -14,6 +14,7 @@ import Recipe from "./pages/recipe/Recipe.jsx";
 import VegetableRecipe from "./pages/recipe/VegetableRecipe.jsx";
 import SeafoodRecipe from "./pages/recipe/SeafoodRecipe.jsx";
 import BeefRecipe from "./pages/recipe/BeefRecipe.jsx";
+import ChickenMeatRecipe from "./pages/recipe/ChickenMeatRecipe.jsx";
 
 function App() {
   return (
@@ -120,6 +121,15 @@ function App() {
           element={
             <Layout>
               <BeefRecipe />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/chicken-meat-recipe"
+          element={
+            <Layout>
+              <ChickenMeatRecipe />
             </Layout>
           }
         />
