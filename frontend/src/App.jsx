@@ -15,6 +15,7 @@ import VegetableRecipe from "./pages/recipe/VegetableRecipe.jsx";
 import SeafoodRecipe from "./pages/recipe/SeafoodRecipe.jsx";
 import BeefRecipe from "./pages/recipe/BeefRecipe.jsx";
 import ChickenMeatRecipe from "./pages/recipe/ChickenMeatRecipe.jsx";
+import Profile from "./pages/profile/Profile.jsx";
 
 function App() {
   return (
@@ -130,6 +131,15 @@ function App() {
           element={
             <Layout>
               <ChickenMeatRecipe />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <Layout>
+              <Profile />
             </Layout>
           }
         />
