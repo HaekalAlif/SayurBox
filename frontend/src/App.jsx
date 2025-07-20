@@ -16,6 +16,7 @@ import SeafoodRecipe from "./pages/recipe/SeafoodRecipe.jsx";
 import BeefRecipe from "./pages/recipe/BeefRecipe.jsx";
 import ChickenMeatRecipe from "./pages/recipe/ChickenMeatRecipe.jsx";
 import Profile from "./pages/profile/Profile.jsx";
+import Account from "./pages/profile/account/Account.jsx";
 
 function App() {
   return (
@@ -140,6 +141,15 @@ function App() {
           element={
             <Layout>
               <Profile />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/profile/account"
+          element={
+            <Layout>
+              <Account />
             </Layout>
           }
         />

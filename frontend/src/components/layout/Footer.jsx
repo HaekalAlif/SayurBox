@@ -60,7 +60,7 @@ const Footer = () => {
             <div className="space-y-8">
               <div className="flex items-center space-x-3">
                 <img
-                  src="assets/footer/facebook.png"
+                  src="/assets/footer/facebook.png"
                   alt="Facebook"
                   className="w-6 h-6"
                   onError={(e) => {
@@ -76,7 +76,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <img
-                  src="assets/footer/instagram.png"
+                  src="/assets/footer/instagram.png"
                   alt="Instagram"
                   className="w-6 h-6"
                   onError={(e) => {
@@ -92,7 +92,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <img
-                  src="assets/footer/twitter.png"
+                  src="/assets/footer/twitter.png"
                   alt="Twitter"
                   className="w-6 h-6"
                   onError={(e) => {
@@ -114,7 +114,7 @@ const Footer = () => {
             {/* Illustration */}
             <div className="mb-6">
               <img
-                src="assets/footer/get-us.png"
+                src="/assets/footer/get-us.png"
                 alt="Sayurbox Illustration"
                 className="w-100 object-contain"
                 onError={(e) => {
@@ -135,7 +135,7 @@ const Footer = () => {
                 className="flex items-center px-4 py-2 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow w-full"
               >
                 <img
-                  src="assets/footer/google-play.png"
+                  src="/assets/footer/google-play.png"
                   alt="Google Play"
                   className="w-8 h-8 mr-3"
                   onError={(e) => {
@@ -151,7 +151,7 @@ const Footer = () => {
                 className="flex items-center px-4 py-2 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow w-full"
               >
                 <img
-                  src="assets/footer/chrome.png"
+                  src="/assets/footer/chrome.png"
                   alt="Web Browser"
                   className="w-6 h-6 mr-3"
                   onError={(e) => {

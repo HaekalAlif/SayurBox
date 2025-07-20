@@ -630,7 +630,7 @@ const CartItem = () => {
                 <div className="mb-4">
                   <div className="flex items-center text-sm">
                     <img
-                      src="src/assets/cart/point.png"
+                      src="assets/cart/point.png"
                       className="w-10 h-10"
                     />
                     <span className="text-black font-bold ml-3">
@@ -644,7 +644,7 @@ const CartItem = () => {
               {products.length > 0 && (
                 <div className="mb-6">
                   <div className="flex items-center text-sm">
-                    <img src="src/assets/cart/xp.png" className="w-10 h-10" />
+                    <img src="assets/cart/xp.png" className="w-10 h-10" />
                     <span className="text-black font-bold ml-3">+18 XP</span>
                   </div>
                 </div>

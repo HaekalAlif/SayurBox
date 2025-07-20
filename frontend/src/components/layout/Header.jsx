@@ -21,7 +21,7 @@ const Header = () => {
           <div className="w-[25%] flex items-center space-x-3">
             <div className="flex items-center">
               <img
-                src="assets/header/sayurbox-logo.png"
+                src="/assets/header/sayurbox-logo.png"
                 alt="Sayurbox Logo"
                 className="h-18 w-auto object-contain"
                 onError={(e) => {
@@ -44,7 +44,7 @@ const Header = () => {
                 style={{ borderColor: "#BEE4B4" }}
               />
               <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-full">
-                <img src="assets/header/search.png" className="w-8" />
+                <img src="/assets/header/search.png" className="w-8" />
               </button>
             </div>
           </div>
@@ -54,7 +54,7 @@ const Header = () => {
             {/* Ikon Keranjang */}
             <div className="relative">
               <div className="w-14 h-14 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center cursor-pointer">
-                <img src="assets/header/cart.png" className="w-8" />
+                <img src="/assets/header/cart.png" className="w-8" />
               </div>
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
                 <span className="text-xs text-white font-bold">3</span>
@@ -64,7 +64,7 @@ const Header = () => {
             {/* Ikon Nota */}
             <div className="relative">
               <div className="w-14 h-14 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center cursor-pointer">
-                <img src="assets/header/bill.png" className="w-8" />
+                <img src="/assets/header/bill.png" className="w-8" />
               </div>
               <div
                 className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center"
@@ -79,7 +79,7 @@ const Header = () => {
             {/* Ikon Keranjang 2 */}
             <div className="relative">
               <div className="w-14 h-14 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center cursor-pointer">
-                <img src="assets/header/cart-2.png" className="w-8" />
+                <img src="/assets/header/cart-2.png" className="w-8" />
               </div>
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
                 <span className="text-xs text-gray-800 font-bold">$</span>
@@ -91,7 +91,7 @@ const Header = () => {
               className="w-18 h-18 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow cursor-pointer"
               style={{ backgroundColor: "#E6B800" }}
             >
-              <img src="assets/header/profile.png" alt="" />
+              <img src="/assets/header/profile.png" alt="" />
             </div>
           </div>
         </div>
