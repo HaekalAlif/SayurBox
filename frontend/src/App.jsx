@@ -13,6 +13,7 @@ import Catalog from "./pages/catalog/Catalog.jsx";
 import Recipe from "./pages/recipe/Recipe.jsx";
 import VegetableRecipe from "./pages/recipe/VegetableRecipe.jsx";
 import SeafoodRecipe from "./pages/recipe/SeafoodRecipe.jsx";
+import BeefRecipe from "./pages/recipe/BeefRecipe.jsx";
 
 function App() {
   return (
@@ -110,6 +111,15 @@ function App() {
           element={
             <Layout>
               <SeafoodRecipe />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/beef-recipe"
+          element={
+            <Layout>
+              <BeefRecipe />
             </Layout>
           }
         />
