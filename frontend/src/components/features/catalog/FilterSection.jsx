@@ -42,7 +42,7 @@ const FilterSection = () => {
       </div>
       <div className="w-60 bg-white min-h-screen ">
         {/* Category List */}
-        <div className="mt-8">
+        <div className="mt-8 ml-2">
           <h1 className="text-2xl font-bold mb-6">By Sayurbox</h1>
           <div className="flex space-x-2">
             <ChevronRight className="w-5 h-5 mt-0.5 ml-2" />
@@ -70,10 +70,7 @@ const FilterSection = () => {
         {/* Filter Section */}
         <div className="mt-6">
           <div className="flex space-x-2 ml-4 mb-2">
-            <img
-              src="/src/assets/catalog/filter.png"
-              className="w-6 h-6 mt-1"
-            />
+            <img src="assets/catalog/filter.png" className="w-6 h-6 mt-1" />
             <h3 className="text-xl font-bold mb-4">Filter</h3>
           </div>
           <div className="flex space-x-2">

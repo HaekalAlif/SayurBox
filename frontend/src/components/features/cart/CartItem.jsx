@@ -16,7 +16,7 @@ const CartItem = () => {
       minQuantity: 1,
       maxQuantity: 10,
       isSelected: true,
-      image: "/src/assets/products/produk-1.png",
+      image: "assets/products/produk-1.png",
     },
     {
       id: 2,
@@ -29,7 +29,7 @@ const CartItem = () => {
       minQuantity: 1,
       maxQuantity: 10,
       isSelected: false,
-      image: "/src/assets/products/produk-1.png",
+      image: "assets/products/produk-1.png",
     },
     {
       id: 3,
@@ -42,7 +42,7 @@ const CartItem = () => {
       minQuantity: 1,
       maxQuantity: 10,
       isSelected: false,
-      image: "/src/assets/products/produk-1.png",
+      image: "assets/products/produk-1.png",
     },
   ]);
 
@@ -151,7 +151,7 @@ const CartItem = () => {
         <div className="flex items-center justify-between">
           <div className="w-26 h-20 rounded-md overflow-hidden bg-red-100">
             <img
-              src="/src/assets/cart/marjan.jpg"
+              src="assets/cart/marjan.jpg"
               alt="Product"
               className="w-full h-full object-cover"
             />
@@ -273,7 +273,7 @@ const CartItem = () => {
             >
               {/* Ganti dengan path ikon custom kalau perlu */}
               <img
-                src="/src/assets/cart/trash.png"
+                src="assets/cart/trash.png"
                 alt="Hapus"
                 className="w-6 h-8 cursor-pointer"
               />
@@ -288,7 +288,7 @@ const CartItem = () => {
               >
                 <div className="w-10 h-10 flex items-center justify-center rounded-full group-active:bg-green-600">
                   <img
-                    src="/src/assets/cart/minus.png"
+                    src="assets/cart/minus.png"
                     alt="Kurangi"
                     className="w-6 h-6"
                   />
@@ -308,7 +308,7 @@ const CartItem = () => {
               >
                 <div className="w-10 h-10 flex items-center justify-center rounded-full group-active:bg-green-600">
                   <img
-                    src="/src/assets/cart/plus.png"
+                    src="assets/cart/plus.png"
                     alt="Tambah"
                     className="w-6 h-6"
                   />
@@ -512,7 +512,7 @@ const CartItem = () => {
                   {/* Empty Cart Image */}
                   <div className="mb-6">
                     <img
-                      src="/src/assets/cart/empty-cart.png"
+                      src="assets/cart/empty-cart.png"
                       alt="Keranjang Kosong"
                       className="w-64 mx-auto"
                     />
@@ -606,7 +606,7 @@ const CartItem = () => {
                 style={{ backgroundColor: "#B1E9AB99" }}
               >
                 <img
-                  src="/src/assets/cart/truck.png"
+                  src="assets/cart/truck.png"
                   alt="Truck Icon"
                   className="text-green-600 w-14 h-8"
                 />

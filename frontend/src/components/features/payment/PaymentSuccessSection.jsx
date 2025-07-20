@@ -99,7 +99,7 @@ const PaymentSuccessSection = () => {
           {/* Success Illustration */}
           <div className="mb-8">
             <img
-              src="/src/assets/payment/success-icon.png"
+              src="assets/payment/success-icon.png"
               alt="Success Image"
               className="w-full max-w-60 mx-auto"
             />
@@ -138,7 +138,7 @@ const PaymentSuccessSection = () => {
           <div className="mb-6 flex justify-center">
             <div className="border border-gray-400 w-120 rounded-xl p-4 flex flex-col items-center">
               <img
-                src="/src/assets/payment/bni.png"
+                src="assets/payment/bni.png"
                 alt="Logo BNI"
                 className="h-6 mb-3"
               />

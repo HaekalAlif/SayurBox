@@ -10,6 +10,7 @@ import Payment from "./pages/payment/Payment.jsx";
 import PaymentMethod from "./pages/payment/PaymentMethod.jsx";
 import PaymentSuccess from "./pages/payment/PaymentSuccess.jsx";
 import Catalog from "./pages/catalog/Catalog.jsx";
+import Recipe from "./pages/recipe/Recipe.jsx";
 
 function App() {
   return (
@@ -80,6 +81,15 @@ function App() {
           element={
             <Layout>
               <Catalog />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/recipe"
+          element={
+            <Layout>
+              <Recipe />
             </Layout>
           }
         />

@@ -32,10 +32,10 @@ const Product = () => {
 
   // Images data
   const images = {
-    main: "/src/assets/products/produk-1.png",
+    main: "assets/products/produk-1.png",
     thumbnails: [
-      "/src/assets/products/produk-2.png",
-      "/src/assets/products/produk-3.png",
+      "assets/products/produk-2.png",
+      "assets/products/produk-3.png",
     ],
   };
 
@@ -289,7 +289,7 @@ const Product = () => {
                 {/* Tombol Chat Sayurbox */}
                 <button className="w-full max-w-[280px] bg-white text-green-600 py-3 px-4 rounded-lg font-bold border border-green-600 flex items-center justify-start gap-3 hover:bg-green-50 transition-colors">
                   <img
-                    src="/src/assets/products/whatsapp.png"
+                    src="assets/products/whatsapp.png"
                     alt="WhatsApp"
                     className="w-10 h-10"
                   />

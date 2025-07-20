@@ -13,8 +13,8 @@ const ProductSection = () => {
 
   // Base product template
   const baseProduct = {
-    image: "/src/assets/landing/products/alpukat.png",
-    badgeTop: "/src/assets/landing/icons/badge-masak.png",
+    image: "assets/landing/products/alpukat.png",
+    badgeTop: "assets/landing/icons/badge-masak.png",
     badgeLabel: "Best Quality for MASAK!",
     unit: "1 Pcs, 1 Kg",
     discount: "84%",

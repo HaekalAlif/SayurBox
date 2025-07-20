@@ -9,8 +9,8 @@ const SpecialOffer = () => {
   const products = [
     {
       id: 1,
-      image: "/src/assets/landing/products/alpukat.png",
-      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      image: "assets/landing/products/alpukat.png",
+      badgeTop: "assets/landing/icons/badge-masak.png",
       badgeLabel: "Best Quality for MASAK!",
       title: "Alpukat Mentega",
       unit: "1 Pcs, 1 Kg",
@@ -20,8 +20,8 @@ const SpecialOffer = () => {
     },
     {
       id: 2,
-      image: "/src/assets/landing/products/alpukat.png",
-      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      image: "assets/landing/products/alpukat.png",
+      badgeTop: "assets/landing/icons/badge-masak.png",
       badgeLabel: "Best Quality for MASAK!",
       title: "Alpukat Mentega",
       unit: "1 Pcs, 1 Kg",
@@ -31,8 +31,8 @@ const SpecialOffer = () => {
     },
     {
       id: 3,
-      image: "/src/assets/landing/products/alpukat.png",
-      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      image: "assets/landing/products/alpukat.png",
+      badgeTop: "assets/landing/icons/badge-masak.png",
       badgeLabel: "Best Quality for MASAK!",
       title: "Alpukat Mentega",
       unit: "1 Pcs, 1 Kg",
@@ -42,8 +42,8 @@ const SpecialOffer = () => {
     },
     {
       id: 4,
-      image: "/src/assets/landing/products/alpukat.png",
-      badgeTop: "/src/assets/landing/icons/badge-masak.png",
+      image: "assets/landing/products/alpukat.png",
+      badgeTop: "assets/landing/icons/badge-masak.png",
       badgeLabel: "Best Quality for MASAK!",
       title: "Alpukat Segar",
       unit: "1 Pcs, 1 Kg",
@@ -114,7 +114,7 @@ const SpecialOffer = () => {
                   <div className="flex-shrink-0">
                     <div className="w-60 rounded-xl shadow-md overflow-hidden">
                       <img
-                        src="/src/assets/landing/special/special.png"
+                        src="assets/landing/special/special.png"
                         alt="Spesial Hari Ini"
                         className="w-full h-full object-cover"
                         onError={(e) => {

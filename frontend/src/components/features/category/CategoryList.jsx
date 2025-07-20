@@ -6,48 +6,48 @@ const CategoryList = () => {
   const specialCategories = [
     {
       name: "By Sayurbox",
-      icon: "/src/assets/category/sayurbox.png",
+      icon: "assets/category/sayurbox.png",
     },
     {
       name: "Planto",
-      icon: "/src/assets/category/planto.png",
+      icon: "assets/category/planto.png",
     },
     {
       name: "Bangga Lokal",
-      icon: "/src/assets/category/bangga-lokal.png",
+      icon: "assets/category/bangga-lokal.png",
     },
     {
       name: "Sayurbox Premium",
-      icon: "/src/assets/category/premium.png",
+      icon: "assets/category/premium.png",
     },
   ];
 
   const allCategories = [
-    { name: "New Product", icon: "/src/assets/category/new-product.png" },
-    { name: "Sayur", icon: "/src/assets/category/sayur.png" },
-    { name: "Buah", icon: "/src/assets/category/buah.png" },
-    { name: "Protein", icon: "/src/assets/category/protein.png" },
-    { name: "Sembako", icon: "/src/assets/category/sembako.png" },
-    { name: "Bumbu Dapur", icon: "/src/assets/category/bumbu.png" },
-    { name: "Susu & Olahan", icon: "/src/assets/category/susu.png" },
-    { name: "Ibu & Bayi", icon: "/src/assets/category/ibu-bayi.png" },
-    { name: "Sarapan", icon: "/src/assets/category/sarapan.png" },
-    { name: "Makanan Ringan", icon: "/src/assets/category/snack.png" },
-    { name: "Minuman Ringan", icon: "/src/assets/category/drink.png" },
-    { name: "Siap Saji", icon: "/src/assets/category/siap-saji.png" },
-    { name: "Kesehatan", icon: "/src/assets/category/kesehatan.png" },
+    { name: "New Product", icon: "assets/category/new-product.png" },
+    { name: "Sayur", icon: "assets/category/sayur.png" },
+    { name: "Buah", icon: "assets/category/buah.png" },
+    { name: "Protein", icon: "assets/category/protein.png" },
+    { name: "Sembako", icon: "assets/category/sembako.png" },
+    { name: "Bumbu Dapur", icon: "assets/category/bumbu.png" },
+    { name: "Susu & Olahan", icon: "assets/category/susu.png" },
+    { name: "Ibu & Bayi", icon: "assets/category/ibu-bayi.png" },
+    { name: "Sarapan", icon: "assets/category/sarapan.png" },
+    { name: "Makanan Ringan", icon: "assets/category/snack.png" },
+    { name: "Minuman Ringan", icon: "assets/category/drink.png" },
+    { name: "Siap Saji", icon: "assets/category/siap-saji.png" },
+    { name: "Kesehatan", icon: "assets/category/kesehatan.png" },
     {
       name: "Perawatan Diri",
-      icon: "/src/assets/category/perawatan-diri.png",
+      icon: "assets/category/perawatan-diri.png",
     },
     {
       name: "Perawatan Rumah",
-      icon: "/src/assets/category/perawatan-rumah.png",
+      icon: "assets/category/perawatan-rumah.png",
     },
-    { name: "Perlengkapan Hewan", icon: "/src/assets/category/hewan.png" },
+    { name: "Perlengkapan Hewan", icon: "assets/category/hewan.png" },
     {
       name: "21+ Category",
-      icon: "/src/assets/category/kategori-dewasa.png",
+      icon: "assets/category/kategori-dewasa.png",
     },
   ];
 

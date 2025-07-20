@@ -54,7 +54,7 @@ const PaymentSection = () => {
     {
       id: 1,
       productName: "Alpukat Mentega",
-      image: "/src/assets/products/produk-1.png",
+      image: "assets/products/produk-1.png",
       price: 15625,
       unit: "1 Pcs",
       discount: 300,
@@ -73,13 +73,13 @@ const PaymentSection = () => {
       label: "Sayur/Tunai (Bayar di tempat)",
       description:
         "Bayar tunai & dapat mengembalikan produk yang tidak sesuai di tempat",
-      icon: "/src/assets/payment/sayur-tunai.png",
+      icon: "assets/payment/sayur-tunai.png",
     },
     {
       id: "bni",
       label: "BNI Virtual Account",
       description: "Bayar ke BNI Virtual Account Transferpay!",
-      icon: "/src/assets/payment/bni.png",
+      icon: "assets/payment/bni.png",
     },
   ];
 
@@ -144,7 +144,7 @@ const PaymentSection = () => {
                 <div className="flex p-2 space-y-3 space-x-4">
                   <div>
                     <img
-                      src="/src/assets/payment/maps.png"
+                      src="assets/payment/maps.png"
                       className="w-20 h-18 rounded-md"
                     />
                   </div>
@@ -190,7 +190,7 @@ const PaymentSection = () => {
               </h2>
               <div className="py-2 px-4 bg-white gap-x-5 rounded-lg flex border border-gray-100 mb-3">
                 <img
-                  src="/src/assets/payment/calendar.png"
+                  src="assets/payment/calendar.png"
                   alt="Calendar"
                   className="w-10"
                 />
@@ -267,7 +267,7 @@ const PaymentSection = () => {
                 Ganti Kemasan
               </p>
               <img
-                src="/src/assets/payment/information.png"
+                src="assets/payment/information.png"
                 className="w-5 h-5 mt-1"
               />
             </div>
@@ -286,7 +286,7 @@ const PaymentSection = () => {
                   </label>
 
                   <img
-                    src="/src/assets/payment/box.png"
+                    src="assets/payment/box.png"
                     className="w-14 h-14 mt-1"
                   />
                   <div>
@@ -357,7 +357,7 @@ const PaymentSection = () => {
             <div className="bg-white rounded-lg p-6 border border-green-300">
               <div className="flex items-center  space-x-3 mb-4 pb-6 border-b border-green-500 ">
                 <img
-                  src="/src/assets/payment/gift.png"
+                  src="assets/payment/gift.png"
                   className="w-14 h-14
                 "
                 />
@@ -463,7 +463,7 @@ const PaymentSection = () => {
               </div>
               <div className="rounded-sm bg-[#B1E9AB] flex border-2 border-green-700 p-4 mb-6">
                 <div className="basis-[10%] flex-shrink-0 flex items-center">
-                  <img src="/src/assets/payment/voucher.png" className="w-9" />
+                  <img src="assets/payment/voucher.png" className="w-9" />
                 </div>
                 <div className="basis-[70%] flex items-center font-bold text-lg pl-6">
                   <span>Pakai Voucher-mu!</span>
@@ -489,7 +489,7 @@ const PaymentSection = () => {
                   </div>
                   <div className="flex justify-between">
                     <div className="flex space-x-2">
-                      <img src="/src/assets/payment/discount.png" />
+                      <img src="assets/payment/discount.png" />
                       <span>Diskon Produk</span>
                     </div>
                     <span className="font-medium text-green-700">
@@ -523,7 +523,7 @@ const PaymentSection = () => {
                       <div className="flex items-start space-x-12">
                         <span className="text-gray-600">Biaya Kemasan</span>
                         <img
-                          src="/src/assets/payment/information.png"
+                          src="assets/payment/information.png"
                           className="w-5 h-5"
                         />
                       </div>
@@ -543,7 +543,7 @@ const PaymentSection = () => {
                       <div className="flex items-start space-x-12">
                         <span className="text-gray-600">Biaya Reservasi</span>
                         <img
-                          src="/src/assets/payment/information.png"
+                          src="assets/payment/information.png"
                           className="w-5 h-5"
                         />
                       </div>

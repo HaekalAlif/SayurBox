@@ -4,23 +4,23 @@ const Hero = () => {
   // Data kategori produk
   const kategoriItems = [
     {
-      icon: "/src/assets/landing/kategori/sayur.png",
+      icon: "assets/landing/kategori/sayur.png",
       label: "Sayur",
     },
     {
-      icon: "/src/assets/landing/kategori/buah.png",
+      icon: "assets/landing/kategori/buah.png",
       label: "Buah",
     },
     {
-      icon: "/src/assets/landing/kategori/protein.png",
+      icon: "assets/landing/kategori/protein.png",
       label: "Protein",
     },
     {
-      icon: "/src/assets/landing/kategori/sembako.png",
+      icon: "assets/landing/kategori/sembako.png",
       label: "Sembako",
     },
     {
-      icon: "/src/assets/landing/kategori/bumbu.png",
+      icon: "assets/landing/kategori/bumbu.png",
       label: "Bumbu Dapur",
     },
   ];
@@ -29,15 +29,15 @@ const Hero = () => {
   const tabItems = [
     {
       label: "Semua Kategori",
-      icon: "/src/assets/landing/kategori/all.png",
+      icon: "assets/landing/kategori/all.png",
     },
     {
       label: "Produk Terbaru",
-      icon: "/src/assets/landing/kategori/new.png",
+      icon: "assets/landing/kategori/new.png",
     },
     {
       label: "Ibu & Bayi",
-      icon: "/src/assets/landing/kategori/baby.png",
+      icon: "assets/landing/kategori/baby.png",
     },
   ];
 
@@ -48,7 +48,7 @@ const Hero = () => {
         <section>
           <div className="w-full">
             <img
-              src="/src/assets/landing/hero/banner-promo.png"
+              src="assets/landing/hero/banner-promo.png"
               alt="Transaksi Pertama Ditraktir 50rb"
               className="w-full h-auto object-contain rounded-xl shadow-md"
               onError={(e) => {
