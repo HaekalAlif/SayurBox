@@ -8,6 +8,7 @@ import ProductDetail from "./pages/products/ProductDetail.jsx";
 import Category from "./pages/category/Category.jsx";
 import Cart from "./pages/cart/Cart";
 import Payment from "./pages/payment/Payment.jsx";
+import PaymentMethod from "./pages/payment/PaymentMethod.jsx";
 
 function App() {
   return (
@@ -59,6 +60,15 @@ function App() {
           element={
             <Layout>
               <Payment />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/payment-method"
+          element={
+            <Layout>
+              <PaymentMethod />
             </Layout>
           }
         />
