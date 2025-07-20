@@ -9,6 +9,7 @@ import Cart from "./pages/cart/Cart";
 import Payment from "./pages/payment/Payment.jsx";
 import PaymentMethod from "./pages/payment/PaymentMethod.jsx";
 import PaymentSuccess from "./pages/payment/PaymentSuccess.jsx";
+import Catalog from "./pages/catalog/Catalog.jsx";
 
 function App() {
   return (
@@ -70,6 +71,15 @@ function App() {
           element={
             <Layout>
               <PaymentSuccess />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/catalog"
+          element={
+            <Layout>
+              <Catalog />
             </Layout>
           }
         />
