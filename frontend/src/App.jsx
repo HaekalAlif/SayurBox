@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // Import components dan pages
 import Layout from "./components/layout/Layout";
 import Home from "./pages/home/Home.jsx";
-import Login from "./pages/auth/login/login.jsx";
 import ProductDetail from "./pages/products/ProductDetail.jsx";
 import Category from "./pages/category/Category.jsx";
 import Cart from "./pages/cart/Cart";
@@ -20,14 +19,6 @@ function App() {
           element={
             <Layout>
               <Home />
-            </Layout>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <Layout>
-              <Login />
             </Layout>
           }
         />
