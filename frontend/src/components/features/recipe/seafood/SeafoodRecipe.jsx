@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ChevronLeft, Search, ChevronUp, ChevronDown } from "lucide-react";
 
-const VegetableRecipe = () => {
+const SeafoodRecipe = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -11,28 +11,28 @@ const VegetableRecipe = () => {
 
   const recipeItems = [
     {
-      image: "assets/recipe/vegetable/tumis-bayam.png",
+      image: "assets/recipe/seafood/nasi-salmon.png",
     },
     {
-      image: "assets/recipe/vegetable/tumis-pakcoy.png",
+      image: "assets/recipe/seafood/lele-sambal.png",
     },
     {
-      image: "assets/recipe/vegetable/sup-kimlo.png",
+      image: "assets/recipe/seafood/cumi-asin.png",
     },
     {
-      image: "assets/recipe/vegetable/cah-buncis.png",
+      image: "assets/recipe/seafood/cumi-krispi.png",
     },
     {
-      image: "assets/recipe/vegetable/pecel.png",
+      image: "assets/recipe/seafood/tuna-steak.png",
     },
     {
-      image: "assets/recipe/vegetable/sup-kacang.png",
+      image: "assets/recipe/seafood/dori-saus.png",
     },
     {
-      image: "assets/recipe/vegetable/oseng-tempe.png",
+      image: "assets/recipe/seafood/cumi-saus.png",
     },
     {
-      image: "assets/recipe/vegetable/sayur-lodeh.png",
+      image: "assets/recipe/seafood/moules.png",
     },
   ];
 
@@ -50,9 +50,9 @@ const VegetableRecipe = () => {
       <div>
         <div className="max-w-5xl mx-auto space-y-8">
           <div className="text-2xl font-bold">
-            <h1>RASA - Sayur </h1>
+            <h1>RASA - Seafood </h1>
           </div>
-          <div className="bg-[#B1E9AB] h-248 rounded-sm px-20 items-center">
+          <div className="bg-[#CBEAE2] h-278   rounded-sm px-20 items-center">
             <div className="flex justify-center items-center ">
               <img
                 src="assets/recipe/vegetable/sayur.png"
@@ -62,7 +62,7 @@ const VegetableRecipe = () => {
 
             {/* Kategori Resep */}
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-x-4 gap-y-20">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-28">
                 {recipeItems.map((item, index) => (
                   <div
                     key={index}
@@ -87,4 +87,4 @@ const VegetableRecipe = () => {
   );
 };
 
-export default VegetableRecipe;
+export default SeafoodRecipe;

@@ -12,6 +12,7 @@ import PaymentSuccess from "./pages/payment/PaymentSuccess.jsx";
 import Catalog from "./pages/catalog/Catalog.jsx";
 import Recipe from "./pages/recipe/Recipe.jsx";
 import VegetableRecipe from "./pages/recipe/VegetableRecipe.jsx";
+import SeafoodRecipe from "./pages/recipe/SeafoodRecipe.jsx";
 
 function App() {
   return (
@@ -100,6 +101,15 @@ function App() {
           element={
             <Layout>
               <VegetableRecipe />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/seafood-recipe"
+          element={
+            <Layout>
+              <SeafoodRecipe />
             </Layout>
           }
         />
