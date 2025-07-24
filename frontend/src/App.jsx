@@ -18,6 +18,7 @@ import ChickenMeatRecipe from "./pages/recipe/ChickenMeatRecipe.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import Account from "./pages/profile/account/Account.jsx";
 import Address from "./pages/profile/address/Address.jsx";
+import AddAddress from "./pages/profile/address/AddAddress.jsx";
 
 function App() {
   return (
@@ -160,6 +161,15 @@ function App() {
           element={
             <Layout>
               <Address />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/profile/address/add-address"
+          element={
+            <Layout>
+              <AddAddress />
             </Layout>
           }
         />
