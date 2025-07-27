@@ -21,6 +21,8 @@ import Address from "./pages/profile/address/Address.jsx";
 import AddAddress from "./pages/profile/address/AddAddress.jsx";
 import AddressDetails from "./pages/profile/address/AddressDetails.jsx";
 import RecipeDetails from "./pages/recipe/detail/RecipeDetails.jsx";
+import Voucher from "./pages/voucher/Voucher.jsx";
+import VoucherCheckout from "./pages/voucher/VoucherCheckout.jsx";
 
 function App() {
   return (
@@ -190,6 +192,24 @@ function App() {
           element={
             <Layout>
               <AddressDetails />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/voucher"
+          element={
+            <Layout>
+              <Voucher />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/voucher-checkout"
+          element={
+            <Layout>
+              <VoucherCheckout />
             </Layout>
           }
         />
