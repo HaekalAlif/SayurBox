@@ -20,6 +20,7 @@ import Account from "./pages/profile/account/Account.jsx";
 import Address from "./pages/profile/address/Address.jsx";
 import AddAddress from "./pages/profile/address/AddAddress.jsx";
 import AddressDetails from "./pages/profile/address/AddressDetails.jsx";
+import RecipeDetails from "./pages/recipe/detail/RecipeDetails.jsx";
 
 function App() {
   return (
@@ -135,6 +136,15 @@ function App() {
           element={
             <Layout>
               <ChickenMeatRecipe />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/recipe/detail"
+          element={
+            <Layout>
+              <RecipeDetails />
             </Layout>
           }
         />
