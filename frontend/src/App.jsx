@@ -24,6 +24,7 @@ import RecipeDetails from "./pages/recipe/detail/RecipeDetails.jsx";
 import Voucher from "./pages/voucher/Voucher.jsx";
 import VoucherCheckout from "./pages/voucher/VoucherCheckout.jsx";
 import Orders from "./pages/orders/Orders.jsx";
+import OrderDetail from "./pages/detail-order/DetailOrder";
 
 function App() {
   return (
@@ -220,6 +221,15 @@ function App() {
           element={
             <Layout>
               <Orders />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/orders/order-detail"
+          element={
+            <Layout>
+              <OrderDetail />
             </Layout>
           }
         />
