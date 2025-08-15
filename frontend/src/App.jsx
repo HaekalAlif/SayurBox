@@ -25,6 +25,10 @@ import Voucher from "./pages/voucher/Voucher.jsx";
 import VoucherCheckout from "./pages/voucher/VoucherCheckout.jsx";
 import Orders from "./pages/orders/Orders.jsx";
 import OrderDetail from "./pages/detail-order/DetailOrder";
+import SayurPanen from "./pages/faq/sayur-panen/SayurPanen"
+import SayurPoin from "./pages/faq/sayur-poin/SayurPoin";
+import KetersediaanProduk from "./pages/faq/ketersediaan-produk/KetersediaanProduk";
+import MetodePembayaran from "./pages/faq/metode-pembayaran/MetodePembayaran.jsx";
 
 function App() {
   return (
@@ -230,6 +234,42 @@ function App() {
           element={
             <Layout>
               <OrderDetail />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/faq/sayur-panen"
+          element={
+            <Layout>
+              <SayurPanen />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/faq/sayur-poin"
+          element={
+            <Layout>
+              <SayurPoin />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/faq/ketersediaan-produk"
+          element={
+            <Layout>
+              <KetersediaanProduk />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/faq/metode-pembayaran"
+          element={
+            <Layout>
+              <MetodePembayaran />
             </Layout>
           }
         />

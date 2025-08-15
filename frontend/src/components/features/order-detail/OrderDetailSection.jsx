@@ -204,7 +204,7 @@ const OrderDetailSection = () => {
                   </div>
                 ))}
               </div>
-              <hr className="my-6" />
+              <hr classN  ame="my-6" />
               <div className="space-y-2">
                 {orderDetails.map((item, index) => (
                   <div
