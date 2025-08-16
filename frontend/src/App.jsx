@@ -29,6 +29,7 @@ import SayurPanen from "./pages/faq/sayur-panen/SayurPanen"
 import SayurPoin from "./pages/faq/sayur-poin/SayurPoin";
 import KetersediaanProduk from "./pages/faq/ketersediaan-produk/KetersediaanProduk";
 import MetodePembayaran from "./pages/faq/metode-pembayaran/MetodePembayaran.jsx";
+import Faq from "./pages/faq/Faq.jsx";
 
 function App() {
   return (
@@ -270,6 +271,15 @@ function App() {
           element={
             <Layout>
               <MetodePembayaran />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/faq"
+          element={
+            <Layout>
+              <Faq />
             </Layout>
           }
         />
