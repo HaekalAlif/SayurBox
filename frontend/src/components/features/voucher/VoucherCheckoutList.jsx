@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronLeft, ChevronRight, Star, Ticket } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const VoucherCheckoutList = () => {
   const handleBackClick = () => {
@@ -14,7 +14,6 @@ const VoucherCheckoutList = () => {
     console.log("Voucher clicked:", voucherId);
   };
 
-  // Generate 8 voucher items
   const vouchers = Array.from({ length: 8 }, (_, index) => ({
     id: index + 1,
     title: "Diskon 10% hingga Rp50.000",
@@ -26,7 +25,6 @@ const VoucherCheckoutList = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Custom Scrollbar CSS */}
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
@@ -99,7 +97,7 @@ const VoucherCheckoutList = () => {
           {/* Voucher List with Limited Height and Scroll */}
           <div
             className="space-y-3 overflow-y-auto custom-scrollbar w-[115%] pr-15"
-            style={{ maxHeight: "490px" }} 
+            style={{ maxHeight: "490px" }}
           >
             {vouchers.map((voucher) => (
               <div
