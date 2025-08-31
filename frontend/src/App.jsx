@@ -31,6 +31,8 @@ import KetersediaanProduk from "./pages/faq/ketersediaan-produk/KetersediaanProd
 import MetodePembayaran from "./pages/faq/metode-pembayaran/MetodePembayaran.jsx";
 import Faq from "./pages/faq/Faq.jsx";
 import SayurPoinUser from "./pages/sayur-poin/SayurPoinUser.jsx";
+import SayurPoinDetail from "./pages/sayur-poin/detail/SayurPoinDetail";
+import SayurPoinFaq from "./pages/sayur-poin/faq/SayurPoinFaq";
 
 function App() {
   return (
@@ -289,11 +291,28 @@ function App() {
           path="/sayur-poin"
           element={
             <Layout>
-              <SayurPoinUser/>
+              <SayurPoinUser />
             </Layout>
           }
         />
 
+        <Route
+          path="/sayur-poin/detail"
+          element={
+            <Layout>
+              <SayurPoinDetail />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/sayur-poin/faq"
+          element={
+            <Layout>
+              <SayurPoinFaq />
+            </Layout>
+          }
+        />
         {/* 404 Page */}
         <Route
           path="*"
