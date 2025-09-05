@@ -25,7 +25,7 @@ import Voucher from "./pages/voucher/Voucher.jsx";
 import VoucherCheckout from "./pages/voucher/VoucherCheckout.jsx";
 import Orders from "./pages/orders/Orders.jsx";
 import OrderDetail from "./pages/detail-order/DetailOrder";
-import SayurPanen from "./pages/faq/sayur-panen/SayurPanen";
+import SayurPanenFaq from "./pages/faq/sayur-panen/SayurPanen";
 import SayurPoin from "./pages/faq/sayur-poin/SayurPoin";
 import KetersediaanProduk from "./pages/faq/ketersediaan-produk/KetersediaanProduk";
 import MetodePembayaran from "./pages/faq/metode-pembayaran/MetodePembayaran.jsx";
@@ -33,6 +33,7 @@ import Faq from "./pages/faq/Faq.jsx";
 import SayurPoinUser from "./pages/sayur-poin/SayurPoinUser.jsx";
 import SayurPoinDetail from "./pages/sayur-poin/detail/SayurPoinDetail";
 import SayurPoinFaq from "./pages/sayur-poin/faq/SayurPoinFaq";
+import SayurPanen from "./pages/sayur-panen/SayurPanen";
 
 function App() {
   return (
@@ -246,7 +247,7 @@ function App() {
           path="/faq/sayur-panen"
           element={
             <Layout>
-              <SayurPanen />
+              <SayurPanenFaq />
             </Layout>
           }
         />
@@ -313,6 +314,16 @@ function App() {
             </Layout>
           }
         />
+
+        <Route
+          path="/sayur-panen"
+          element={
+            <Layout>
+              <SayurPanen />
+            </Layout>
+          }
+        />
+
         {/* 404 Page */}
         <Route
           path="*"
