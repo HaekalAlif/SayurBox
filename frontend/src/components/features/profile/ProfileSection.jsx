@@ -1,49 +1,40 @@
 import React from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  User,
-  MapPin,
-  HelpCircle,
-  Lock,
-  FileText,
-  Trash,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ProfileSection = () => {
+  const navigate = useNavigate();
+
   const handleBackClick = () => {
     window.history.back();
   };
 
   const handleNavigate = (path) => {
-    console.log("Navigate to:", path);
+    navigate(path);
   };
 
   const menuItems = [
     {
       title: "Daftar Alamat Saya",
       icon: "assets/profile/address.png",
-      action: () => handleNavigate("/address"),
+      action: () => handleNavigate("/profile/address"),
     },
     {
       title: "Bantuan",
       icon: "assets/profile/help.png",
-      action: () => handleNavigate("/help"),
+      action: () => handleNavigate("/faq"),
     },
     {
       title: "Kebijakan Privasi",
       icon: "assets/profile/policy.png",
-      action: () => handleNavigate("/privacy"),
     },
     {
       title: "Syarat & Ketentuan",
       icon: "assets/profile/terms.png",
-      action: () => handleNavigate("/terms"),
     },
     {
       title: "Hapus Akun",
       icon: "assets/profile/setting.png",
-      action: () => handleNavigate("/delete-account"),
     },
   ];
 
@@ -65,11 +56,11 @@ const ProfileSection = () => {
           {/* Profile Header */}
           <div className="text-center flex mb-8">
             <img src="/assets/profile/user.png" className="w-16 h-16 " />
-            <div className="text-left ml-4">
-              <h2 className="text-xl font-bold mb-2">Nama Account</h2>
+            <div className="text-left ml-4 ">
+              <h2 className="text-xl font-bold mb-2">Aji</h2>
               <button
-                onClick={() => handleNavigate("/edit-profile")}
-                className="flex items-center space-x-2"
+                onClick={() => handleNavigate("/profile/account")}
+                className="flex items-center space-x-2 cursor-pointer"
               >
                 <img
                   src="assets/profile/edit-profile.png"
@@ -97,7 +88,7 @@ const ProfileSection = () => {
 
             <div
               className="p-4 rounded-xl cursor-pointer border border-gray-200 shadow-md transition-shadow"
-              onClick={() => handleNavigate("/points")}
+              onClick={() => handleNavigate("/sayur-poin")}
             >
               <div className="flex items-center space-x-3 justify-between">
                 <img src="/assets/profile/point.png" className="w-10 h-10" />
@@ -111,8 +102,11 @@ const ProfileSection = () => {
           </div>
 
           {/* Progress Bar */}
-          <div className="p-4 rounded-xl cursor-pointer border border-gray-200 shadow-md transition-shadow mb-4">
-            <div className="flex items-center space-x-3 mb-6">
+          <div
+            className="p-4 rounded-xl cursor-pointer border border-gray-200 shadow-md transition-shadow mb-4 "
+            onClick={() => handleNavigate("/sayur-panen")}
+          >
+            <div className="flex items-center space-x-3 mb-6 ">
               <img
                 src="/assets/profile/xp.png"
                 alt="Leaf"

@@ -68,7 +68,9 @@ const Footer = () => {
                   }}
                 />
                 <a
-                  href="#"
+                  href="https://facebook.com/sayurbox"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-800 font-medium hover:text-blue-600 transition-colors"
                 >
                   Facebook
@@ -84,7 +86,9 @@ const Footer = () => {
                   }}
                 />
                 <a
-                  href="#"
+                  href="https://instagram.com/sayurbox"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-800 font-medium hover:text-pink-600 transition-colors"
                 >
                   Instagram
@@ -100,7 +104,9 @@ const Footer = () => {
                   }}
                 />
                 <a
-                  href="#"
+                  href="https://x.com/sayurbox"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-800 font-medium hover:text-blue-400 transition-colors"
                 >
                   Twitter
