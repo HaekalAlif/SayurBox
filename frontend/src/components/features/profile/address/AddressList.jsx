@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { ChevronLeft, Edit, Trash2 } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AddressList = () => {
   const [selectedAddress, setSelectedAddress] = useState(0);
+  const navigate = useNavigate();
 
   const handleBackClick = () => {
     window.history.back();
@@ -136,10 +138,16 @@ const AddressList = () => {
         <div className="flex flex-col md:flex-row gap-4 space-x-12 px-4">
           {/* Left Side - Action Buttons */}
           <div className="flex flex-col gap-4 w-full md:w-1/4">
-            <button className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-md font-semibold transition-colors">
+            <button
+              className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-md font-semibold transition-colors cursor-pointer"
+              onClick={() => navigate("/profile/address")}
+            >
               Pilih Alamat
             </button>
-            <button className="border border-green-600 text-green-600 py-3 rounded-md font-semibold hover:bg-green-50 transition-colors">
+            <button
+              className="border border-green-600 text-green-600 py-3 rounded-md font-semibold hover:bg-green-50 transition-colors cursor-pointer"
+              onClick={() => navigate("/profile/address/address-details")}
+            >
               Tambah Alamat
             </button>
           </div>

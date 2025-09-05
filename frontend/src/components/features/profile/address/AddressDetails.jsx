@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { ChevronLeft, MapPin } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AddressDetails = () => {
+  const navigate = useNavigate();
+
   const handleBackClick = () => {
     window.history.back();
   };
@@ -65,7 +68,10 @@ const AddressDetails = () => {
             </div>
             <div>
               {/* Submit Button */}
-              <button className="w-full py-5 text-xl font-bold bg-green-600 hover:bg-green-700 text-white px-6 text-md transition-colors rounded-b-md ">
+              <button
+                className="w-full py-5 text-xl font-bold bg-green-600 hover:bg-green-700 text-white px-6 text-md transition-colors rounded-b-md cursor-pointer"
+                onClick={() => navigate("/profile/address/add-address")}
+              >
                 Lanjutkan
               </button>
             </div>

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { ChevronLeft, MapPin } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AddAddress = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     courierNote: "",
     recipientName: "",
@@ -197,8 +199,8 @@ const AddAddress = () => {
 
         {/* Submit Button */}
         <button
-          onClick={handleSubmit}
-          className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-md text-md transition-colors mt-4"
+          className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-md text-md transition-colors mt-4 cursor-pointer"
+          onClick={() => navigate("/profile/address")}
         >
           Lanjutkan
         </button>

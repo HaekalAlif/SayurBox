@@ -364,7 +364,7 @@ const Header = () => {
               ))}
             </div>
             <button
-              className="w-full bg-[#FFD42A] text-black font-semibold text-lg py-3 rounded-xl flex items-center justify-between gap-2 px-4"
+              className="w-full bg-[#FFD42A] text-black font-semibold text-lg py-3 rounded-xl flex items-center justify-between gap-2 px-4 cursor-pointer hover:shadow-lg transition"
               onClick={() => goTo(paths.alamat)}
             >
               <span>Lihat Semua Alamat</span>
