@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { ChevronLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const FaqSection = () => {
   const [expandedAccordions, setExpandedAccordions] = useState([]);
+  const navigate = useNavigate();
 
   const handleBackClick = () => {
     window.history.back();
@@ -19,14 +21,42 @@ const FaqSection = () => {
   };
 
   const topicItems = [
-    { icon: "/assets/faq/sayur-panen.png", label: "Sayurpanen" },
-    { icon: "/assets/faq/sayur-poin.png", label: "SayurPoin" },
-    { icon: "/assets/faq/product.png", label: "Ketersediaan Produk" },
-    { icon: "/assets/faq/payment.png", label: "Pembayaran" },
-    { icon: "/assets/faq/shipping.png", label: "Pengiriman" },
-    { icon: "/assets/faq/refund.png", label: "Pengembalian \nDana" },
-    { icon: "/assets/faq/voucher.png", label: "Voucher & \nPromo" },
-    { icon: "/assets/faq/etc.png", label: "Lain-lain" },
+    {
+      icon: "/assets/faq/sayur-panen.png",
+      label: "Sayurpanen",
+      path: "/faq/sayur-panen",
+    },
+    {
+      icon: "/assets/faq/sayur-poin.png",
+      label: "SayurPoin",
+      path: "/faq/sayur-poin",
+    },
+    {
+      icon: "/assets/faq/product.png",
+      label: "Ketersediaan Produk",
+      path: "/faq/product-availability",
+    },
+    {
+      icon: "/assets/faq/payment.png",
+      label: "Pembayaran",
+      path: "/faq/payment-method",
+    },
+    {
+      icon: "/assets/faq/shipping.png",
+      label: "Pengiriman",
+      path: "/faq/shipping",
+    },
+    {
+      icon: "/assets/faq/refund.png",
+      label: "Pengembalian \nDana",
+      path: "/faq/refund",
+    },
+    {
+      icon: "/assets/faq/voucher.png",
+      label: "Voucher & \nPromo",
+      path: "/faq/voucher",
+    },
+    { icon: "/assets/faq/etc.png", label: "Lain-lain", path: "/faq/etc" },
   ];
 
   const faqItems = [
@@ -97,10 +127,10 @@ const FaqSection = () => {
             </h2>
             <div className="grid grid-cols-5 gap-x-3 gap-y-7">
               {topicItems.map((item, index) => (
-                <div className="">
+                <div key={index}>
                   <div
-                    key={index}
                     className="flex flex-col bg-[#F4F4E6] border items-center p-2 rounded-lg cursor-pointer transition-colors mx-4 mb-3 hover:border-green-500 group"
+                    onClick={() => navigate(item.path)}
                   >
                     <img
                       src={item.icon}

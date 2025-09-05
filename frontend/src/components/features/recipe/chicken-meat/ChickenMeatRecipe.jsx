@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { ChevronLeft, Search, ChevronUp, ChevronDown } from "lucide-react";
+import React from "react";
+import { ChevronLeft} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ChickenMeatRecipe = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isExpanded, setIsExpanded] = useState(false);
+  const navigate = useNavigate();
 
   const handleBackClick = () => {
     window.history.back();
@@ -67,6 +67,7 @@ const ChickenMeatRecipe = () => {
                   <div
                     key={index}
                     className="rounded-lg h-32 cursor-pointer transition-all duration-200 justify-between hover:translate-y-1"
+                    onClick={() => navigate("/recipe/detail")}
                   >
                     <div className="flex justify-between">
                       <div className="w-full h-full rounded-lg overflow-hidden">

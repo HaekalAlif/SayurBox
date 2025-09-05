@@ -82,7 +82,7 @@ const ListPayment = () => {
   };
 
   const handleBackClick = () => {
-    navigate(-1);
+    window.history.back();
   };
 
   return (

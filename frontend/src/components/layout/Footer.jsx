@@ -13,7 +13,7 @@ const Footer = () => {
             <ul className="space-y-6">
               <li>
                 <a
-                  href="#"
+                  href="/recipe"
                   className="text-gray-800 font-medium hover:text-green-600 transition-colors cursor-pointer"
                 >
                   Resep Sayurbox
@@ -21,7 +21,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/sayur-poin"
                   className="text-gray-800 font-medium hover:text-green-600 transition-colors cursor-pointer"
                 >
                   SayurPoin
@@ -29,7 +29,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/sayur-panen"
                   className="text-gray-800 font-medium hover:text-green-600 transition-colors cursor-pointer"
                 >
                   SayurPanen
@@ -37,7 +37,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/voucher"
                   className="text-gray-800 font-medium hover:text-green-600 transition-colors cursor-pointer"
                 >
                   Voucher Saya
@@ -45,7 +45,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/faq"
                   className="text-gray-800 font-medium hover:text-green-600 transition-colors cursor-pointer"
                 >
                   FaQ Sayurbox

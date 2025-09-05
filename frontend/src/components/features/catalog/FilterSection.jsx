@@ -34,7 +34,7 @@ const FilterSection = () => {
         <div className="flex items-center mb-4">
           <button
             onClick={handleBackClick}
-            className="w-12 h-12 rounded-full border border-green-400 text-green-600 flex items-center justify-center hover:bg-green-50 transition-all duration-200 mr-3"
+            className="w-12 h-12 rounded-full border border-green-400 text-green-600 flex items-center justify-center hover:bg-green-50 transition-all duration-200 mr-3 cursor-pointer"
           >
             <ChevronLeft size={32} />
           </button>

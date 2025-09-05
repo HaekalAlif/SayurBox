@@ -73,7 +73,7 @@ function App() {
         />
 
         <Route
-          path="/payment"
+          path="/checkout"
           element={
             <Layout>
               <Payment />
@@ -262,7 +262,7 @@ function App() {
         />
 
         <Route
-          path="/faq/ketersediaan-produk"
+          path="/faq/product-availability"
           element={
             <Layout>
               <KetersediaanProduk />
@@ -271,7 +271,7 @@ function App() {
         />
 
         <Route
-          path="/faq/metode-pembayaran"
+          path="/faq/payment-method"
           element={
             <Layout>
               <MetodePembayaran />

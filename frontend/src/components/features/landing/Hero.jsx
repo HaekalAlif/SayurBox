@@ -6,22 +6,27 @@ const Hero = () => {
     {
       icon: "assets/landing/kategori/sayur.png",
       label: "Sayur",
+      href: "/catalog",
     },
     {
       icon: "assets/landing/kategori/buah.png",
       label: "Buah",
+      href: "/catalog",
     },
     {
       icon: "assets/landing/kategori/protein.png",
       label: "Protein",
+      href: "/catalog",
     },
     {
       icon: "assets/landing/kategori/sembako.png",
       label: "Sembako",
+      href: "/catalog",
     },
     {
       icon: "assets/landing/kategori/bumbu.png",
       label: "Bumbu Dapur",
+      href: "/catalog",
     },
   ];
 
@@ -30,14 +35,17 @@ const Hero = () => {
     {
       label: "Semua Kategori",
       icon: "assets/landing/kategori/all.png",
+      href: "/category                      ",
     },
     {
       label: "Produk Terbaru",
       icon: "assets/landing/kategori/new.png",
+      href: "/catalog",
     },
     {
       label: "Ibu & Bayi",
       icon: "assets/landing/kategori/baby.png",
+      href: "/catalog",
     },
   ];
 
@@ -72,9 +80,10 @@ const Hero = () => {
               {/* Kategori Grid */}
               <div className="grid grid-cols-3 md:grid-cols-5 gap-10 mb-6 px-12">
                 {kategoriItems.map((item, index) => (
-                  <div
+                  <a
                     key={index}
-                    className="flex flex-col items-center space-y-2 "
+                    href={item.href}
+                    className="flex flex-col items-center space-y-2"
                   >
                     {/* Kartu kategori */}
                     <div className="flex items-center justify-center w-28 bg-[rgba(212,228,150,0.25)] border border-[rgba(180,200,100,0.5)] rounded-xl py-4 shadow-md hover:shadow-lg transition-shadow cursor-pointer">
@@ -90,22 +99,22 @@ const Hero = () => {
                         />
                       </div>
                     </div>
-
                     {/* Label kategori di bawah card */}
                     {item.label && (
                       <span className="text-sm text-gray-800 font-bold text-center">
                         {item.label}
                       </span>
                     )}
-                  </div>
+                  </a>
                 ))}
               </div>
 
               {/* Tab List */}
               <div className="grid grid-cols-3 gap-6 px-6 pt-4">
                 {tabItems.map((tab, index) => (
-                  <div
+                  <a
                     key={index}
+                    href={tab.href}
                     className="flex items-center gap-3 w-full bg-[rgba(212,228,150,0.25)] rounded-sm py-3 px-4 hover:shadow-lg transition-shadow cursor-pointer"
                   >
                     <div className="w-24 h-8 flex items-center justify-center">
@@ -127,7 +136,7 @@ const Hero = () => {
                         {tab.badge}
                       </span>
                     )}
-                  </div>
+                  </a>
                 ))}
               </div>
               {/* Garis Bawah */}

@@ -58,14 +58,6 @@ const ProductSection = () => {
     setActiveTab(tabId);
   };
 
-  const scrollDown = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ top: 400, behavior: "smooth" });
-    }
-  };
-
-  const hasMoreProducts = products.length > 12;
-
   return (
     <div className="pb-8">
       {/* Custom Scrollbar CSS */}
@@ -121,7 +113,9 @@ const ProductSection = () => {
                 style={{ maxHeight: "960px" }}
               >
                 {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <a href="/product-detail" className="cursor-pointer">
+                    <ProductCard key={product.id} product={product} />
+                  </a>
                 ))}
               </div>
             </div>

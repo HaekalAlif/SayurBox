@@ -1,34 +1,36 @@
 import React, { useState } from "react";
 import { ChevronLeft, Search, ChevronUp, ChevronDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const LandingRecipe = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const handleBackClick = () => {
-    window.history.back();
-  };
+  const navigate = useNavigate();
 
   const categoryItems = [
     {
       title: "Sayur",
       image: "assets/recipe/sayur.png",
       bgColor: "#B1E9AB",
+      path: "/vegetable-recipe",
     },
     {
       title: "Seafood",
       image: "assets/recipe/seafood.png",
       bgColor: "#CBEAE2",
+      path: "/seafood-recipe",
     },
     {
       title: "Sapi",
       image: "assets/recipe/sapi.png",
       bgColor: "#FFE887",
+      path: "/beef-recipe",
     },
     {
       title: "Ayam",
       image: "assets/recipe/ayam.png",
       bgColor: "#FFC7C5",
+      path: "/chicken-meat-recipe",
     },
   ];
 
@@ -36,36 +38,13 @@ const LandingRecipe = () => {
     {
       image: "assets/recipe/sayur-asem.png",
       title: "Sayur Asem",
-    },
-    {
-      image: "assets/recipe/sayur-asem.png",
-      title: "Sayur Asem",
-    },
-    {
-      image: "assets/recipe/sayur-asem.png",
-      title: "Sayur Asem",
-    },
-    {
-      image: "assets/recipe/sayur-asem.png",
-      title: "Sayur Asem",
-    },
-    {
-      image: "assets/recipe/sayur-asem.png",
-      title: "Sayur Asem",
-    },
-    {
-      image: "assets/recipe/sayur-asem.png",
-      title: "Sayur Asem",
-    },
-    {
-      image: "assets/recipe/sayur-asem.png",
-      title: "Sayur Asem",
-    },
-    {
-      image: "assets/recipe/sayur-asem.png",
-      title: "Sayur Asem",
+      path: "/recipe/detail",
     },
   ];
+
+  const handleBackClick = () => {
+    window.history.back();
+  };
 
   return (
     <div className="min-h-screen bg-white ">
@@ -115,6 +94,7 @@ const LandingRecipe = () => {
                     key={index}
                     className="rounded-lg pl-14 h-32 cursor-pointer hover:shadow-md transition-shadow duration-200 justify-between"
                     style={{ backgroundColor: item.bgColor }}
+                    onClick={() => navigate(item.path)}
                   >
                     <div className="flex justify-between">
                       <div className="flex items-center py-6 ">
@@ -136,31 +116,27 @@ const LandingRecipe = () => {
             </div>
 
             {/* Rekomendasi Resep Hari Ini */}
-            <div className="space-y-4 pb-8">
-              <h2 className="text-xl font-bold mb-8">
-                Rekomendasi Resep Hari Ini
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-                {recipeItems.map((item, index) => (
-                  <div
-                    key={index}
-                    className="bg-white border-2 rounded-lg shadow-md overflow-hidden hover:border-green-600 transition-shadow duration-200 cursor-pointer"
-                  >
-                    <div className="aspect-w-16 aspect-h-12">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-48 object-cover"
-                      />
-                    </div>
-                    <div className="mx-auto p-4 text-center">
-                      <h3 className="text-md font-semibold text-gray-900">
-                        {item.title}
-                      </h3>
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-12 pb-12 pt-6">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-white border-2 rounded-lg shadow-md overflow-hidden hover:border-green-600 transition-shadow duration-200 cursor-pointer "
+                  onClick={() => navigate(recipeItems[0].path)}
+                >
+                  <div className="aspect-w-16 aspect-h-12">
+                    <img
+                      src={recipeItems[0].image}
+                      alt={recipeItems[0].title}
+                      className="w-full h-48 object-cover"
+                    />
                   </div>
-                ))}
-              </div>
+                  <div className="mx-auto p-4 text-center">
+                    <h3 className="text-md font-semibold text-gray-900">
+                      {recipeItems[0].title}
+                    </h3>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronDown, ChevronUp, Copy } from "lucide-react";
+import { ChevronLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const PaymentSuccessSection = () => {
   const [timeLeft, setTimeLeft] = useState(7195); // 01:59:55 in seconds
   const [expandedAccordion, setExpandedAccordion] = useState(null);
   const [copied, setCopied] = useState(false);
+
+  const navigate = useNavigate();
 
   const virtualAccount = "880428668688679676";
   const orderId = "#DH-WGFNCPMJHUT-NR";
@@ -168,7 +171,7 @@ const PaymentSuccessSection = () => {
               <div key={index} className="border-b border-gray-400 ">
                 <button
                   onClick={() => toggleAccordion(index)}
-                  className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-gray-50"
+                  className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-gray-50 cursor-pointer"
                 >
                   <span className="text-sm font-medium text-gray-700">
                     {item.title}
@@ -192,7 +195,10 @@ const PaymentSuccessSection = () => {
           </div>
 
           {/* Action Button */}
-          <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-base transition-all duration-200">
+          <button
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-base transition-all duration-200 cursor-pointer"
+            onClick={() => navigate("/orders/order-detail")}
+          >
             Lihat Order Saya
           </button>
         </div>

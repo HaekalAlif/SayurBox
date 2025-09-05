@@ -7,61 +7,104 @@ const CategoryList = () => {
     {
       name: "By Sayurbox",
       icon: "assets/category/sayurbox.png",
+      href: "/catalog",
     },
     {
       name: "Planto",
       icon: "assets/category/planto.png",
+      href: "/catalog",
     },
     {
       name: "Bangga Lokal",
       icon: "assets/category/bangga-lokal.png",
+      href: "/catalog",
     },
     {
       name: "Sayurbox Premium",
       icon: "assets/category/premium.png",
+      href: "/catalog",
     },
   ];
 
   const allCategories = [
-    { name: "New Product", icon: "assets/category/new-product.png" },
-    { name: "Sayur", icon: "assets/category/sayur.png" },
-    { name: "Buah", icon: "assets/category/buah.png" },
-    { name: "Protein", icon: "assets/category/protein.png" },
-    { name: "Sembako", icon: "assets/category/sembako.png" },
-    { name: "Bumbu Dapur", icon: "assets/category/bumbu.png" },
-    { name: "Susu & Olahan", icon: "assets/category/susu.png" },
-    { name: "Ibu & Bayi", icon: "assets/category/ibu-bayi.png" },
-    { name: "Sarapan", icon: "assets/category/sarapan.png" },
-    { name: "Makanan Ringan", icon: "assets/category/snack.png" },
-    { name: "Minuman Ringan", icon: "assets/category/drink.png" },
-    { name: "Siap Saji", icon: "assets/category/siap-saji.png" },
-    { name: "Kesehatan", icon: "assets/category/kesehatan.png" },
+    {
+      name: "New Product",
+      icon: "assets/category/new-product.png",
+      href: "/catalog",
+    },
+    { name: "Sayur", icon: "assets/category/sayur.png", href: "/catalog" },
+    { name: "Buah", icon: "assets/category/buah.png", href: "/catalog" },
+    { name: "Protein", icon: "assets/category/protein.png", href: "/catalog" },
+    { name: "Sembako", icon: "assets/category/sembako.png", href: "/catalog" },
+    {
+      name: "Bumbu Dapur",
+      icon: "assets/category/bumbu.png",
+      href: "/catalog",
+    },
+    {
+      name: "Susu & Olahan",
+      icon: "assets/category/susu.png",
+      href: "/catalog",
+    },
+    {
+      name: "Ibu & Bayi",
+      icon: "assets/category/ibu-bayi.png",
+      href: "/catalog",
+    },
+    { name: "Sarapan", icon: "assets/category/sarapan.png", href: "/catalog" },
+    {
+      name: "Makanan Ringan",
+      icon: "assets/category/snack.png",
+      href: "/catalog",
+    },
+    {
+      name: "Minuman Ringan",
+      icon: "assets/category/drink.png",
+      href: "/catalog",
+    },
+    {
+      name: "Siap Saji",
+      icon: "assets/category/siap-saji.png",
+      href: "/catalog",
+    },
+    {
+      name: "Kesehatan",
+      icon: "assets/category/kesehatan.png",
+      href: "/catalog",
+    },
     {
       name: "Perawatan Diri",
       icon: "assets/category/perawatan-diri.png",
+      href: "/catalog",
     },
     {
       name: "Perawatan Rumah",
       icon: "assets/category/perawatan-rumah.png",
+      href: "/catalog",
     },
-    { name: "Perlengkapan Hewan", icon: "assets/category/hewan.png" },
+    {
+      name: "Perlengkapan Hewan",
+      icon: "assets/category/hewan.png",
+      href: "/catalog",
+    },
     {
       name: "21+ Category",
       icon: "assets/category/kategori-dewasa.png",
+      href: "/catalog",
     },
   ];
 
   const handleBackClick = () => {
-    navigate(-1);
+    window.history.back();
   };
 
   // Category Card Component
-  const CategoryCard = ({ category, onClick }) => (
-    <div className="flex flex-col items-center justify-center group">
-      <div
-        onClick={onClick}
-        className="w-22 h-22 mb-4 flex items-center justify-center rounded-lg bg-[#F4F4E6] overflow-hidden border border-transparent group-hover:border-green-600 transition-all duration-200 cursor-pointer"
-      >
+  const CategoryCard = ({ category }) => (
+    <a
+      href={category.href}
+      className="flex flex-col items-center justify-center group"
+    >
+      <div className="w-22 h-22 mb-4 flex items-center justify-center rounded-lg bg-[#F4F4E6] overflow-hidden border border-transparent group-hover:border-green-600 transition-all duration-200 cursor-pointer">
         <img
           src={category.icon}
           alt={category.name}
@@ -72,12 +115,10 @@ const CategoryList = () => {
           }}
         />
       </div>
-
-      {/* Teks kategori di bawah gambar */}
       <span className="text-sm font-semibold text-gray-800 text-center leading-tight group-hover:text-green-600 transition-colors duration-200">
         {category.name}
       </span>
-    </div>
+    </a>
   );
 
   return (
@@ -97,14 +138,9 @@ const CategoryList = () => {
           <h2 className="text-xl font-bold text-gray-900 mb-6">
             Spesial untuk kamu!
           </h2>
-
           <div className="grid grid-cols-2 md:grid-cols-4 gap-42">
             {specialCategories.map((category, index) => (
-              <CategoryCard
-                key={index}
-                category={category}
-                onClick={() => handleCategoryClick(category.name)}
-              />
+              <CategoryCard key={index} category={category} />
             ))}
           </div>
         </section>
@@ -114,14 +150,9 @@ const CategoryList = () => {
           <h2 className="text-xl font-bold text-gray-900 mb-8">
             Semua Kategori
           </h2>
-
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-44 gap-y-12 mb-16">
             {allCategories.map((category, index) => (
-              <CategoryCard
-                key={index}
-                category={category}
-                onClick={() => handleCategoryClick(category.name)}
-              />
+              <CategoryCard key={index} category={category} />
             ))}
           </div>
         </section>

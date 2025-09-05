@@ -432,7 +432,7 @@ const SayurPanenSection = () => {
           </div>
           {/* Riwayat XP hanya di index 0 */}
           {activeIdx === 0 && (
-            <div className="bg-[#F5FFCE] rounded-xl flex items-center justify-between px-4 py-3 mt-6 mx-auto w-full max-w-[400px] border border-green-500 mb-6">
+            <div className="bg-[#F5FFCE] rounded-xl flex items-center justify-between px-4 py-3 mt-6 mx-auto w-full max-w-[400px] border border-green-500 mb-6 cursor-pointer">
               <div className="flex ">
                 <div className="flex items-center gap-2">
                   <img src="/assets/sayur-panen/xp.png" className="w-12 h-12" />

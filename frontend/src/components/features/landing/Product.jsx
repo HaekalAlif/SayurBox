@@ -60,14 +60,6 @@ const ProductSection = () => {
     setActiveTab(tabId);
   };
 
-  const scrollDown = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ top: 400, behavior: "smooth" });
-    }
-  };
-
-  const hasMoreProducts = products.length > 12;
-
   return (
     <div className="pb-8">
       {/* Custom Scrollbar CSS */}
@@ -132,62 +124,64 @@ const ProductSection = () => {
 };
 
 const ProductCard = ({ product }) => (
-  <div className="flex-shrink-0">
-    <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
-      {/* Image Area */}
-      <div className="relative w-full h-46">
-        {/* Badge Top */}
-        <div className="absolute top-2 left-2 z-10">
+  <a href="/product-detail" className="cursor-pointer">
+    <div className="flex-shrink-0">
+      <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
+        {/* Image Area */}
+        <div className="relative w-full h-46">
+          {/* Badge Top */}
+          <div className="absolute top-2 left-2 z-10">
+            <img
+              src={product.badgeTop}
+              alt={product.badgeLabel}
+              className="w-16 h-6 object-contain"
+              onError={(e) => {
+                e.target.style.display = "none";
+              }}
+            />
+          </div>
+
+          {/* Product Image */}
           <img
-            src={product.badgeTop}
-            alt={product.badgeLabel}
-            className="w-16 h-6 object-contain"
+            src={product.image}
+            alt={product.title}
+            className="w-full h-full object-cover"
             onError={(e) => {
               e.target.style.display = "none";
             }}
           />
+
+          {/* Add Icon */}
+          <button className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer">
+            <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
+          </button>
         </div>
 
-        {/* Product Image */}
-        <img
-          src={product.image}
-          alt={product.title}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.target.style.display = "none";
-          }}
-        />
+        {/* Price & Info */}
+        <div className="p-3">
+          <div className="mb-1">
+            <span className="text-base font-bold text-gray-800">
+              {product.currentPrice}
+            </span>
+          </div>
 
-        {/* Add Icon */}
-        <button className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer">
-          <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
-        </button>
-      </div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
+              {product.discount}
+            </span>
+            <span className="line-through text-gray-400 text-xs">
+              {product.originalPrice}
+            </span>
+          </div>
 
-      {/* Price & Info */}
-      <div className="p-3">
-        <div className="mb-1">
-          <span className="text-base font-bold text-gray-800">
-            {product.currentPrice}
-          </span>
+          <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
+            {product.title}
+          </h4>
+          <p className="text-xs text-gray-500">{product.unit}</p>
         </div>
-
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
-            {product.discount}
-          </span>
-          <span className="line-through text-gray-400 text-xs">
-            {product.originalPrice}
-          </span>
-        </div>
-
-        <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
-          {product.title}
-        </h4>
-        <p className="text-xs text-gray-500">{product.unit}</p>
       </div>
     </div>
-  </div>
+  </a>
 );
 
 export default ProductSection;

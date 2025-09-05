@@ -1,17 +1,12 @@
 import React from "react";
-import { ChevronLeft, ChevronRight, Star, Ticket } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const VoucherList = () => {
+  const navigate = useNavigate();
+
   const handleBackClick = () => {
     window.history.back();
-  };
-
-  const handleExchangePoints = () => {
-    console.log("Exchange points for voucher");
-  };
-
-  const handleVoucherClick = (voucherId) => {
-    console.log("Voucher clicked:", voucherId);
   };
 
   // Generate 8 voucher items
@@ -46,11 +41,11 @@ const VoucherList = () => {
         >
           {/* Exchange Points Button */}
           <button
-            onClick={handleExchangePoints}
-            className="w-[95%] flex items-center justify-between p-4 rounded-sm mb-4 transition-colors hover:opacity-90 border border-green-600"
+            onClick={() => navigate("/sayur-poin")}
+            className="w-[95%] flex items-center justify-between p-4 rounded-sm mb-4 transition-colors hover:opacity-90 border border-green-600 cursor-pointer"
             style={{ backgroundColor: "#B1E9AB" }}
           >
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-6 cursor-pointer">
               <img src="/assets/voucher/discount.png" className="w-8" />
               <span className="text-md font-semibold">
                 Butuh Voucher? Tukarkan Poin!
@@ -64,7 +59,6 @@ const VoucherList = () => {
             {vouchers.map((voucher) => (
               <div
                 key={voucher.id}
-                onClick={() => handleVoucherClick(voucher.id)}
                 className="h-38 flex items-center rounded-xl cursor-pointer bg-white pr-4"
               >
                 {/* Voucher Icon */}

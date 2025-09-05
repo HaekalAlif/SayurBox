@@ -192,7 +192,7 @@ const OrderDetailSection = () => {
                 </h3>
                 <ChevronUp size={24} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {priceSummary.map((item, index) => (
                   <div key={index} className="flex justify-between">
                     <span className={`text-sm ${item.bold ? "font-bold" : ""}`}>
@@ -204,14 +204,16 @@ const OrderDetailSection = () => {
                   </div>
                 ))}
               </div>
-              <hr classN  ame="my-6" />
-              <div className="space-y-2">
+              <hr className="my-5" />
+              <div className="space-y-3">
                 {orderDetails.map((item, index) => (
                   <div
                     key={index}
                     className="flex justify-between items-center"
                   >
-                    <span className={`text-sm ${item.bold ? "font-bold" : ""}`}>
+                    <span
+                      className={`text-sm ${item.bold ? "font-bold" : ""} `}
+                    >
                       {item.label}
                     </span>
                     <div className="flex items-center space-x-2">
@@ -285,13 +287,13 @@ const OrderDetailSection = () => {
             <div className="flex justify-between space-x-4 mt-12">
               <button
                 onClick={handleCancelOrder}
-                className="flex-1 bg-red-500 text-white py-3 rounded-lg font-medium hover:bg-red-600 transition-colors"
+                className="flex-1 bg-red-500 text-white py-3 rounded-lg font-medium hover:bg-red-600 transition-colors cursor-pointer"
               >
                 Batalkan Pesanan
               </button>
               <button
                 onClick={handlePayment}
-                className="flex-1 bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors"
+                className="flex-1 bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors cursor-pointer"
               >
                 Bayar
               </button>

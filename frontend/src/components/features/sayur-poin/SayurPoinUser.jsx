@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const SayurPoinUser = () => {
   const [activeTab, setActiveTab] = useState("Semua");
+
+  const navigate = useNavigate();
 
   const tabs = [
     { label: "Semua", active: activeTab === "Semua" },
@@ -61,7 +64,7 @@ const SayurPoinUser = () => {
             <div className="text-sm font-semibold mb-4">
               Kadaluarsa 20 Juli 2025
             </div>
-            <button className="bg-none text-white rounded-sm px-4 py-1 text-sm font-semibold border border-white cursor-pointer">
+            <button className="bg-none text-white rounded-sm px-4 py-1 text-sm font-semibold border border-white cursor-pointer" onClick={()=> navigate("/sayur-poin/detail")}>
               Lihat Selengkapnya
             </button>
           </div>
@@ -70,7 +73,7 @@ const SayurPoinUser = () => {
         {/* Voucher Card */}
         <div className="px-10 py-4">
           <div className="flex items-center justify-between bg-white px-4 py-4 border border-gray-200 rounded-2xl cursor-pointer">
-            <div className="flex items-center ">
+            <div className="flex items-center" onClick={() => navigate("/voucher")}>
               <img
                 src="/assets/sayur-poin/voucher.png"
                 alt="Voucher"

@@ -46,7 +46,7 @@ const Product = () => {
   ];
 
   const handleBackClick = () => {
-    navigate(-1);
+    window.history.back();
   };
 
   const handleThumbnailClick = (index) => {
@@ -278,7 +278,7 @@ const Product = () => {
               {/* Action Buttons */}
               <div className="space-y-3">
                 {/* Tombol Masukkan Keranjang */}
-                <button className="w-full max-w-[280px] bg-white py-3 px-4 rounded-lg font-bold flex items-center justify-start gap-3 border border-green-600 hover:bg-green-50 transition-colors">
+                <button className="w-full max-w-[280px] bg-white py-3 px-4 rounded-lg font-bold flex items-center justify-start gap-3 border border-green-600 hover:bg-green-50 transition-colors cursor-pointer">
                   {/* Icon bulat hijau */}
                   <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
                     <Plus className="w-6 h-6 text-white" />
@@ -287,7 +287,7 @@ const Product = () => {
                 </button>
 
                 {/* Tombol Chat Sayurbox */}
-                <button className="w-full max-w-[280px] bg-white text-green-600 py-3 px-4 rounded-lg font-bold border border-green-600 flex items-center justify-start gap-3 hover:bg-green-50 transition-colors">
+                <button className="w-full max-w-[280px] bg-white text-green-600 py-3 px-4 rounded-lg font-bold border border-green-600 flex items-center justify-start gap-3 hover:bg-green-50 transition-colors cursor-pointer">
                   <img
                     src="assets/products/whatsapp.png"
                     alt="WhatsApp"

@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Trash2, Minus, Plus, ChevronLeft, Truck } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 const CartItem = () => {
   const [selectedDeliveryTime, setSelectedDeliveryTime] = useState("today");
@@ -111,13 +111,13 @@ const CartItem = () => {
   };
 
   const handleBackClick = () => {
-    navigate(-1);
+    window.history.back();
   };
 
   const selectedProducts = products.filter((product) => product.isSelected);
   const totalItems = selectedProducts.length;
 
-  // Add PromoProductItem component
+  // PromoProductItem component
   const PromoProductItem = ({ index }) => {
     const [quantity, setQuantity] = useState(1);
     const [isAdded, setIsAdded] = useState(false);
@@ -125,21 +125,6 @@ const CartItem = () => {
     const handleAddClick = () => {
       setIsAdded(true);
       setQuantity(1);
-    };
-
-    const handleQuantityIncrease = () => {
-      if (quantity < 10) {
-        setQuantity(quantity + 1);
-      }
-    };
-
-    const handleQuantityDecrease = () => {
-      if (quantity > 1) {
-        setQuantity((prev) => prev - 1);
-      } else {
-        setIsAdded(false);
-        setQuantity(0);
-      }
     };
 
     return (
@@ -271,7 +256,6 @@ const CartItem = () => {
               className="text-gray-400 hover:text-red-500  p-2 rounded-full transition-all duration-200"
               title="Hapus item"
             >
-              {/* Ganti dengan path ikon custom kalau perlu */}
               <img
                 src="assets/cart/trash.png"
                 alt="Hapus"
@@ -321,345 +305,240 @@ const CartItem = () => {
     </div>
   );
 
+  // Carousel logic
   const carouselRef = useRef(null);
-  const [scrollValue, setScrollValue] = useState(0.25); // Set initial to 25%
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  const [scrollValue, setScrollValue] = useState(0.25);
 
   const handleScroll = () => {
     const container = carouselRef.current;
     if (!container) return;
     const { scrollLeft, scrollWidth, clientWidth } = container;
     const scrollPercentage = scrollLeft / (scrollWidth - clientWidth);
-    // Add the initial 25% offset to the actual scroll percentage
     setScrollValue(0.25 + scrollPercentage * 0.75);
-  };
-
-  const handleSliderChange = (e) => {
-    const container = carouselRef.current;
-    if (!container) return;
-    const newValue = parseFloat(e.target.value);
-    setScrollValue(newValue);
-    // Adjust the scroll calculation to account for the 25% offset
-    const adjustedValue = Math.max(0, (newValue - 0.25) / 0.75);
-    const newScrollLeft =
-      adjustedValue * (container.scrollWidth - container.clientWidth);
-    container.scrollTo({ left: newScrollLeft, behavior: "smooth" });
-  };
-
-  // Mouse wheel scroll handler
-  const handleWheel = (e) => {
-    const container = carouselRef.current;
-    if (!container) return;
-
-    e.preventDefault();
-    const scrollAmount = e.deltaY > 0 ? 300 : -300;
-    container.scrollBy({ left: scrollAmount, behavior: "smooth" });
-  };
-
-  // Mouse drag handlers
-  const handleMouseDown = (e) => {
-    const container = carouselRef.current;
-    if (!container) return;
-
-    setIsDragging(true);
-    setStartX(e.pageX - container.offsetLeft);
-    setScrollLeft(container.scrollLeft);
-    container.style.cursor = "grabbing";
-  };
-
-  const handleMouseMove = (e) => {
-    const container = carouselRef.current;
-    if (!container || !isDragging) return;
-
-    e.preventDefault();
-    const x = e.pageX - container.offsetLeft;
-    const walk = (x - startX) * 2;
-    container.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleMouseUp = () => {
-    const container = carouselRef.current;
-    if (!container) return;
-
-    setIsDragging(false);
-    container.style.cursor = "grab";
-  };
-
-  const handleMouseLeave = () => {
-    const container = carouselRef.current;
-    if (!container) return;
-
-    setIsDragging(false);
-    container.style.cursor = "grab";
-  };
-
-  // Touch handlers for mobile
-  const handleTouchStart = (e) => {
-    const container = carouselRef.current;
-    if (!container) return;
-
-    setIsDragging(true);
-    setStartX(e.touches[0].pageX - container.offsetLeft);
-    setScrollLeft(container.scrollLeft);
-  };
-
-  const handleTouchMove = (e) => {
-    const container = carouselRef.current;
-    if (!container || !isDragging) return;
-
-    const x = e.touches[0].pageX - container.offsetLeft;
-    const walk = (x - startX) * 2;
-    container.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
   };
 
   useEffect(() => {
     handleScroll();
-    // Don't scroll initially, just keep the progress bar at 25%
   }, []);
+
+  const handleCheckout = () => {
+    window.location.href = "/checkout";
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Back Button */}
-      <div className="bg-white z-10 pl-4">
+      <div className="absolute bg-white z-10 pl-4">
         <button
           onClick={handleBackClick}
-          className="relative top-16 left-6 cursor-pointer items-center w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform"
+          className="relative left-6 cursor-pointer items-center w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform"
         >
           <ChevronLeft className="w-10 h-10 ml-1" />
         </button>
       </div>
 
-      {/* Header Section */}
-      <div className="font-bold text-3xl text-black pl-46">Keranjang</div>
+      <div className="mt-10">
+        {/* Header Section */}
+        <div className="font-bold text-3xl text-black pl-46">Keranjang</div>
 
-      {/* 2-Column Grid Layout */}
-      <div className="px-16 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-        {/* Left Column - Takes 2/3 of space */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Enhanced Delivery Time Selection */}
-          <div
-            style={{ backgroundColor: "#D4E496" }}
-            className="p-8 rounded-lg"
-          >
-            <h2 className="font-bold text-gray-900 mb-4 text-lg">
-              Pilih Waktu Pengiriman
-            </h2>
-
-            <div className="grid grid-cols-2 max-w-md">
-              {deliveryOptions.map((option) => (
-                <div
-                  key={option.id}
-                  className={`p-4 w-50 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                    selectedDeliveryTime === option.id
-                      ? "border-green-500 bg-white shadow-sm"
-                      : "border-gray-200 bg-white hover:border-gray-300"
-                  }`}
-                  onClick={() => setSelectedDeliveryTime(option.id)}
-                >
-                  <div className="space-y-1">
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
-                      {option.date}
-                    </p>
-                    <p className="text-base font-bold text-green-800">
-                      {option.label}
-                    </p>
-                    <p className="text-xs text-gray-700 font-medium">
-                      {option.description}
-                    </p>
-                    <p className="text-xs text-green-800">{option.time}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Enhanced Select All - Hide when cart is empty */}
-          {products.length > 0 && (
+        {/* 2-Column Grid Layout */}
+        <div className="px-16 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          {/* Left Column - Takes 2/3 of space */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Enhanced Delivery Time Selection */}
             <div
-              className="mt-4 p-6 border-b border-gray-200"
               style={{ backgroundColor: "#D4E496" }}
+              className="p-8 rounded-lg"
             >
-              <div className="flex items-center space-x-3">
-                <label className="relative w-10 h-10 inline-block">
-                  <input
-                    type="checkbox"
-                    checked={selectAll}
-                    onChange={handleSelectAll}
-                    className="custom-checkbox w-10 h-10 appearance-none rounded border-2 border-green-500 bg-white checked:bg-green-500 checked:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
-                  />
-                </label>
+              <h2 className="font-bold text-gray-900 mb-4 text-lg">
+                Pilih Waktu Pengiriman
+              </h2>
 
-                <span className="font-bold text-gray-900">Pilih Semua</span>
-                <span className="text-gray-500 text-md font-medium">
-                  ({products.length})
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Enhanced Product List */}
-          {products.length === 0 ? (
-            /* Empty Cart UI - Only for product list area */
-            <div className="space-y-4">
-              <div className="flex flex-col items-center justify-center">
-                <div className="text-center">
-                  {/* Empty Cart Image */}
-                  <div className="mb-6">
-                    <img
-                      src="assets/cart/empty-cart.png"
-                      alt="Keranjang Kosong"
-                      className="w-64 mx-auto"
-                    />
-                  </div>
-
-                  {/* Empty Cart Text */}
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">
-                    Yah, keranjang mu kosong nih...
-                  </h3>
-                  <p className="text-md text-gray-600 mb-6">
-                    Yuk belanja sekarang
-                  </p>
-
-                  {/* Shop Now Button */}
-                  <button
-                    onClick={() => window.history.back()}
-                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg text-md transition-all duration-200 shadow-sm"
+              <div className="grid grid-cols-2 max-w-md">
+                {deliveryOptions.map((option) => (
+                  <div
+                    key={option.id}
+                    className={`p-4 w-50 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                      selectedDeliveryTime === option.id
+                        ? "border-green-500 bg-white shadow-sm"
+                        : "border-gray-200 bg-white hover:border-gray-300"
+                    }`}
+                    onClick={() => setSelectedDeliveryTime(option.id)}
                   >
-                    Belanja Sekarang
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {products.map((product) => (
-                <ProductItem key={product.id} product={product} />
-              ))}
-            </div>
-          )}
-
-          <div className="mt-6 p-4 bg-[#D4E496] rounded-lg border border-orange-200">
-            <h3 className="px-4 font-bold text-gray-900 mb-4 text-lg">
-              Ayo Tebus Harga WOW!
-            </h3>
-
-            {/* Carousel Wrapper */}
-            <div className="w-full px-4">
-              {/* Carousel Card */}
-              <div
-                ref={carouselRef}
-                onScroll={handleScroll}
-                onWheel={handleWheel}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseLeave}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-                className="overflow-x-auto snap-x snap-mandatory flex space-x-4 pb-2 scroll-smooth scrollbar-hide touch-pan-x cursor-grab select-none"
-                style={{
-                  WebkitOverflowScrolling: "touch",
-                  scrollbarWidth: "none",
-                  msOverflowStyle: "none",
-                }}
-              >
-                {[1, 2, 3, 4, 5, 6].map((item, i) => (
-                  <PromoProductItem key={i} index={i} />
+                    <div className="space-y-1">
+                      <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                        {option.date}
+                      </p>
+                      <p className="text-base font-bold text-green-800">
+                        {option.label}
+                      </p>
+                      <p className="text-xs text-gray-700 font-medium">
+                        {option.description}
+                      </p>
+                      <p className="text-xs text-green-800">{option.time}</p>
+                    </div>
+                  </div>
                 ))}
               </div>
+            </div>
 
-              {/* Progress bar */}
-              <div className="mt-4 relative h-3">
-                <div className="absolute top-1 left-0 w-full h-2 bg-gray-200 rounded-full" />
+            {/* Enhanced Select All - Hide when cart is empty */}
+            {products.length > 0 && (
+              <div
+                className="mt-4 p-6 border-b border-gray-200"
+                style={{ backgroundColor: "#D4E496" }}
+              >
+                <div className="flex items-center space-x-3">
+                  <label className="relative w-10 h-10 inline-block">
+                    <input
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={handleSelectAll}
+                      className="custom-checkbox w-10 h-10 appearance-none rounded border-2 border-green-500 bg-white checked:bg-green-500 checked:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
+                    />
+                  </label>
+
+                  <span className="font-bold text-gray-900">Pilih Semua</span>
+                  <span className="text-gray-500 text-md font-medium">
+                    ({products.length})
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Enhanced Product List */}
+            {products.length === 0 ? (
+              <div className="space-y-4">
+                <div className="flex flex-col items-center justify-center">
+                  <div className="text-center">
+                    <div className="mb-6">
+                      <img
+                        src="assets/cart/empty-cart.png"
+                        alt="Keranjang Kosong"
+                        className="w-64 mx-auto"
+                      />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">
+                      Yah, keranjang mu kosong nih...
+                    </h3>
+                    <p className="text-md text-gray-600 mb-6">
+                      Yuk belanja sekarang
+                    </p>
+                    <button
+                      onClick={() => window.history.back()}
+                      className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg text-md transition-all duration-200 shadow-sm"
+                    >
+                      Belanja Sekarang
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {products.map((product) => (
+                  <ProductItem key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+
+            <div className="mt-6 p-4 bg-[#D4E496] rounded-lg border border-orange-200">
+              <h3 className="px-4 font-bold text-gray-900 mb-4 text-lg">
+                Ayo Tebus Harga WOW!
+              </h3>
+
+              {/* Carousel Wrapper */}
+              <div className="w-full px-4">
+                {/* Carousel Card */}
                 <div
-                  className="absolute top-1 left-0 h-2 bg-green-500 rounded-full transition-all duration-200"
-                  style={{ width: `${scrollValue * 100}%` }}
-                />
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={scrollValue}
-                  onChange={handleSliderChange}
-                  className="relative z-10 w-full h-3 opacity-0 cursor-pointer"
-                />
+                  ref={carouselRef}
+                  onScroll={handleScroll}
+                  className="overflow-x-auto snap-x snap-mandatory flex space-x-4 pb-2 scroll-smooth scrollbar-hide touch-pan-x"
+                  style={{
+                    WebkitOverflowScrolling: "touch",
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
+                  }}
+                >
+                  {[1, 2, 3, 4, 5, 6].map((item, i) => (
+                    <PromoProductItem key={i} index={i} />
+                  ))}
+                </div>
+
+                {/* Progress bar only, no slider */}
+                <div className="mt-4 relative h-3">
+                  <div className="absolute top-1 left-0 w-full h-2 bg-gray-200 rounded-full" />
+                  <div
+                    className="absolute top-1 left-0 h-2 bg-green-500 rounded-full transition-all duration-200"
+                    style={{ width: `${scrollValue * 100}%` }}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Right Column - Enhanced Cart Summary */}
-        <div className="lg:col-span-1">
-          <div>
-            <div className="py-5 px-8 rounded-xl border border-2 border-gray-200 w-full max-w-sm mx-auto lg:mx-0">
-              {/* Gratis Ongkir Highlight */}
-              <div
-                className="flex items-center space-x-3 mb-4 p-3 bg-white rounded-lg border border-green-200"
-                style={{ backgroundColor: "#B1E9AB99" }}
-              >
-                <img
-                  src="assets/cart/truck.png"
-                  alt="Truck Icon"
-                  className="text-green-600 w-14 h-8"
-                />
-                <div>
-                  <p className="font-semibold text-sm text-gray-900">
-                    <strong>Gratis Ongkir</strong> minimum belanja{" "}
-                    <strong>Rp. 100.000</strong>
-                  </p>
-                </div>
-              </div>
-
-              {/* Total */}
-              <div className="flex items-center py-3 ">
-                <span className="font-bold text-gray-900 text-lg">
-                  Total : {products.length === 0 ? "Rp.-" : "Rp. 2.025"}
-                </span>
-              </div>
-
-              {/* Points - Hide when cart is empty */}
-              {products.length > 0 && (
-                <div className="mb-4">
-                  <div className="flex items-center text-sm">
-                    <img
-                      src="assets/cart/point.png"
-                      className="w-10 h-10"
-                    />
-                    <span className="text-black font-bold ml-3">
-                      +9 SayurPoint
-                    </span>
+          {/* Right Column - Enhanced Cart Summary */}
+          <div className="lg:col-span-1">
+            <div>
+              <div className="py-5 px-8 rounded-xl border border-2 border-gray-200 w-full max-w-sm mx-auto lg:mx-0">
+                {/* Gratis Ongkir Highlight */}
+                <div
+                  className="flex items-center space-x-3 mb-4 p-3 bg-white rounded-lg border border-green-200"
+                  style={{ backgroundColor: "#B1E9AB99" }}
+                >
+                  <img
+                    src="assets/cart/truck.png"
+                    alt="Truck Icon"
+                    className="text-green-600 w-14 h-8"
+                  />
+                  <div>
+                    <p className="font-semibold text-sm text-gray-900">
+                      <strong>Gratis Ongkir</strong> minimum belanja{" "}
+                      <strong>Rp. 100.000</strong>
+                    </p>
                   </div>
                 </div>
-              )}
 
-              {/* XP - Hide when cart is empty */}
-              {products.length > 0 && (
-                <div className="mb-6">
-                  <div className="flex items-center text-sm">
-                    <img src="assets/cart/xp.png" className="w-10 h-10" />
-                    <span className="text-black font-bold ml-3">+18 XP</span>
-                  </div>
+                {/* Total */}
+                <div className="flex items-center py-3 ">
+                  <span className="font-bold text-gray-900 text-lg">
+                    Total : {products.length === 0 ? "Rp.-" : "Rp. 2.025"}
+                  </span>
                 </div>
-              )}
 
-              {/* Add margin bottom when cart is empty to maintain spacing */}
-              {products.length === 0 && <div className="mb-6"></div>}
+                {/* Points - Hide when cart is empty */}
+                {products.length > 0 && (
+                  <div className="mb-4">
+                    <div className="flex items-center text-sm">
+                      <img src="assets/cart/point.png" className="w-10 h-10" />
+                      <span className="text-black font-bold ml-3">
+                        +9 SayurPoint
+                      </span>
+                    </div>
+                  </div>
+                )}
 
-              {/* Checkout Button */}
-              <button
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-sm font-semibold text-lg transition-all duration-200 shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
-                disabled={products.length === 0 || totalItems === 0}
-              >
-                {products.length === 0 ? "Keranjang Kosong" : "Checkout"}
-              </button>
+                {/* XP - Hide when cart is empty */}
+                {products.length > 0 && (
+                  <div className="mb-6">
+                    <div className="flex items-center text-sm">
+                      <img src="assets/cart/xp.png" className="w-10 h-10" />
+                      <span className="text-black font-bold ml-3">+18 XP</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Add margin bottom when cart is empty to maintain spacing */}
+                {products.length === 0 && <div className="mb-6"></div>}
+
+                {/* Checkout Button */}
+                <button
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-sm font-semibold text-lg transition-all duration-200 shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+                  disabled={products.length === 0 || totalItems === 0}
+                  onClick={handleCheckout}
+                >
+                  {products.length === 0 ? "Keranjang Kosong" : "Checkout"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

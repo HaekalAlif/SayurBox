@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const detailImages = [
   "/assets/sayur-poin/detail/image-1.png",
@@ -10,6 +11,7 @@ const detailImages = [
 
 const SayurPoinDetail = () => {
   const handleBackClick = () => window.history.back();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen w-full bg-white">
@@ -33,14 +35,24 @@ const SayurPoinDetail = () => {
 
         {/* Detail Images */}
         <div className="flex flex-col">
-          {detailImages.map((src, idx) => (
-            <img
-              key={idx}
-              src={src}
-              alt={`SayurPoin Detail ${idx + 1}`}
-              className="w-full h-auto shadow"
-            />
-          ))}
+          {detailImages.map((src, idx) =>
+            idx === 3 ? (
+              <img
+                key={idx}
+                src={src}
+                alt={`SayurPoin Detail ${idx + 1}`}
+                className="w-full h-auto shadow cursor-pointer"
+                onClick={() => navigate("/sayur-poin/faq")}
+              />
+            ) : (
+              <img
+                key={idx}
+                src={src}
+                alt={`SayurPoin Detail ${idx + 1}`}
+                className="w-full h-auto shadow"
+              />
+            )
+          )}
         </div>
       </div>
     </div>
