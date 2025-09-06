@@ -7,7 +7,6 @@ const Header = () => {
   const [showAddress, setShowAddress] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(0);
 
-  // Dummy data alamat
   const addressList = [
     {
       label: "Fulan bin fulana",
@@ -23,7 +22,6 @@ const Header = () => {
     },
   ];
 
-  // Path untuk setiap ikon (ubah sesuai kebutuhan)
   const paths = {
     logo: "/",
     cart: "/cart",

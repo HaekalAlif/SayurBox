@@ -34,6 +34,8 @@ import SayurPoinUser from "./pages/sayur-poin/SayurPoinUser.jsx";
 import SayurPoinDetail from "./pages/sayur-poin/detail/SayurPoinDetail";
 import SayurPoinFaq from "./pages/sayur-poin/faq/SayurPoinFaq";
 import SayurPanen from "./pages/sayur-panen/SayurPanen";
+import Login from "./pages/auth/login/Login.jsx";
+import Register from "./pages/auth/register/Register";
 
 function App() {
   return (
@@ -47,6 +49,8 @@ function App() {
             </Layout>
           }
         />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/product-detail"
           element={
