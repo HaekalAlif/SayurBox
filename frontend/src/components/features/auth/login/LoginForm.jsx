@@ -1,8 +1,24 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLogin } from "./LoginForm.hooks";
 
 const LoginForm = () => {
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [password, setPassword] = useState("");
+  const { handleLogin, loading, error } = useLogin();
+  const navigate = useNavigate();
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const result = await handleLogin({ emailOrPhone, password });
+    if (result) {
+      if (result.role === "admin" || result.role === 1) {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    }
+  };
 
   return (
     <div
@@ -24,7 +40,7 @@ const LoginForm = () => {
 
       {/* Right Side - Login Form */}
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 bg-white">
-        <div className="w-full max-w-2xl  bg-white rounded-xl shadow-lg p-8">
+        <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-8">
           <div className="flex justify-center mb-6">
             <img
               src="/assets/auth/sayurbox-logo.png"
@@ -33,7 +49,7 @@ const LoginForm = () => {
             />
           </div>
           <h2 className="text-xl font-bold mb-6 text-gray-900">Masuk</h2>
-          <form>
+          <form onSubmit={onSubmit}>
             <div className="mb-4">
               <label className="block font-semibold mb-2 text-gray-800">
                 Nomor HP/E-mail
@@ -44,6 +60,7 @@ const LoginForm = () => {
                 onChange={(e) => setEmailOrPhone(e.target.value)}
                 placeholder="Masukkan Nomor Handphone atau E-mail"
                 className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                disabled={loading}
               />
               <p className="text-xs text-gray-500 mt-1">
                 Cth. 08969123456789 atau dummy@mail.com
@@ -59,13 +76,16 @@ const LoginForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Masukkan Password"
                 className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                disabled={loading}
               />
             </div>
+            {error && <div className="text-red-600 text-sm mb-4">{error}</div>}
             <button
               type="submit"
               className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition-colors cursor-pointer"
+              disabled={loading}
             >
-              Masuk
+              {loading ? "Memproses..." : "Masuk"}
             </button>
           </form>
           <div className="flex items-center my-6">

@@ -1,14 +1,33 @@
 import React, { useState } from "react";
 import { ChevronLeft } from "lucide-react";
+import { useRegister } from "./RegisterForm.hooks"; // Tambahkan import hooks
 
 const RegisterForm = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState(""); // Tambahkan email
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const { handleRegister, loading, error } = useRegister(); // Pakai hooks
 
   const handleBackClick = () => {
     window.history.back();
+  };
+
+  // Tambahkan logic submit
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== repeatPassword) {
+      alert("Password tidak sama!");
+      return;
+    }
+    await handleRegister({
+      name,
+      email,
+      password,
+      password_confirmation: repeatPassword,
+      phone,
+    });
   };
 
   return (
@@ -34,11 +53,11 @@ const RegisterForm = () => {
         <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
           Lengkapi Data Diri
         </h2>
-        <p className="text-center text-md text-gray-700 mb-6">
+        <p className="text-center text-md text-gray-700 mb-4">
           Lengkapi data diri terlebih dahulu untuk proses pemesanan yang lebih
           murah
         </p>
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={onSubmit}>
           <div>
             <label className="block font-semibold mb-2 text-gray-800">
               <span className="text-red-600">*</span>Nama Pengguna
@@ -52,7 +71,20 @@ const RegisterForm = () => {
             />
           </div>
           <div>
-            <label className="block font-semibold mb-2 text-gray-800">
+            <label className="block font-semibold text-gray-800">
+              <span className="text-red-600">*</span>Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Masukkan Email"
+              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              required
+            />
+          </div>
+          <div>
+            <label className="block font-semibold text-gray-800">
               <span className="text-red-600">*</span>Nomor HP/Whatsapp
             </label>
             <input
@@ -64,7 +96,7 @@ const RegisterForm = () => {
             />
           </div>
           <div>
-            <label className="block font-semibold mb-2 text-gray-800">
+            <label className="block font-semibold text-gray-800">
               <span className="text-red-600">*</span>Buat Password Baru
             </label>
             <input
@@ -76,7 +108,7 @@ const RegisterForm = () => {
             />
           </div>
           <div>
-            <label className="block font-semibold mb-2 text-gray-800">
+            <label className="block font-semibold text-gray-800">
               <span className="text-red-600">*</span>Ulangi Password
             </label>
             <input
@@ -87,11 +119,15 @@ const RegisterForm = () => {
               className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
+          {error && (
+            <div className="text-red-600 text-sm">{error}</div>
+          )}
           <button
             type="submit"
             className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-md transition-colors mt-4 cursor-pointer"
+            disabled={loading}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
       </div>

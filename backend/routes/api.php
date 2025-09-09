@@ -2,12 +2,16 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\TestController;
+use App\Http\Controllers\AddressController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Test API routes
-Route::get('/test', [TestController::class, 'test']);
-Route::get('/users', [TestController::class, 'getUsers']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::apiResource('addresses', AddressController::class);
+    Route::post('addresses/{id}/default', [AddressController::class, 'setDefault']);
+});
+
+
+include 'auth.php';

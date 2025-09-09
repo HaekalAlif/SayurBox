@@ -203,6 +203,15 @@ function App() {
         />
 
         <Route
+          path="/profile/address/address-details/:id?"
+          element={
+            <Layout>
+              <AddAddress />
+            </Layout>
+          }
+        />
+
+        <Route
           path="/profile/address/address-details"
           element={
             <Layout>

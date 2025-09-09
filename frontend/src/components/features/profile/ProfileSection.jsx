@@ -1,9 +1,11 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 const ProfileSection = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleBackClick = () => {
     window.history.back();
@@ -38,6 +40,8 @@ const ProfileSection = () => {
     },
   ];
 
+console.log("User in ProfileSection:", user);
+
   return (
     <div className="min-h-screen relative bg-white">
       {/* Header with Back Button */}
@@ -49,7 +53,6 @@ const ProfileSection = () => {
           <ChevronLeft className="w-10 h-10 ml-1" />
         </button>
       </div>
-
       {/* Main Container */}
       <div className="flex items-center justify-center min-h-screen p-6 mb-8">
         <div className="w-full max-w-xl bg-white border-2 border-green-600 rounded-3xl p-10 shadow-lg">
@@ -57,7 +60,10 @@ const ProfileSection = () => {
           <div className="text-center flex mb-8">
             <img src="/assets/profile/user.png" className="w-16 h-16 " />
             <div className="text-left ml-4 ">
-              <h2 className="text-xl font-bold mb-2">Aji</h2>
+              <h2 className="text-xl font-bold mb-2">
+                {" "}
+                {user ? user.name : "Guest"}
+              </h2>
               <button
                 onClick={() => handleNavigate("/profile/account")}
                 className="flex items-center space-x-2 cursor-pointer"

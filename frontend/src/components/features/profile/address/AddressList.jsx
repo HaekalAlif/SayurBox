@@ -1,58 +1,51 @@
 import React, { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAddressList } from "./AddressList.hooks";
+import BaseModal from "@/components/base/BaseModal";
+import SayurboxLoading from "@/components/base/SayurboxLoading";
 
 const AddressList = () => {
-  const [selectedAddress, setSelectedAddress] = useState(0);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [modalLoading, setModalLoading] = useState(false);
   const navigate = useNavigate();
+
+  const {
+    addresses,
+    loading,
+    error,
+    selectedAddress,
+    setSelectedAddress,
+    handleSetDefaultAddress,
+    handleDeleteAddress,
+    handleEditAddress,
+  } = useAddressList();
 
   const handleBackClick = () => {
     window.history.back();
   };
 
-  const addresses = [
-    {
-      id: 1,
-      name: "Fulan bin Fulana",
-      phone: "+62812345678",
-      address: "Jl. Mawar No. 5A, Keciklo, Kecamatan Garden Baru, 67891",
-    },
-    {
-      id: 2,
-      name: "Fulan bin Fulana",
-      phone: "+62812345678",
-      address: "Jl. Mawar No. 5A, Keciklo, Kecamatan Garden Baru, 67891",
-    },
-    {
-      id: 3,
-      name: "Fulan bin Fulana",
-      phone: "+62812345678",
-      address: "Jl. Mawar No. 5A, Keciklo, Kecamatan Garden Baru, 67891",
-    },
-    {
-      id: 4,
-      name: "Fulan bin Fulana",
-      phone: "+62812345678",
-      address: "Jl. Mawar No. 5A, Keciklo, Kecamatan Garden Baru, 67891",
-    },
-    {
-      id: 5,
-      name: "Fulan bin Fulana",
-      phone: "+62812345678",
-      address: "Jl. Mawar No. 5A, Keciklo, Kecamatan Garden Baru, 67891",
-    },
-  ];
-
-  const handleAddressSelect = (index) => {
-    setSelectedAddress(index);
+  // Show modal before delete
+  const confirmDelete = (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
   };
 
-  const handleEditAddress = (id) => {
-    console.log("Edit address:", id);
+  const handleConfirmDelete = async () => {
+    setModalLoading(true);
+    await handleDeleteAddress(deleteId);
+    setModalLoading(false);
+    setShowDeleteModal(false);
+    setDeleteId(null);
   };
 
-  const handleDeleteAddress = (id) => {
-    console.log("Delete address:", id);
+  // Pilih alamat dan set default di backend
+  const handleChooseAddress = async () => {
+    const address = addresses[selectedAddress];
+    if (address) {
+      await handleSetDefaultAddress(address.id);
+    }
   };
 
   const AddressCard = ({ address, index, isSelected }) => (
@@ -62,22 +55,23 @@ const AddressList = () => {
           ? "border-2 border-green-600"
           : "border border-gray-300 hover:border-gray-400"
       }`}
-      onClick={() => handleAddressSelect(index)}
+      onClick={() => setSelectedAddress(index)}
     >
-      {/* Address Content */}
       <div>
-        <h3 className="font-semibold mb-1">{address.name}</h3>
+        <h3 className="font-semibold mb-1">
+          {address.recipient_name || address.name}
+        </h3>
         <p className="text-sm mb-2">{address.phone}</p>
-        <p className="text-sm mb-4">{address.address}</p>
-
-        {/* Radio Button */}
+        <p className="text-sm mb-4 max-w-[90%]">
+          {address.full_address || address.address}
+        </p>
         <div className="absolute top-1/2 -mt-6 right-4 transform -translate-y-1/2">
           <label className="inline-flex items-center cursor-pointer">
             <input
               type="radio"
               name="address"
               checked={isSelected}
-              onChange={() => handleAddressSelect(index)}
+              onChange={() => setSelectedAddress(index)}
               className="sr-only"
             />
             <div className="w-7 h-7 rounded-full border-2 border-green-600 flex items-center justify-center bg-white transition-all duration-200">
@@ -89,24 +83,21 @@ const AddressList = () => {
             </div>
           </label>
         </div>
-
         <hr className="mb-3 border border-green-600 w-full" />
-
-        {/* Action Buttons */}
         <div className="flex justify-end space-x-4">
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleDeleteAddress(address.id);
+              confirmDelete(address.id);
             }}
             className="flex items-center space-x-1 text-red-600 font-semibold hover:text-red-700 text-md cursor-pointer"
           >
             <span>Hapus Alamat</span>
           </button>
           <button
-            onClick={(e) => {
+            onClick={async (e) => {
               e.stopPropagation();
-              handleEditAddress(address.id);
+              navigate(`/profile/address/address-details/${address.id}`);
             }}
             className="flex items-center space-x-1 text-green-500 font-semibold hover:text-green-700 text-md"
           >
@@ -119,6 +110,19 @@ const AddressList = () => {
 
   return (
     <div className="bg-white px-4 relative min-h-screen mb-14">
+      {/* Modal Konfirmasi Hapus */}
+      <BaseModal
+        open={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title="Hapus Alamat?"
+        description="Konfirmasi bahwa alamat Anda saat ini akan dihapus"
+        confirmText={modalLoading ? "Menghapus..." : "Ya"}
+        cancelText="Kembali"
+        onConfirm={handleConfirmDelete}
+        confirmColor="bg-red-500 hover:bg-red-600"
+        cancelColor="border-green-600 text-green-600 hover:bg-green-50"
+      />
+
       {/* Header with Back Button */}
       <div className="top-0 h-0 bg-white z-10 pl-4">
         <button
@@ -130,7 +134,7 @@ const AddressList = () => {
       </div>
 
       {/* Main Container */}
-      <div className="border-2  border-yellow-400 rounded-xl bg-white p-6 mt-16 mx-auto max-w-4xl">
+      <div className="border-2 border-yellow-400 rounded-xl bg-white p-6 mt-16 mx-auto max-w-4xl">
         <h1 className="text-2xl font-bold text-center mb-6">
           Daftar Alamat Saya
         </h1>
@@ -140,7 +144,7 @@ const AddressList = () => {
           <div className="flex flex-col gap-4 w-full md:w-1/4">
             <button
               className="bg-green-600 hover:bg-green-700 text-white py-3 rounded-md font-semibold transition-colors cursor-pointer"
-              onClick={() => navigate("/profile/address")}
+              onClick={handleChooseAddress}
             >
               Pilih Alamat
             </button>
@@ -154,14 +158,22 @@ const AddressList = () => {
 
           {/* Right Side - Address Cards */}
           <div className="flex flex-col gap-3 w-full md:w-3/4">
-            {addresses.map((address, index) => (
-              <AddressCard
-                key={address.id}
-                address={address}
-                index={index}
-                isSelected={selectedAddress === index}
-              />
-            ))}
+            {loading ? (
+              <SayurboxLoading />
+            ) : error ? (
+              <div className="text-center text-red-600">{error}</div>
+            ) : addresses.length === 0 ? (
+              <div className="text-center text-gray-500">Belum ada alamat.</div>
+            ) : (
+              addresses.map((address, index) => (
+                <AddressCard
+                  key={address.id}
+                  address={address}
+                  index={index}
+                  isSelected={selectedAddress === index}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>
