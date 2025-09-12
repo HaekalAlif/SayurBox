@@ -1,9 +1,16 @@
-import React, { useState, useRef } from "react";
-import { Plus, ChevronDown } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { Plus, ChevronDown, AlertCircle, X } from "lucide-react";
+import { useProductCatalog } from "./Product.hooks";
+import { Link } from "react-router-dom";
+import SayurboxLoading from "../../base/SayurBoxLoading";
 
 const ProductSection = () => {
-  const [activeTab, setActiveTab] = useState("latest");
   const scrollRef = useRef(null);
+  const [showToast, setShowToast] = useState(false);
+
+  // Menggunakan custom hook untuk fetch data produk
+  const { products, loading, error, activeTab, handleTabChange } =
+    useProductCatalog();
 
   // Data tabs
   const tabs = [
@@ -11,55 +18,36 @@ const ProductSection = () => {
     { id: "choices", label: "Produk Terlaris" },
   ];
 
-  // Base product template
-  const baseProduct = {
-    image: "assets/landing/products/alpukat.png",
-    badgeTop: "assets/landing/icons/badge-masak.png",
-    badgeLabel: "Best Quality for MASAK!",
-    unit: "1 Pcs, 1 Kg",
-    discount: "84%",
-  };
+  // Handler untuk menampilkan toast
+  const handleAddToCart = (e, productId) => {
+    e.preventDefault(); // Mencegah navigasi ke halaman detail
+    e.stopPropagation(); // Mencegah event bubble ke Link
 
-  // Product names array
-  const productNames = [
-    "Alpukat Mentega",
-    "Alpukat Mentega Premium",
-    "Alpukat Organik",
-    "Alpukat Segar",
-    "Alpukat Import",
-    "Alpukat Lokal",
-    "Alpukat Super",
-    "Alpukat Jumbo",
-    "Alpukat Deluxe",
-    "Alpukat Royal",
-    "Alpukat Gold",
-    "Alpukat Platinum",
-    "Alpukat Diamond",
-    "Alpukat Crystal",
-    "Alpukat Supreme",
-    "Alpukat Ultimate",
-  ];
+    setShowToast(true);
 
-  // Generate products using loop
-  const products = productNames.map((name, index) => {
-    const basePrice = 2500 + index * 500; // Increment price by 500 each
-    const originalPrice = Math.round(basePrice * 6.25); // Calculate original price
+    // Otomatis sembunyikan toast setelah 3 detik
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
 
-    return {
-      id: index + 1,
-      title: name,
-      currentPrice: `Rp. ${basePrice.toLocaleString()}`,
-      originalPrice: `Rp. ${originalPrice.toLocaleString()}`,
-      ...baseProduct,
-    };
-  });
-
-  const handleTabChange = (tabId) => {
-    setActiveTab(tabId);
+    console.log("Product added to cart (coming soon):", productId);
   };
 
   return (
     <div className="pb-8">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-20 right-4 z-50 bg-green-600 text-white py-3 px-4 rounded-md shadow-lg flex items-center">
+          <span className="mr-2">Cart feature coming soon!</span>
+          <button
+            onClick={() => setShowToast(false)}
+            className="text-white hover:text-green-200"
+          >
+            <X size={18} />
+          </button>
+        </div>
+      )}
+
       {/* Custom Scrollbar CSS */}
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
@@ -83,42 +71,68 @@ const ProductSection = () => {
       `}</style>
 
       {/* Tab Navigation */}
-      <div className="flex flex-wrap gap-12 bg-[#C5FFBF] p-4 max-w-screen-lg mx-auto">
-        <div className="my-auto font-semibold ml-2">
-          <h1>urutkan :</h1>
+      <div className="flex flex-wrap gap-4 md:gap-8 bg-[#C5FFBF] p-4 max-w-screen-lg mx-auto overflow-x-auto">
+        <div className="my-auto font-semibold ml-2 whitespace-nowrap">
+          <h1>Urutkan :</h1>
         </div>
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => handleTabChange(tab.id)}
-            className={`text-md font-semibold rounded-sm px-6 py-3 border transition-colors w-64 whitespace-nowrap cursor-pointer ${
-              activeTab === tab.id
-                ? "bg-green-600 text-white"
-                : "bg-white text-green-600 font-bold  hover:bg-green-50"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+        <div className="flex gap-2 md:gap-4 overflow-x-auto pb-2">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              className={`text-sm md:text-md font-semibold rounded-sm px-4 md:px-6 py-2 md:py-3 border transition-colors whitespace-nowrap cursor-pointer ${
+                activeTab === tab.id
+                  ? "bg-green-600 text-white"
+                  : "bg-white text-green-600 font-bold hover:bg-green-50"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Product Grid */}
       <div className="py-8 px-4 md:px-8">
         <div className="max-w-screen-lg mx-auto">
           <section className="w-full bg-white">
-            <div className="relative">
-              <div
-                ref={scrollRef}
-                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto scroll-smooth custom-scrollbar"
-                style={{ maxHeight: "960px" }}
-              >
-                {products.map((product) => (
-                  <a href="/product-detail" className="cursor-pointer">
-                    <ProductCard key={product.id} product={product} />
-                  </a>
-                ))}
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex items-center">
+                <AlertCircle className="w-5 h-5 mr-2" />
+                {error}
               </div>
-            </div>
+            )}
+
+            {loading ? (
+              <SayurboxLoading />
+            ) : (
+              <div className="relative">
+                {products.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    No products found. Try adjusting your filters.
+                  </div>
+                ) : (
+                  <div
+                    ref={scrollRef}
+                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto scroll-smooth custom-scrollbar"
+                    style={{ maxHeight: "960px" }}
+                  >
+                    {products.map((product) => (
+                      <Link
+                        to={`/product/${product.slug}`}
+                        key={product.id}
+                        className="cursor-pointer"
+                      >
+                        <ProductCard
+                          product={product}
+                          onAddToCart={(e) => handleAddToCart(e, product.id)}
+                        />
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </section>
         </div>
       </div>
@@ -126,22 +140,19 @@ const ProductSection = () => {
   );
 };
 
-const ProductCard = ({ product }) => (
+const ProductCard = ({ product, onAddToCart }) => (
   <div className="flex-shrink-0">
-    <div className="w-56 h-76 rounded-sm shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
+    <div className="w-full h-full rounded-sm shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
       {/* Image Area */}
-      <div className="relative w-full h-46">
-        {/* Badge Top */}
-        <div className="absolute top-2 left-2 z-10">
-          <img
-            src={product.badgeTop}
-            alt={product.badgeLabel}
-            className="w-16 h-6 object-contain"
-            onError={(e) => {
-              e.target.style.display = "none";
-            }}
-          />
-        </div>
+      <div className="relative w-full h-46 aspect-square">
+        {/* Badge Top - Only show if product is limited */}
+        {product.availability === "limited" && (
+          <div className="absolute top-2 left-2 z-10">
+            <span className="bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded">
+              Stok Terbatas
+            </span>
+          </div>
+        )}
 
         {/* Product Image */}
         <img
@@ -149,13 +160,16 @@ const ProductCard = ({ product }) => (
           alt={product.title}
           className="w-full h-full object-cover"
           onError={(e) => {
-            e.target.style.display = "none";
+            e.target.src = "/assets/default-product.png";
           }}
         />
 
         {/* Add Icon */}
-        <button className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer">
-          <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
+        <button
+          onClick={onAddToCart}
+          className="absolute top-2 right-4 w-10 h-10 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer"
+        >
+          <Plus className="w-6 h-6 text-white group-hover:text-green-600 transition-colors" />
         </button>
       </div>
 
@@ -167,14 +181,16 @@ const ProductCard = ({ product }) => (
           </span>
         </div>
 
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
-            {product.discount}
-          </span>
-          <span className="line-through text-gray-400 text-xs">
-            {product.originalPrice}
-          </span>
-        </div>
+        {product.discount && (
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
+              {product.discount}
+            </span>
+            <span className="line-through text-gray-400 text-xs">
+              {product.originalPrice}
+            </span>
+          </div>
+        )}
 
         <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
           {product.title}

@@ -1,57 +1,14 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { useSpecialOffer } from "./SpecialOffer.hooks";
+import SayurboxLoading from "@/components/base/SayurBoxLoading";
 
 const SpecialOffer = () => {
   const scrollRef = useRef(null);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
 
-  const products = [
-    {
-      id: 1,
-      image: "assets/landing/products/alpukat.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-      title: "Alpukat Mentega",
-      unit: "1 Pcs, 1 Kg",
-      currentPrice: "Rp. 2.500",
-      originalPrice: "Rp. 15.625",
-      discount: "84%",
-    },
-    {
-      id: 2,
-      image: "assets/landing/products/alpukat.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-      title: "Alpukat Mentega",
-      unit: "1 Pcs, 1 Kg",
-      currentPrice: "Rp. 3.000",
-      originalPrice: "Rp. 18.750",
-      discount: "84%",
-    },
-    {
-      id: 3,
-      image: "assets/landing/products/alpukat.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-      title: "Alpukat Mentega",
-      unit: "1 Pcs, 1 Kg",
-      currentPrice: "Rp. 4.500",
-      originalPrice: "Rp. 28.125",
-      discount: "84%",
-    },
-    {
-      id: 4,
-      image: "assets/landing/products/alpukat.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-      title: "Alpukat Segar",
-      unit: "1 Pcs, 1 Kg",
-      currentPrice: "Rp. 2.200",
-      originalPrice: "Rp. 13.750",
-      discount: "84%",
-    },
-  ];
+  const { products, loading, error } = useSpecialOffer();
 
   const checkScroll = () => {
     const el = scrollRef.current;
@@ -126,68 +83,82 @@ const SpecialOffer = () => {
                   </div>
 
                   {/* Product Cards */}
-                  {products.map((product) => (
-                    <a href="/product-detail" className="cursor-pointer">
-                      <div key={product.id} className="flex-shrink-0">
-                        <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
-                          {/* Image Area */}
-                          <div className="relative w-full h-46">
-                            {/* Badge Top */}
-                            <div className="absolute top-2 left-2 z-10">
+                  {loading ? (
+                    <SayurboxLoading />
+                  ) : error ? (
+                    <div className="text-center py-12 text-red-600 font-bold">
+                      {error}
+                    </div>
+                  ) : (
+                    products.map((product) => (
+                      <a
+                        href={`/product/${product.slug}`}
+                        className="cursor-pointer"
+                        key={product.id}
+                      >
+                        <div className="flex-shrink-0">
+                          <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
+                            {/* Image Area */}
+                            <div className="relative w-full h-46">
+                              {/* Badge Top */}
+                              <div className="absolute top-2 left-2 z-10">
+                                <img
+                                  src={product.badgeTop}
+                                  alt={product.badgeLabel}
+                                  className="w-16 h-6 object-contain"
+                                  onError={(e) => {
+                                    e.target.style.display = "none";
+                                  }}
+                                />
+                              </div>
+
+                              {/* Product Image */}
                               <img
-                                src={product.badgeTop}
-                                alt={product.badgeLabel}
-                                className="w-16 h-6 object-contain"
+                                src={product.image}
+                                alt={product.title}
+                                className="w-full h-full object-cover"
                                 onError={(e) => {
                                   e.target.style.display = "none";
                                 }}
                               />
+
+                              {/* Add Icon */}
+                              <button className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer">
+                                <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
+                              </button>
                             </div>
 
-                            {/* Product Image */}
-                            <img
-                              src={product.image}
-                              alt={product.title}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.target.style.display = "none";
-                              }}
-                            />
+                            {/* Price & Info */}
+                            <div className="p-3">
+                              <div className="mb-1">
+                                <span className="text-base font-bold text-gray-800">
+                                  {product.currentPrice}
+                                </span>
+                              </div>
 
-                            {/* Add Icon */}
-                            <button className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer">
-                              <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
-                            </button>
-                          </div>
+                              <div className="flex items-center gap-2 mb-2">
+                                {product.discount && (
+                                  <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
+                                    {product.discount}
+                                  </span>
+                                )}
+                                <span className="line-through text-gray-400 text-xs">
+                                  {product.originalPrice}
+                                </span>
+                              </div>
 
-                          {/* Price & Info */}
-                          <div className="p-3">
-                            <div className="mb-1">
-                              <span className="text-base font-bold text-gray-800">
-                                {product.currentPrice}
-                              </span>
+                              <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
+                                {product.title}
+                              </h4>
+                              <p className="text-xs text-gray-500">
+                                {product.unit}
+                              </p>
                             </div>
-
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
-                                {product.discount}
-                              </span>
-                              <span className="line-through text-gray-400 text-xs">
-                                {product.originalPrice}
-                              </span>
-                            </div>
-
-                            <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
-                              {product.title}
-                            </h4>
-                            <p className="text-xs text-gray-500">
-                              {product.unit}
-                            </p>
                           </div>
                         </div>
-                      </div>
-                    </a>
-                  ))}
+                      </a>
+                    ))
+                  )}
                 </div>
               </div>
             </div>

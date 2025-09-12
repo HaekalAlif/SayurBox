@@ -47,7 +47,7 @@ const AccountSection = () => {
               alt="User avatar"
               className="w-48 h-48 object-cover rounded-lg border border-gray-200"
             />
-            <button className="mt-4 px-6 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition-colors w-[80%] font-semibold flex justify-center space-x-2 mb-3">
+            <button className="mt-4 px-6 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition-colors w-[80%] font-semibold flex justify-center space-x-2 mb-3 cursor-pointer">
               <span>Pilih Foto</span>
             </button>
             <p className="text-xs text-gray-500 mt-2 max-w-xs text-left">
@@ -150,7 +150,7 @@ const AccountSection = () => {
 
                       <button
                         onClick={() => setSelectedGender("male")}
-                        className={`p-3 border-2 rounded-lg flex items-center space-x-3 transition-colors w-full ${
+                        className={`p-3 border-2 rounded-lg flex items-center space-x-3 transition-colors w-full cursor-pointer ${
                           selectedGender === "male"
                             ? "border-green-500"
                             : "border-gray-200 hover:border-gray-300"
@@ -185,7 +185,7 @@ const AccountSection = () => {
 
                       <button
                         onClick={() => setSelectedGender("female")}
-                        className={`p-3 border-2 rounded-lg flex items-center space-x-3 transition-colors w-full ${
+                        className={`p-3 border-2 rounded-lg flex items-center space-x-3 transition-colors w-full cursor-pointer ${
                           selectedGender === "female"
                             ? "border-green-500"
                             : "border-gray-200 hover:border-gray-300"
@@ -296,7 +296,7 @@ const AccountSection = () => {
             <div className="flex items-center justify-center ml-12 mt-12">
               <button
                 onClick={handleSaveData}
-                className="w-full max-w-xs h-12 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+                className="w-full max-w-xs h-12 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer"
               >
                 Simpan Data
               </button>

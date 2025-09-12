@@ -24,17 +24,16 @@ export function useLogin() {
       const res = response?.data || response;
       setUser(res.user);
 
-      console.log(setUser)
+      console.log(setUser);
 
       // Redirect sesuai role
       if (res.user.role === 1) {
-        navigate("/admin");
+        navigate("/admin/products");
       } else if (res.user.role === 0) {
         navigate("/");
       }
 
       return res;
-      
     } catch (err) {
       setError(
         err.response?.data?.message || "Login gagal. Silakan cek data Anda."

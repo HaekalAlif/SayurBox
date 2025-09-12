@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 const Hero = () => {
   // Data kategori produk
@@ -6,48 +6,92 @@ const Hero = () => {
     {
       icon: "assets/landing/kategori/sayur.png",
       label: "Sayur",
-      href: "/catalog",
+      href: "/catalog?category=sayur",
     },
     {
       icon: "assets/landing/kategori/buah.png",
       label: "Buah",
-      href: "/catalog",
+      href: "/catalog?category=buah",
     },
     {
       icon: "assets/landing/kategori/protein.png",
       label: "Protein",
-      href: "/catalog",
+      href: "/catalog?category=protein",
     },
     {
       icon: "assets/landing/kategori/sembako.png",
       label: "Sembako",
-      href: "/catalog",
+      href: "/catalog?category=sembako",
     },
     {
       icon: "assets/landing/kategori/bumbu.png",
       label: "Bumbu Dapur",
-      href: "/catalog",
+      href: "/catalog?category=bumbu-dapur",
     },
   ];
 
-  // Data tab list
+  // Data tab list (carousel)
   const tabItems = [
     {
       label: "Semua Kategori",
       icon: "assets/landing/kategori/all.png",
-      href: "/category                      ",
+      href: "/category",
     },
     {
       label: "Produk Terbaru",
       icon: "assets/landing/kategori/new.png",
-      href: "/catalog",
+      href: "/catalog?category=new-product",
     },
     {
       label: "Ibu & Bayi",
       icon: "assets/landing/kategori/baby.png",
-      href: "/catalog",
+      href: "/catalog?category=ibu-bayi",
+    },
+    {
+      label: "Susu & Olahan",
+      icon: "assets/landing/kategori/susu.png",
+      href: "/catalog?category=susu-olahan",
+    },
+    {
+      label: "Siap Saji",
+      icon: "assets/landing/kategori/siap-saji.png",
+      href: "/catalog?category=siap-saji",
     },
   ];
+
+  // Ref dan state untuk slider
+  const sliderRef = useRef(null);
+  const [progress, setProgress] = useState(0);
+
+  // Hilangkan scrollbar dengan CSS
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
+
+  // Update progress bar saat scroll
+  const handleScroll = () => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+    const maxScroll = slider.scrollWidth - slider.clientWidth;
+    const currentScroll = slider.scrollLeft;
+    const percent = maxScroll === 0 ? 0 : currentScroll / maxScroll;
+    setProgress(percent);
+  };
+
+  useEffect(() => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+    slider.addEventListener("scroll", handleScroll);
+    // Set awal ke 0
+    setProgress(0);
+    return () => slider.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="pt-8 px-4 md:px-8">
@@ -60,7 +104,6 @@ const Hero = () => {
               alt="Transaksi Pertama Ditraktir 50rb"
               className="w-full h-auto object-contain rounded-xl shadow-md"
               onError={(e) => {
-                // Fallback jika gambar tidak ditemukan
                 e.target.style.display = "none";
                 e.target.nextSibling.style.display = "flex";
               }}
@@ -109,45 +152,68 @@ const Hero = () => {
                 ))}
               </div>
 
-              {/* Tab List */}
-              <div className="grid grid-cols-3 gap-6 px-6 pt-4">
-                {tabItems.map((tab, index) => (
-                  <a
-                    key={index}
-                    href={tab.href}
-                    className="flex items-center gap-3 w-full bg-[rgba(212,228,150,0.25)] rounded-sm py-3 px-4 hover:shadow-lg transition-shadow cursor-pointer"
-                  >
-                    <div className="w-24 h-8 flex items-center justify-center">
-                      <img
-                        src={tab.icon}
-                        alt={tab.label}
-                        className="w-12 h-12 object-contain"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          e.target.nextSibling.style.display = "flex";
-                        }}
-                      />
-                    </div>
-                    <span className="text-sm text-gray-800 font-bold">
-                      {tab.label}
-                    </span>
-                    {tab.badge && (
-                      <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full ml-2">
-                        {tab.badge}
-                      </span>
-                    )}
-                  </a>
-                ))}
-              </div>
-              {/* Garis Bawah */}
-              <div className="w-[95%] h-1 mx-auto mt-7 rounded-full overflow-hidden flex">
-                {/* 40% hijau */}
+              {/* Tab List - Carousel */}
+              <div className="relative">
                 <div
-                  className="h-full"
-                  style={{ width: "40%", backgroundColor: "#049624" }}
-                ></div>
-                {/* 60% abu-abu */}
-                <div className="h-full flex-1 bg-gray-300"></div>
+                  ref={sliderRef}
+                  className="flex gap-6 px-6 pt-4 overflow-x-auto no-scrollbar"
+                  style={{
+                    scrollBehavior: "smooth",
+                  }}
+                >
+                  {tabItems.map((tab, index) => (
+                    <a
+                      key={index}
+                      href={tab.href}
+                      className="flex items-center gap-3 min-w-[300px] bg-[rgba(212,228,150,0.25)] rounded-sm py-3 px-4 hover:shadow-lg transition-shadow cursor-pointer"
+                      style={{
+                        height: "80px",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      <div className="w-24 h-8 flex items-center justify-center">
+                        <img
+                          src={tab.icon}
+                          alt={tab.label}
+                          className="w-12 h-12 object-contain"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                            e.target.nextSibling.style.display = "flex";
+                          }}
+                        />
+                      </div>
+                      <span className="text-sm text-gray-800 font-bold">
+                        {tab.label}
+                      </span>
+                      {tab.badge && (
+                        <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full ml-2">
+                          {tab.badge}
+                        </span>
+                      )}
+                    </a>
+                  ))}
+                </div>
+                {/* Garis Bawah sebagai indikator progress */}
+                <div className="w-[95%] h-1 mx-auto mt-7 rounded-full overflow-hidden flex">
+                  {/* Progress hijau */}
+                  <div
+                    className="h-full"
+                    style={{
+                      width: `${40 + progress * 60}%`,
+                      backgroundColor: "#049624",
+                      transition: "width 0.2s",
+                    }}
+                  ></div>
+                  {/* Sisa abu-abu */}
+                  <div
+                    className="h-full"
+                    style={{
+                      width: `${60 - progress * 60}%`,
+                      backgroundColor: "#e5e7eb",
+                      transition: "width 0.2s",
+                    }}
+                  ></div>
+                </div>
               </div>
             </div>
           </div>

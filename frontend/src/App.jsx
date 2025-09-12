@@ -36,6 +36,8 @@ import SayurPoinFaq from "./pages/sayur-poin/faq/SayurPoinFaq";
 import SayurPanen from "./pages/sayur-panen/SayurPanen";
 import Login from "./pages/auth/login/Login.jsx";
 import Register from "./pages/auth/register/Register";
+import ProductForm from "./pages/admin/product-form/ProductForm";
+import Products from "./pages/admin/products/ProductList";
 
 function App() {
   return (
@@ -52,7 +54,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
-          path="/product-detail"
+          path="/product/:slug"
           element={
             <Layout>
               <ProductDetail />
@@ -333,6 +335,24 @@ function App() {
           element={
             <Layout>
               <SayurPanen />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/admin/product-form"
+          element={
+            <Layout>
+              <ProductForm />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/admin/products"
+          element={
+            <Layout>
+              <Products />
             </Layout>
           }
         />

@@ -1,60 +1,12 @@
-import React, { useState, useRef } from "react";
-import { Plus, ChevronDown } from "lucide-react";
+import React, { useRef } from "react";
+import { Plus } from "lucide-react";
+import { useLandingProduct } from "./Product.hooks";
+import SayurboxLoading from "@/components/base/SayurBoxLoading";
 
 const ProductSection = () => {
-  const [activeTab, setActiveTab] = useState("latest");
   const scrollRef = useRef(null);
-
-  // Data tabs
-  const tabs = [
-    { id: "latest", label: "Terbaru di Sayurbox" },
-    { id: "choices", label: "Sayurbox's Choices" },
-    { id: "bulk", label: "Beli Banyak Lebih Murah" },
-    { id: "alsoBuy", label: "Beli Ini Juga" },
-  ];
-
-  // Base product template
-  const baseProduct = {
-    image: "assets/landing/products/alpukat.png",
-    badgeTop: "assets/landing/icons/badge-masak.png",
-    badgeLabel: "Best Quality for MASAK!",
-    unit: "1 Pcs, 1 Kg",
-    discount: "84%",
-  };
-
-  // Product names array
-  const productNames = [
-    "Alpukat Mentega",
-    "Alpukat Mentega Premium",
-    "Alpukat Organik",
-    "Alpukat Segar",
-    "Alpukat Import",
-    "Alpukat Lokal",
-    "Alpukat Super",
-    "Alpukat Jumbo",
-    "Alpukat Deluxe",
-    "Alpukat Royal",
-    "Alpukat Gold",
-    "Alpukat Platinum",
-    "Alpukat Diamond",
-    "Alpukat Crystal",
-    "Alpukat Supreme",
-    "Alpukat Ultimate",
-  ];
-
-  // Generate products using loop
-  const products = productNames.map((name, index) => {
-    const basePrice = 2500 + index * 500; // Increment price by 500 each
-    const originalPrice = Math.round(basePrice * 6.25); // Calculate original price
-
-    return {
-      id: index + 1,
-      title: name,
-      currentPrice: `Rp. ${basePrice.toLocaleString()}`,
-      originalPrice: `Rp. ${originalPrice.toLocaleString()}`,
-      ...baseProduct,
-    };
-  });
+  const { products, loading, error, tabs, activeTab, setActiveTab } =
+    useLandingProduct();
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
@@ -106,15 +58,23 @@ const ProductSection = () => {
         <div className="max-w-screen-lg mx-auto">
           <section className="w-full bg-white">
             <div className="relative">
-              <div
-                ref={scrollRef}
-                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto scroll-smooth custom-scrollbar"
-                style={{ maxHeight: "960px" }}
-              >
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
+              {loading ? (
+                <SayurboxLoading />
+              ) : error ? (
+                <div className="text-center py-12 text-red-600 font-bold">
+                  {error}
+                </div>
+              ) : (
+                <div
+                  ref={scrollRef}
+                  className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto scroll-smooth custom-scrollbar"
+                  style={{ maxHeight: "960px" }}
+                >
+                  {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              )}
             </div>
           </section>
         </div>
@@ -124,7 +84,7 @@ const ProductSection = () => {
 };
 
 const ProductCard = ({ product }) => (
-  <a href="/product-detail" className="cursor-pointer">
+  <a href={`/product/${product.slug}`} className="cursor-pointer">
     <div className="flex-shrink-0">
       <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
         {/* Image Area */}
@@ -166,9 +126,11 @@ const ProductCard = ({ product }) => (
           </div>
 
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
-              {product.discount}
-            </span>
+            {product.discount && (
+              <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
+                {product.discount}
+              </span>
+            )}
             <span className="line-through text-gray-400 text-xs">
               {product.originalPrice}
             </span>

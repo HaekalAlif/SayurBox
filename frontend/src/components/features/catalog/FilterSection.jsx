@@ -1,31 +1,129 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { getCategories } from "@/service/categories/category";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+// Mapping slug ke judul dan subjudul
+const categoryInfo = {
+  "new-product": {
+    title: "Produk Terbaru",
+    subtitle: "Temukan produk terbaru dari Sayurbox",
+  },
+  "sayur": {
+    title: "Sayur",
+    subtitle: "Aneka sayuran segar pilihan",
+  },
+  "buah": {
+    title: "Buah",
+    subtitle: "Buah-buahan segar setiap hari",
+  },
+  "protein": {
+    title: "Protein",
+    subtitle: "Sumber protein terbaik untuk keluarga",
+  },
+  "sembako": {
+    title: "Sembako",
+    subtitle: "Kebutuhan pokok harian Anda",
+  },
+  "bumbu-dapur": {
+    title: "Bumbu Dapur",
+    subtitle: "Bumbu dapur lengkap untuk masakan lezat",
+  },
+  "susu-olahan": {
+    title: "Susu & Olahan",
+    subtitle: "Produk susu dan olahan berkualitas",
+  },
+  "ibu-bayi": {
+    title: "Ibu & Bayi",
+    subtitle: "Pilihan terbaik untuk ibu dan bayi",
+  },
+  "sarapan": {
+    title: "Sarapan",
+    subtitle: "Menu sarapan sehat dan praktis",
+  },
+  "makanan-ringan": {
+    title: "Makanan Ringan",
+    subtitle: "Cemilan enak untuk segala suasana",
+  },
+  "minuman-ringan": {
+    title: "Minuman Ringan",
+    subtitle: "Minuman segar pelepas dahaga",
+  },
+  "siap-saji": {
+    title: "Siap Saji",
+    subtitle: "Makanan siap saji praktis",
+  },
+  "kesehatan": {
+    title: "Kesehatan",
+    subtitle: "Produk kesehatan untuk keluarga",
+  },
+  "perawatan-diri": {
+    title: "Perawatan Diri",
+    subtitle: "Perawatan diri dan kecantikan",
+  },
+  "perawatan-rumah": {
+    title: "Perawatan Rumah",
+    subtitle: "Produk perawatan rumah tangga",
+  },
+  "perlengkapan-hewan": {
+    title: "Perlengkapan Hewan",
+    subtitle: "Kebutuhan hewan peliharaan",
+  },
+  "21-category": {
+    title: "21+ Category",
+    subtitle: "Produk khusus dewasa",
+  },
+};
 
 const FilterSection = () => {
-  const [selectedCategory, setSelectedCategory] = useState("Protein");
+  const [categories, setCategories] = useState([]);
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("Paling Relevan");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
 
-  const categories = [
-    "Protein",
-    "Paket Masak",
-    "Sayuran Siap Saji",
-    "Jus Segar",
-    "Bumbu Masak Praktis",
-    "Makanan & Minuman Ringan",
-    "Kebutuhan Dapur",
-    "Pelengkap Makanan",
-  ];
-
   const filterOptions = ["Harga Termurah", "Harga Termahal", "Potongan Diskon"];
-
   const sortOptions = ["Semua", "Produk Terlaris"];
+
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    // Fetch categories from backend
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories();
+        setCategories(response.data);
+      } catch (err) {
+        setCategories([]);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    // Set selected category from URL query param
+    const categorySlug = searchParams.get("category");
+    if (categorySlug) setSelectedCategorySlug(categorySlug);
+  }, [searchParams]);
 
   const handleBackClick = () => {
     window.history.back();
   };
+
+  const handleCategoryClick = (slug) => {
+    setSelectedCategorySlug(slug);
+    // Update URL query param
+    navigate(`/catalog?category=${slug}`);
+  };
+
+  // Ambil info judul dan subjudul sesuai kategori
+  const info =
+    categoryInfo[selectedCategorySlug] || {
+      title: "By Sayurbox",
+      subtitle: "Sayur & Buah",
+    };
 
   return (
     <div className="flex">
@@ -43,25 +141,23 @@ const FilterSection = () => {
       <div className="w-60 bg-white min-h-screen ">
         {/* Category List */}
         <div className="mt-8 ml-2">
-          <h1 className="text-2xl font-bold mb-6">By Sayurbox</h1>
+          <h1 className="text-2xl font-bold mb-6">{info.title}</h1>
           <div className="flex space-x-2">
             <ChevronRight className="w-5 h-5 mt-0.5 ml-2" />
-            <h3 className="text-md font-bold mb-4">Sayur & Buah</h3>
+            <h3 className="text-md font-bold mb-4">{info.subtitle}</h3>
           </div>
           <div className="space-y-2">
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
+                key={category.slug}
+                onClick={() => handleCategoryClick(category.slug)}
                 className={`w-full text-left py-2 px-3 rounded-md transition-colors cursor-pointer ${
-                  selectedCategory === category
+                  selectedCategorySlug === category.slug
                     ? "text-green-700 font-bold"
-                    : index === 0
-                    ? "text-gray-900 hover:bg-gray-50"
                     : "text-gray-700 hover:bg-gray-50"
                 }`}
               >
-                {category}
+                {category.name}
               </button>
             ))}
           </div>

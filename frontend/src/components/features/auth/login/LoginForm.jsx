@@ -13,7 +13,7 @@ const LoginForm = () => {
     const result = await handleLogin({ emailOrPhone, password });
     if (result) {
       if (result.role === "admin" || result.role === 1) {
-        navigate("/admin");
+        navigate("/admin/products");
       } else {
         navigate("/");
       }

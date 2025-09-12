@@ -30,69 +30,89 @@ const CategoryList = () => {
     {
       name: "New Product",
       icon: "assets/category/new-product.png",
-      href: "/catalog",
+      href: "/catalog?category=new-product",
     },
-    { name: "Sayur", icon: "assets/category/sayur.png", href: "/catalog" },
-    { name: "Buah", icon: "assets/category/buah.png", href: "/catalog" },
-    { name: "Protein", icon: "assets/category/protein.png", href: "/catalog" },
-    { name: "Sembako", icon: "assets/category/sembako.png", href: "/catalog" },
+    {
+      name: "Sayur",
+      icon: "assets/category/sayur.png",
+      href: "/catalog?category=sayur",
+    },
+    {
+      name: "Buah",
+      icon: "assets/category/buah.png",
+      href: "/catalog?category=buah",
+    },
+    {
+      name: "Protein",
+      icon: "assets/category/protein.png",
+      href: "/catalog?category=protein",
+    },
+    {
+      name: "Sembako",
+      icon: "assets/category/sembako.png",
+      href: "/catalog?category=sembako",
+    },
     {
       name: "Bumbu Dapur",
       icon: "assets/category/bumbu.png",
-      href: "/catalog",
+      href: "/catalog?category=bumbu-dapur",
     },
     {
       name: "Susu & Olahan",
       icon: "assets/category/susu.png",
-      href: "/catalog",
+      href: "/catalog?category=susu-olahan",
     },
     {
       name: "Ibu & Bayi",
       icon: "assets/category/ibu-bayi.png",
-      href: "/catalog",
+      href: "/catalog?category=ibu-bayi",
     },
-    { name: "Sarapan", icon: "assets/category/sarapan.png", href: "/catalog" },
+    {
+      name: "Sarapan",
+      icon: "assets/category/sarapan.png",
+      href: "/catalog?category=sarapan",
+    },
     {
       name: "Makanan Ringan",
       icon: "assets/category/snack.png",
-      href: "/catalog",
+      href: "/catalog?category=makanan-ringan",
     },
     {
       name: "Minuman Ringan",
       icon: "assets/category/drink.png",
-      href: "/catalog",
+      href: "/catalog?category=minuman-ringan",
     },
     {
       name: "Siap Saji",
       icon: "assets/category/siap-saji.png",
-      href: "/catalog",
+      href: "/catalog?category=siap-saji",
     },
     {
       name: "Kesehatan",
       icon: "assets/category/kesehatan.png",
-      href: "/catalog",
+      href: "/catalog?category=kesehatan",
     },
     {
       name: "Perawatan Diri",
       icon: "assets/category/perawatan-diri.png",
-      href: "/catalog",
+      href: "/catalog?category=perawatan-diri",
     },
     {
       name: "Perawatan Rumah",
       icon: "assets/category/perawatan-rumah.png",
-      href: "/catalog",
+      href: "/catalog?category=perawatan-rumah",
     },
     {
       name: "Perlengkapan Hewan",
       icon: "assets/category/hewan.png",
-      href: "/catalog",
+      href: "/catalog?category=perlengkapan-hewan",
     },
     {
       name: "21+ Category",
       icon: "assets/category/kategori-dewasa.png",
-      href: "/catalog",
+      href: "/catalog?category=21-category",
     },
-  ];
+  ]; 
 
   const handleBackClick = () => {
     window.history.back();

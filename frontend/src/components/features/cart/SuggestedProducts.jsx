@@ -3,11 +3,8 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 
 const SuggestedProducts = () => {
   const scrollRef1 = useRef(null);
-  const scrollRef2 = useRef(null);
   const [showLeft1, setShowLeft1] = useState(false);
   const [showRight1, setShowRight1] = useState(false);
-  const [showLeft2, setShowLeft2] = useState(false);
-  const [showRight2, setShowRight2] = useState(false);
 
   const fruitProducts = [
     {
@@ -121,18 +118,6 @@ const SuggestedProducts = () => {
         <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
           {/* Image Area */}
           <div className="relative w-full h-46">
-            {/* Badge Top */}
-            <div className="absolute top-2 left-2 z-10">
-              <img
-                src={product.badgeTop}
-                alt={product.badgeLabel}
-                className="w-16 h-6 object-contain"
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
-              />
-            </div>
-
             {/* Product Image */}
             <img
               src={product.image}

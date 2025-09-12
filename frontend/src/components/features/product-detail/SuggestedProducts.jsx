@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { useSuggestedProducts } from "./SuggestedProducts.hooks";
+import SayurboxLoading from "@/components/base/SayurBoxLoading";
 
 const SuggestedProducts = () => {
   const scrollRef1 = useRef(null);
@@ -9,145 +11,19 @@ const SuggestedProducts = () => {
   const [showLeft2, setShowLeft2] = useState(false);
   const [showRight2, setShowRight2] = useState(false);
 
-  const fruitProducts = [
-    {
-      id: 1,
-      title: "Alpukat Mentega",
-      price: "Rp. 2.500",
-      originalPrice: "Rp. 15.625",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 2,
-      title: "Alpukat Mentega Premium",
-      price: "Rp. 3.000",
-      originalPrice: "Rp. 18.750",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 3,
-      title: "Alpukat Organik",
-      price: "Rp. 4.500",
-      originalPrice: "Rp. 28.125",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 4,
-      title: "Alpukat Segar",
-      price: "Rp. 2.200",
-      originalPrice: "Rp. 13.750",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 5,
-      title: "Alpukat Import",
-      price: "Rp. 5.500",
-      originalPrice: "Rp. 34.375",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 6,
-      title: "Alpukat Import 2",
-      price: "Rp. 5.500",
-      originalPrice: "Rp. 34.375",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-  ];
+  // Ambil produk dari hooks (API, random 10)
+  const {
+    products: fruitProducts,
+    loading: loading1,
+    error: error1,
+  } = useSuggestedProducts();
+  const {
+    products: relatedProducts,
+    loading: loading2,
+    error: error2,
+  } = useSuggestedProducts();
 
-  const relatedProducts = [
-    {
-      id: 7,
-      title: "Alpukat Mentega Deluxe",
-      price: "Rp. 6.000",
-      originalPrice: "Rp. 37.500",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 8,
-      title: "Alpukat Royal",
-      price: "Rp. 7.500",
-      originalPrice: "Rp. 46.875",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 9,
-      title: "Alpukat Gold",
-      price: "Rp. 8.000",
-      originalPrice: "Rp. 50.000",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 10,
-      title: "Alpukat Platinum",
-      price: "Rp. 9.000",
-      originalPrice: "Rp. 56.250",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 11,
-      title: "Alpukat Diamond",
-      price: "Rp. 10.000",
-      originalPrice: "Rp. 62.500",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 12,
-      title: "Alpukat Diamond 2",
-      price: "Rp. 10.000",
-      originalPrice: "Rp. 62.500",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-  ];
-
-  // EXACT SAME LOGIC AS SPECIALOFFER - Section 1
+  // Scroll logic section 1
   const checkScroll1 = () => {
     const el = scrollRef1.current;
     if (!el) return;
@@ -155,7 +31,7 @@ const SuggestedProducts = () => {
     setShowRight1(el.scrollLeft + el.clientWidth < el.scrollWidth);
   };
 
-  // EXACT SAME LOGIC AS SPECIALOFFER - Section 2
+  // Scroll logic section 2
   const checkScroll2 = () => {
     const el = scrollRef2.current;
     if (!el) return;
@@ -183,7 +59,6 @@ const SuggestedProducts = () => {
     };
   }, []);
 
-  // EXACT SAME SCROLL FUNCTION AS SPECIALOFFER
   const scrollBy1 = (amount) => {
     scrollRef1.current.scrollBy({ left: amount, behavior: "smooth" });
   };
@@ -193,7 +68,11 @@ const SuggestedProducts = () => {
   };
 
   const ProductCard = ({ product }) => (
-    <a href="/product-detail">
+    <a
+      href={`/product/${product.slug}`}
+      className="cursor-pointer"
+      key={product.id}
+    >
       <div className="flex-shrink-0">
         <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
           {/* Image Area */}
@@ -240,9 +119,11 @@ const SuggestedProducts = () => {
             </div>
 
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
-                {product.discount}
-              </span>
+              {product.discount && (
+                <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
+                  {product.discount}
+                </span>
+              )}
               <span className="line-through text-gray-400 text-xs">
                 {product.originalPrice}
               </span>
@@ -272,7 +153,7 @@ const SuggestedProducts = () => {
             {showLeft1 && (
               <button
                 onClick={() => scrollBy1(-300)}
-                className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition"
+                className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer"
               >
                 <ChevronLeft className="w-6 h-6 text-white" />
               </button>
@@ -282,7 +163,7 @@ const SuggestedProducts = () => {
             {showRight1 && (
               <button
                 onClick={() => scrollBy1(300)}
-                className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition"
+                className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer"
               >
                 <ChevronRight className="w-6 h-6 text-white" />
               </button>
@@ -292,9 +173,17 @@ const SuggestedProducts = () => {
               className="flex items-center gap-4 overflow-x-auto px-2 h-88 md:px-0 scroll-smooth scrollbar-hide"
               ref={scrollRef1}
             >
-              {fruitProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              {loading1 ? (
+                <SayurboxLoading />
+              ) : error1 ? (
+                <div className="text-center py-12 text-red-600 font-bold">
+                  {error1}
+                </div>
+              ) : (
+                fruitProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -330,15 +219,23 @@ const SuggestedProducts = () => {
               className="flex items-center gap-4 overflow-x-auto h-88 px-2 md:px-0 scroll-smooth scrollbar-hide"
               ref={scrollRef2}
             >
-              {relatedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              {loading2 ? (
+                <SayurboxLoading />
+              ) : error2 ? (
+                <div className="text-center py-12 text-red-600 font-bold">
+                  {error2}
+                </div>
+              ) : (
+                relatedProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Custom CSS untuk hide scrollbar - SAME AS SPECIALOFFER */}
+      {/* Custom CSS untuk hide scrollbar */}
       <style jsx>{`
         .scrollbar-hide {
           -ms-overflow-style: none;
