@@ -22,6 +22,7 @@ export const useProductDetail = () => {
 
   // Variants based on product unit
   const [variants, setVariants] = useState([]);
+  const [maxQuantity, setMaxQuantity] = useState(11); // default
 
   // Format currency
   const formatCurrency = (price) => {
@@ -82,6 +83,7 @@ export const useProductDetail = () => {
               ? "Stok Terbatas"
               : "Tidak Tersedia",
           category: [productData.category.name],
+          stock: productData.stock ?? 0, // tambahkan stock
           images: {
             main: mainImageUrl,
             thumbnails: thumbnails,
@@ -103,6 +105,9 @@ export const useProductDetail = () => {
 
         setVariants(defaultVariants);
         setSelectedVariant(defaultVariants[0]);
+
+        // Set maksimal quantity dari stock
+        setMaxQuantity(productData.stock ?? 11);
 
         setLoading(false);
       } catch (err) {
@@ -130,7 +135,7 @@ export const useProductDetail = () => {
   };
 
   const handleQuantityChange = (type) => {
-    if (type === "increase" && quantity < 11) {
+    if (type === "increase" && quantity < maxQuantity) {
       setQuantity(quantity + 1);
     } else if (type === "decrease" && quantity > 1) {
       setQuantity(quantity - 1);
@@ -139,15 +144,6 @@ export const useProductDetail = () => {
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
-  };
-
-  const handleAddToCart = () => {
-    setToastMessage("Fitur keranjang belanja akan segera hadir!");
-    setShowToast(true);
-
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
   };
 
   const handleChatSayurbox = () => {
@@ -166,6 +162,7 @@ export const useProductDetail = () => {
     selectedImageIndex,
     selectedVariant,
     quantity,
+    maxQuantity,
     showFullDescription,
     showToast,
     toastMessage,
@@ -175,7 +172,6 @@ export const useProductDetail = () => {
     handleVariantSelect,
     handleQuantityChange,
     toggleDescription,
-    handleAddToCart,
     handleChatSayurbox,
     setShowToast,
   };

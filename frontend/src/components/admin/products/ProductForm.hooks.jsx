@@ -23,10 +23,10 @@ export const useProductForm = () => {
     name: "",
     short_description: "",
     description: "",
-    price: "",
     original_price: "",
     discount_percent: "",
     availability: "available",
+    stock: "",
     images: [],
     unit: "",
   });
@@ -61,10 +61,10 @@ export const useProductForm = () => {
           name: product.name,
           short_description: product.short_description,
           description: product.description,
-          price: product.price,
           original_price: product.original_price,
           discount_percent: product.discount_percent || "",
           availability: product.availability,
+          stock: product.stock ?? "",
           images: [],
           unit: product.unit,
         });
@@ -136,18 +136,25 @@ export const useProductForm = () => {
     setError(null);
 
     try {
-      // Kirim images sebagai images[] di FormData
+      // Hitung price dari original_price dan discount_percent
+      const originalPrice = parseFloat(formData.original_price);
+      const discountPercent = formData.discount_percent
+        ? parseInt(formData.discount_percent)
+        : 0;
+      const price =
+        discountPercent > 0
+          ? Math.round(originalPrice * (1 - discountPercent / 100))
+          : originalPrice;
+
       const dataToSubmit = {
         ...formData,
-        price: parseFloat(formData.price),
-        original_price: parseFloat(formData.original_price),
-        discount_percent: formData.discount_percent
-          ? parseInt(formData.discount_percent)
-          : null,
+        price,
+        original_price: originalPrice,
+        discount_percent: discountPercent,
         category_id: parseInt(formData.category_id),
+        stock: parseInt(formData.stock),
       };
 
-      // Service sudah handle images[] jika array file
       if (isEditMode) {
         await updateProduct(id, dataToSubmit);
       } else {
@@ -170,6 +177,7 @@ export const useProductForm = () => {
     formData,
     imagePreviews,
     handleChange,
+    handleRemoveImage,
     handleSubmit,
     navigate,
   };

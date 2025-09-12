@@ -1,191 +1,91 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { ChevronLeft } from "lucide-react";
+import { useCartItem } from "./CartItem.hooks";
+import { useAuth } from "@/context/AuthContext";
+import SayurboxLoading from "@/components/base/SayurBoxLoading";
 
 const CartItem = () => {
-  const [selectedDeliveryTime, setSelectedDeliveryTime] = useState("today");
-  const [selectAll, setSelectAll] = useState(false);
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      title: "Alpukat Mentega",
-      variant: "1 Pcs",
-      price: "Rp. 2.500",
-      originalPrice: "Rp. 15.625",
-      discount: "84%",
-      quantity: 1,
-      minQuantity: 1,
-      maxQuantity: 10,
-      isSelected: true,
-      image: "assets/products/produk-1.png",
-    },
-    {
-      id: 2,
-      title: "Tomat Segar",
-      variant: "500 gr",
-      price: "Rp. 8.000",
-      originalPrice: "Rp. 12.000",
-      discount: "33%",
-      quantity: 2,
-      minQuantity: 1,
-      maxQuantity: 10,
-      isSelected: false,
-      image: "assets/products/produk-1.png",
-    },
-    {
-      id: 3,
-      title: "Bawang Merah",
-      variant: "250 gr",
-      price: "Rp. 7.000",
-      originalPrice: "Rp. 9.000",
-      discount: "22%",
-      quantity: 1,
-      minQuantity: 1,
-      maxQuantity: 10,
-      isSelected: false,
-      image: "assets/products/produk-1.png",
-    },
-  ]);
+  const { user } = useAuth();
+  const userId = user?.id;
 
-  const deliveryOptions = [
-    {
-      id: "today",
-      date: "6 April 2025",
-      label: "Hari Ini",
-      description: "Semua barang tersedia",
-      time: "s/d pukul 12.00",
-    },
-    {
-      id: "tomorrow",
-      label: "Besok",
-      date: "7 April 2025",
-      description: "Semua barang tersedia",
-      time: "s/d pukul 18.00",
-    },
-  ];
-
-  const handleSelectAll = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
-    setProducts(
-      products.map((product) => ({
-        ...product,
-        isSelected: newSelectAll,
-      }))
-    );
-  };
-
-  const handleProductSelect = (productId) => {
-    setProducts(
-      products.map((product) =>
-        product.id === productId
-          ? { ...product, isSelected: !product.isSelected }
-          : product
-      )
-    );
-  };
-
-  const handleQuantityChange = (productId, newQuantity) => {
-    setProducts(
-      products.map((product) =>
-        product.id === productId
-          ? { ...product, quantity: newQuantity }
-          : product
-      )
-    );
-  };
-
-  const handleDeleteProduct = (productId) => {
-    setProducts(products.filter((product) => product.id !== productId));
-  };
-
-  const handleQuantityDecrease = (product) => {
-    if (product.quantity > product.minQuantity) {
-      handleQuantityChange(product.id, product.quantity - 1);
-    }
-  };
-
-  const handleQuantityIncrease = (product) => {
-    if (product.quantity < product.maxQuantity) {
-      handleQuantityChange(product.id, product.quantity + 1);
-    }
-  };
-
-  const handleBackClick = () => {
-    window.history.back();
-  };
-
-  const selectedProducts = products.filter((product) => product.isSelected);
-  const totalItems = selectedProducts.length;
+  const {
+    selectedDeliveryTime,
+    setSelectedDeliveryTime,
+    selectAll,
+    products,
+    deliveryOptions,
+    handleSelectAll,
+    handleProductSelect,
+    handleQuantityChange,
+    handleDeleteProduct,
+    handleQuantityDecrease,
+    handleQuantityIncrease,
+    handleBackClick,
+    selectedProducts,
+    totalItems,
+    carouselRef,
+    scrollValue,
+    handleScroll,
+    handleCheckout,
+    loading,
+    totalPrice,
+  } = useCartItem(userId);
 
   // PromoProductItem component
-  const PromoProductItem = ({ index }) => {
-    const [quantity, setQuantity] = useState(1);
-    const [isAdded, setIsAdded] = useState(false);
-
-    const handleAddClick = () => {
-      setIsAdded(true);
-      setQuantity(1);
-    };
-
-    return (
-      <div
-        key={index}
-        className="min-w-[300px] bg-white rounded-lg border border-green-200 shadow-sm p-4 snap-center flex-shrink-0 pointer-events-auto"
-        onMouseDown={(e) => e.preventDefault()}
-      >
-        <div className="flex items-center justify-between">
-          <div className="w-26 h-20 rounded-md overflow-hidden bg-red-100">
-            <img
-              src="assets/cart/marjan.jpg"
-              alt="Product"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="flex-1 px-4">
-            <h4 className="text-sm font-semibold text-gray-900 leading-snug">
-              Marjan Sirup <br /> Cocopandan
-            </h4>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs font-bold bg-red-500 text-white px-2 py-0.5 rounded">
-                43%
-              </span>
-              <span className="text-xs text-gray-400 line-through">
-                Rp. 25.700
-              </span>
-            </div>
-            <p className="font-bold text-gray-900 text-base mt-1">Rp. 14.900</p>
-          </div>
-          <button
-            onClick={handleAddClick}
-            className="w-10 h-10 -mt-12 rounded-full bg-green-600 text-white flex items-center justify-center cursor-pointer hover:bg-green-700 transition-all duration-200"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-          </button>
+  const PromoProductItem = ({ index }) => (
+    <div
+      key={index}
+      className="min-w-[300px] bg-white rounded-lg border border-green-200 shadow-sm p-4 snap-center flex-shrink-0 pointer-events-auto"
+      onMouseDown={(e) => e.preventDefault()}
+    >
+      <div className="flex items-center justify-between">
+        <div className="w-26 h-20 rounded-md overflow-hidden bg-red-100">
+          <img
+            src="assets/cart/marjan.jpg"
+            alt="Product"
+            className="w-full h-full object-cover"
+          />
         </div>
-
-        <p className="text-[11px] max-w-[300px] text-gray-600 mt-3 px-4">
-          Tambah{" "}
-          <strong>
-            {" "}
-            49rb Proteins, Vegetables, Sayurbox Kitchen, atau Fruits
-          </strong>
-        </p>
+        <div className="flex-1 px-4">
+          <h4 className="text-sm font-semibold text-gray-900 leading-snug">
+            Marjan Sirup <br /> Cocopandan
+          </h4>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs font-bold bg-red-500 text-white px-2 py-0.5 rounded">
+              43%
+            </span>
+            <span className="text-xs text-gray-400 line-through">
+              Rp. 25.700
+            </span>
+          </div>
+          <p className="font-bold text-gray-900 text-base mt-1">Rp. 14.900</p>
+        </div>
+        <button className="w-10 h-10 -mt-12 rounded-full bg-green-600 text-white flex items-center justify-center cursor-pointer hover:bg-green-700 transition-all duration-200">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+        </button>
       </div>
-    );
-  };
+      <p className="text-[11px] max-w-[300px] text-gray-600 mt-3 px-4">
+        Tambah{" "}
+        <strong>
+          {" "}
+          49rb Proteins, Vegetables, Sayurbox Kitchen, atau Fruits
+        </strong>
+      </p>
+    </div>
+  );
 
   const ProductItem = ({ product }) => (
     <div
@@ -207,7 +107,7 @@ const CartItem = () => {
         <div className="w-28 h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex-shrink-0 overflow-hidden shadow-sm">
           {product.image ? (
             <img
-              src={product.image}
+              src={`${import.meta.env.VITE_API_BASE_URL}${product.image}`}
               alt={product.title}
               className="w-full h-full object-cover"
             />
@@ -227,7 +127,6 @@ const CartItem = () => {
             <p className="text-md text-gray-600 font-medium mb-2">
               {product.variant}
             </p>
-
             {/* Price */}
             <div className="flex items-center space-x-2">
               <span className="font-bold text-gray-900 text-lg">
@@ -247,10 +146,9 @@ const CartItem = () => {
               )}
             </div>
           </div>
-
           {/* Action Buttons (kanan) */}
           <div className="flex flex-row items-center gap-4 mt-14 ml-10">
-            {/* Delete Button (sejajar dengan quantity) */}
+            {/* Delete Button */}
             <button
               onClick={() => handleDeleteProduct(product.id)}
               className="text-gray-400 hover:text-red-500  p-2 rounded-full transition-all duration-200"
@@ -262,13 +160,12 @@ const CartItem = () => {
                 className="w-6 h-8 cursor-pointer"
               />
             </button>
-
             {/* Quantity */}
             <div className="flex items-center bg-white border-2 border-gray-200 rounded-full overflow-hidden shadow-sm">
               <button
                 onClick={() => handleQuantityDecrease(product)}
                 disabled={product.quantity <= product.minQuantity}
-                className="group px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+                className="group px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer"
               >
                 <div className="w-10 h-10 flex items-center justify-center rounded-full group-active:bg-green-600">
                   <img
@@ -278,17 +175,15 @@ const CartItem = () => {
                   />
                 </div>
               </button>
-
               <div className="py-2 bg-gray-50">
                 <span className="text-lg font-semibold text-gray-900 min-w-[20px] text-center block">
                   {product.quantity}
                 </span>
               </div>
-
               <button
                 onClick={() => handleQuantityIncrease(product)}
                 disabled={product.quantity >= product.maxQuantity}
-                className="group px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+                className="group px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer"
               >
                 <div className="w-10 h-10 flex items-center justify-center rounded-full group-active:bg-green-600">
                   <img
@@ -305,25 +200,11 @@ const CartItem = () => {
     </div>
   );
 
-  // Carousel logic
-  const carouselRef = useRef(null);
-  const [scrollValue, setScrollValue] = useState(0.25);
+  console.log(products);
 
-  const handleScroll = () => {
-    const container = carouselRef.current;
-    if (!container) return;
-    const { scrollLeft, scrollWidth, clientWidth } = container;
-    const scrollPercentage = scrollLeft / (scrollWidth - clientWidth);
-    setScrollValue(0.25 + scrollPercentage * 0.75);
-  };
-
-  useEffect(() => {
-    handleScroll();
-  }, []);
-
-  const handleCheckout = () => {
-    window.location.href = "/checkout";
-  };
+  if (loading) {
+    return <SayurboxLoading />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -336,16 +217,14 @@ const CartItem = () => {
           <ChevronLeft className="w-10 h-10 ml-1" />
         </button>
       </div>
-
       <div className="mt-10">
         {/* Header Section */}
         <div className="font-bold text-3xl text-black pl-46">Keranjang</div>
-
         {/* 2-Column Grid Layout */}
         <div className="px-16 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-          {/* Left Column - Takes 2/3 of space */}
+          {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Enhanced Delivery Time Selection */}
+            {/* Delivery Time Selection */}
             <div
               style={{ backgroundColor: "#D4E496" }}
               className="p-8 rounded-lg"
@@ -353,7 +232,6 @@ const CartItem = () => {
               <h2 className="font-bold text-gray-900 mb-4 text-lg">
                 Pilih Waktu Pengiriman
               </h2>
-
               <div className="grid grid-cols-2 max-w-md">
                 {deliveryOptions.map((option) => (
                   <div
@@ -381,8 +259,7 @@ const CartItem = () => {
                 ))}
               </div>
             </div>
-
-            {/* Enhanced Select All - Hide when cart is empty */}
+            {/* Select All */}
             {products.length > 0 && (
               <div
                 className="mt-4 p-6 border-b border-gray-200"
@@ -397,7 +274,6 @@ const CartItem = () => {
                       className="custom-checkbox w-10 h-10 appearance-none rounded border-2 border-green-500 bg-white checked:bg-green-500 checked:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
                     />
                   </label>
-
                   <span className="font-bold text-gray-900">Pilih Semua</span>
                   <span className="text-gray-500 text-md font-medium">
                     ({products.length})
@@ -405,8 +281,7 @@ const CartItem = () => {
                 </div>
               </div>
             )}
-
-            {/* Enhanced Product List */}
+            {/* Product List */}
             {products.length === 0 ? (
               <div className="space-y-4">
                 <div className="flex flex-col items-center justify-center">
@@ -440,15 +315,12 @@ const CartItem = () => {
                 ))}
               </div>
             )}
-
+            {/* Promo Carousel */}
             <div className="mt-6 p-4 bg-[#D4E496] rounded-lg border border-orange-200">
               <h3 className="px-4 font-bold text-gray-900 mb-4 text-lg">
                 Ayo Tebus Harga WOW!
               </h3>
-
-              {/* Carousel Wrapper */}
               <div className="w-full px-4">
-                {/* Carousel Card */}
                 <div
                   ref={carouselRef}
                   onScroll={handleScroll}
@@ -463,8 +335,6 @@ const CartItem = () => {
                     <PromoProductItem key={i} index={i} />
                   ))}
                 </div>
-
-                {/* Progress bar only, no slider */}
                 <div className="mt-4 relative h-3">
                   <div className="absolute top-1 left-0 w-full h-2 bg-gray-200 rounded-full" />
                   <div
@@ -475,12 +345,11 @@ const CartItem = () => {
               </div>
             </div>
           </div>
-
-          {/* Right Column - Enhanced Cart Summary */}
+          {/* Right Column - Cart Summary */}
           <div className="lg:col-span-1">
             <div>
               <div className="py-5 px-8 rounded-xl border border-2 border-gray-200 w-full max-w-sm mx-auto lg:mx-0">
-                {/* Gratis Ongkir Highlight */}
+                {/* Gratis Ongkir */}
                 <div
                   className="flex items-center space-x-3 mb-4 p-3 bg-white rounded-lg border border-green-200"
                   style={{ backgroundColor: "#B1E9AB99" }}
@@ -497,15 +366,16 @@ const CartItem = () => {
                     </p>
                   </div>
                 </div>
-
                 {/* Total */}
                 <div className="flex items-center py-3 ">
                   <span className="font-bold text-gray-900 text-lg">
-                    Total : {products.length === 0 ? "Rp.-" : "Rp. 2.025"}
+                    Total :{" "}
+                    {products.length === 0 || totalItems === 0
+                      ? "Rp.-"
+                      : `Rp. ${Number(totalPrice).toLocaleString("id-ID")}`}
                   </span>
                 </div>
-
-                {/* Points - Hide when cart is empty */}
+                {/* Points */}
                 {products.length > 0 && (
                   <div className="mb-4">
                     <div className="flex items-center text-sm">
@@ -516,8 +386,7 @@ const CartItem = () => {
                     </div>
                   </div>
                 )}
-
-                {/* XP - Hide when cart is empty */}
+                {/* XP */}
                 {products.length > 0 && (
                   <div className="mb-6">
                     <div className="flex items-center text-sm">
@@ -526,10 +395,8 @@ const CartItem = () => {
                     </div>
                   </div>
                 )}
-
-                {/* Add margin bottom when cart is empty to maintain spacing */}
+                {/* Spacing */}
                 {products.length === 0 && <div className="mb-6"></div>}
-
                 {/* Checkout Button */}
                 <button
                   className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-sm font-semibold text-lg transition-all duration-200 shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"

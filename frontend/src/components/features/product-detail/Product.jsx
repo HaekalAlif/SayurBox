@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -9,6 +9,10 @@ import {
 } from "lucide-react";
 import { useProductDetail } from "./Product.hooks";
 import SayurboxLoading from "../../base/SayurBoxLoading";
+import { useAuth } from "@/context/AuthContext";
+import { getCart, createCart } from "@/service/cart/cart";
+import { addCartItem } from "@/service/cart/cartItem";
+import { useCartItem } from "@/components/features/cart/CartItem.hooks";
 
 const Product = () => {
   const {
@@ -19,18 +23,67 @@ const Product = () => {
     selectedVariant,
     quantity,
     showFullDescription,
-    showToast,
-    toastMessage,
     variants,
     handleBackClick,
     handleThumbnailClick,
     handleVariantSelect,
     handleQuantityChange,
     toggleDescription,
-    handleAddToCart,
     handleChatSayurbox,
-    setShowToast,
   } = useProductDetail();
+
+  const { user } = useAuth();
+  const userId = user?.id;
+  const { isProductInCart } = useCartItem(userId);
+
+  const [cartId, setCartId] = useState(null);
+  const [addingToCart, setAddingToCart] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  // Ambil cart id user (sekali saja)
+  useEffect(() => {
+    const fetchCartId = async () => {
+      if (!userId) return;
+      try {
+        const res = await getCart(userId);
+        if (res.data && res.data.id) {
+          setCartId(res.data.id);
+        } else {
+          const newCart = await createCart(userId);
+          setCartId(newCart.data.id);
+        }
+      } catch {
+        const newCart = await createCart(userId);
+        setCartId(newCart.data.id);
+      }
+    };
+    fetchCartId();
+  }, [userId]);
+
+  // Handle tambah ke cart
+  const handleAddToCart = async () => {
+    if (!cartId || !product?.id) return;
+    if (isProductInCart(product.id)) {
+      setToastMessage("Produk sudah ada di keranjang!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+      return;
+    }
+    setAddingToCart(true);
+    try {
+      await addCartItem(cartId, product.id, quantity);
+      setToastMessage("Berhasil menambahkan ke keranjang!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+    } catch (err) {
+      setToastMessage("Gagal menambahkan ke keranjang!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+    } finally {
+      setAddingToCart(false);
+    }
+  };
 
   if (loading) {
     return <SayurboxLoading />;
@@ -57,8 +110,6 @@ const Product = () => {
     return null;
   }
 
-  // Konstruksi array thumbnails jika ada lebih dari satu gambar
-  // Untuk saat ini hanya ada satu gambar, tapi implementasi ini memungkinkan pengembangan
   const images = {
     main: product.images.main,
     thumbnails: product.images.thumbnails || [],
@@ -95,7 +146,6 @@ const Product = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - Images */}
             <div className="space-y-4">
-              {/* Main Image with Hoverable Chevrons */}
               <div className="relative group w-full max-h-[500px]">
                 <img
                   src={
@@ -110,8 +160,6 @@ const Product = () => {
                     e.target.src = "/assets/default-product.png";
                   }}
                 />
-
-                {/* Chevron Left (Previous) - Only show if there are thumbnails */}
                 {images.thumbnails.length > 0 && (
                   <button
                     onClick={() =>
@@ -126,8 +174,6 @@ const Product = () => {
                     <ChevronLeft className="w-10 h-10" />
                   </button>
                 )}
-
-                {/* Chevron Right (Next) - Only show if there are thumbnails */}
                 {images.thumbnails.length > 0 && (
                   <button
                     onClick={() =>
@@ -143,8 +189,6 @@ const Product = () => {
                   </button>
                 )}
               </div>
-
-              {/* Thumbnail Images - Only show if there are thumbnails */}
               {(images.thumbnails.length > 0 || true) && (
                 <div className="flex space-x-3">
                   <div
@@ -164,7 +208,6 @@ const Product = () => {
                       }}
                     />
                   </div>
-
                   {images.thumbnails.map((thumb, index) => (
                     <div
                       key={index}
@@ -191,22 +234,16 @@ const Product = () => {
 
             {/* Right Column - Product Info */}
             <div className="space-y-7 max-w-lg">
-              {/* Product Title & Subtitle */}
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
                   {product.title}
                 </h1>
                 <p className="text-gray-900 text-md">{product.subtitle}</p>
               </div>
-
-              {/* Price Section */}
               <div className="space-y-1">
-                {/* Current Price */}
                 <span className="text-2xl font-bold text-gray-900">
                   {product.currentPrice}
                 </span>
-
-                {/* Discount + Original Price in one line below */}
                 {product.discount && (
                   <div className="flex items-center space-x-3 pt-3">
                     <span className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded">
@@ -218,8 +255,6 @@ const Product = () => {
                   </div>
                 )}
               </div>
-
-              {/* Category */}
               <div className="text-md text-gray-600 py-2">
                 <span className="font-semibold text-gray-800">Kategori: </span>
                 {product.category.map((cat, index) => (
@@ -229,8 +264,6 @@ const Product = () => {
                   </span>
                 ))}
               </div>
-
-              {/* Variant Selection */}
               <div>
                 <p className="text-md font-semibold text-gray-900 mb-3">
                   Pilih Varian :
@@ -251,8 +284,6 @@ const Product = () => {
                   ))}
                 </div>
               </div>
-
-              {/* Availability */}
               <div className="text-md py-2">
                 <span className="font-semibold text-gray-800">
                   Tersedia untuk:{" "}
@@ -260,53 +291,68 @@ const Product = () => {
                 <span className="font-bold text-gray-900">
                   {product.availability}
                 </span>
+                <span className="ml-4 font-semibold text-gray-800">Stok: </span>
+                <span className="font-bold text-green-700">
+                  {product.stock}
+                </span>
               </div>
-
-              {/* Quantity Section */}
               <div className="flex items-center text-md font-semibold text-gray-900 space-x-3 py-2">
                 <span>Pilih Jumlah :</span>
-
-                {/* Minus Button */}
                 <button
                   onClick={() => handleQuantityChange("decrease")}
                   disabled={quantity <= 1}
-                  className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <span className="text-green-600 font-bold">−</span>
                 </button>
-
-                {/* Quantity */}
                 <span className="min-w-[1.5rem] text-center text-base font-semibold text-gray-900">
                   {quantity}
                 </span>
-
-                {/* Plus Button */}
                 <button
                   onClick={() => handleQuantityChange("increase")}
-                  disabled={quantity >= 11}
-                  className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={quantity >= product.stock}
+                  className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <span className="text-green-600 font-bold text-lg">+</span>
                 </button>
-
-                {/* Max Label */}
-                <span className="text-xs text-gray-500">Maks: 11</span>
+                <span className="text-xs text-gray-500">
+                  Maks: {product.stock}
+                </span>
               </div>
-
-              {/* Action Buttons */}
               <div className="space-y-3">
                 {/* Tombol Masukkan Keranjang */}
                 <button
                   onClick={handleAddToCart}
                   className="w-full max-w-[280px] bg-white py-3 px-4 rounded-lg font-bold flex items-center justify-start gap-3 border border-green-600 hover:bg-green-50 transition-colors cursor-pointer"
+                  disabled={addingToCart}
                 >
-                  {/* Icon bulat hijau */}
                   <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
-                    <Plus className="w-6 h-6 text-white" />
+                    {addingToCart ? (
+                      <svg
+                        className="animate-spin w-6 h-6 text-white"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8z"
+                        />
+                      </svg>
+                    ) : (
+                      <Plus className="w-6 h-6 text-white" />
+                    )}
                   </div>
                   <span className="text-green-600">Masukkan Keranjang</span>
                 </button>
-
                 {/* Tombol Chat Sayurbox */}
                 <button
                   onClick={handleChatSayurbox}
@@ -325,13 +371,10 @@ const Product = () => {
               </div>
             </div>
           </div>
-
-          {/* Product Information Section */}
           <div className="mt-12 bg-white">
             <h3 className="text-lg font-bold text-gray-900 mb-4">
               Informasi Produk
             </h3>
-
             <div className="text-gray-700 text-md leading-relaxed">
               {showFullDescription || product.description.length <= 200 ? (
                 <p>{product.description}</p>
@@ -339,7 +382,6 @@ const Product = () => {
                 <p>{product.description.substring(0, 200)}...</p>
               )}
             </div>
-
             {product.description.length > 200 && (
               <button
                 onClick={toggleDescription}

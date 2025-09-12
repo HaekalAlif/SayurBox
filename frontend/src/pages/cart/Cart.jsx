@@ -1,6 +1,6 @@
 import React from "react";
 import CartItem from "../../components/features/cart/CartItem";
-import SuggestedProducts from "../../components/features/cart/SuggestedProducts";
+import SuggestedProducts from "../../components/features/product-detail/SuggestedProducts";
 
 const Cart = () => {
   return (

@@ -10,6 +10,7 @@ const ProductForm = () => {
     formData,
     imagePreviews,
     handleChange,
+    handleRemoveImage,
     handleSubmit,
     navigate,
   } = useProductForm();
@@ -106,22 +107,6 @@ const ProductForm = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 font-medium mb-2">
-                  Price (Rp)
-                </label>
-                <input
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  min="0"
-                  step="0.01"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
                   Original Price (Rp)
                 </label>
                 <input
@@ -135,9 +120,7 @@ const ProductForm = () => {
                   required
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 font-medium mb-2">
                   Discount (%)
@@ -152,21 +135,36 @@ const ProductForm = () => {
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
+            </div>
 
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Unit
-                </label>
-                <input
-                  type="text"
-                  name="unit"
-                  value={formData.unit}
-                  onChange={handleChange}
-                  placeholder="kg, gram, pcs"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  required
-                />
-              </div>
+            <div>
+              <label className="block text-gray-700 font-medium mb-2">
+                Stock
+              </label>
+              <input
+                type="number"
+                name="stock"
+                value={formData.stock}
+                onChange={handleChange}
+                min="0"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 font-medium mb-2">
+                Unit
+              </label>
+              <input
+                type="text"
+                name="unit"
+                value={formData.unit}
+                onChange={handleChange}
+                placeholder="kg, gram, pcs"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                required
+              />
             </div>
 
             <div>

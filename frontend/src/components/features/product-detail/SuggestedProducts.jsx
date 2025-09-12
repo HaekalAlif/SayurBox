@@ -2,6 +2,10 @@ import React, { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { useSuggestedProducts } from "./SuggestedProducts.hooks";
 import SayurboxLoading from "@/components/base/SayurBoxLoading";
+import { useAuth } from "@/context/AuthContext";
+import { useCartItem } from "@/components/features/cart/CartItem.hooks";
+import { addCartItem } from "@/service/cart/cartItem";
+import { getCart, createCart } from "@/service/cart/cart";
 
 const SuggestedProducts = () => {
   const scrollRef1 = useRef(null);
@@ -10,6 +14,35 @@ const SuggestedProducts = () => {
   const [showRight1, setShowRight1] = useState(false);
   const [showLeft2, setShowLeft2] = useState(false);
   const [showRight2, setShowRight2] = useState(false);
+
+  const { user } = useAuth();
+  const userId = user?.id;
+  const { isProductInCart } = useCartItem(userId);
+
+  const [cartId, setCartId] = useState(null);
+  const [addingId, setAddingId] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  // Ambil cart id user (sekali saja)
+  useEffect(() => {
+    const fetchCartId = async () => {
+      if (!userId) return;
+      try {
+        const res = await getCart(userId);
+        if (res.data && res.data.id) {
+          setCartId(res.data.id);
+        } else {
+          const newCart = await createCart(userId);
+          setCartId(newCart.data.id);
+        }
+      } catch {
+        const newCart = await createCart(userId);
+        setCartId(newCart.data.id);
+      }
+    };
+    fetchCartId();
+  }, [userId]);
 
   // Ambil produk dari hooks (API, random 10)
   const {
@@ -67,6 +100,30 @@ const SuggestedProducts = () => {
     scrollRef2.current.scrollBy({ left: amount, behavior: "smooth" });
   };
 
+  // Handle tambah ke cart
+  const handleAddToCart = async (product) => {
+    if (!cartId || !product?.id) return;
+    if (isProductInCart(product.id)) {
+      setToastMessage("Produk sudah ada di keranjang!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+      return;
+    }
+    setAddingId(product.id);
+    try {
+      await addCartItem(cartId, product.id, 1);
+      setToastMessage("Berhasil menambahkan ke keranjang!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+    } catch (err) {
+      setToastMessage("Gagal menambahkan ke keranjang!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+    } finally {
+      setAddingId(null);
+    }
+  };
+
   const ProductCard = ({ product }) => (
     <a
       href={`/product/${product.slug}`}
@@ -105,8 +162,39 @@ const SuggestedProducts = () => {
             </div>
 
             {/* Add Icon */}
-            <button className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer">
-              <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
+            <button
+              type="button"
+              className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                handleAddToCart(product);
+              }}
+              disabled={addingId === product.id}
+              title="Tambah ke keranjang"
+            >
+              {addingId === product.id ? (
+                <svg
+                  className="animate-spin w-8 h-8 text-white group-hover:text-green-600"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8z"
+                  />
+                </svg>
+              ) : (
+                <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
+              )}
             </button>
           </div>
 
@@ -141,6 +229,13 @@ const SuggestedProducts = () => {
 
   return (
     <div className="px-4 py-8">
+      {/* Toast */}
+      {showToast && (
+        <div className="fixed top-20 right-4 z-50 bg-green-600 text-white py-3 px-4 rounded-md shadow-lg flex items-center">
+          <span className="mr-2">{toastMessage}</span>
+        </div>
+      )}
+
       <div className="max-w-6xl mx-auto">
         {/* Section 1: Lainnya dari : Buah */}
         <div className="mb-4">
