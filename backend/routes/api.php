@@ -6,6 +6,8 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductImageController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CartItemController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -28,5 +30,13 @@ Route::get('product-images/{product_id}', [ProductImageController::class, 'index
 Route::post('product-images', [ProductImageController::class, 'store']);
 Route::delete('product-images/{id}', [ProductImageController::class, 'destroy']);
 Route::put('product-images/{id}', [ProductImageController::class, 'update']);
+
+Route::get('/carts/{user_id}', [CartController::class, 'show']);
+Route::post('/carts', [CartController::class, 'store']);
+Route::delete('/carts/{id}', [CartController::class, 'destroy']);
+
+Route::post('/cart-items', [CartItemController::class, 'store']);
+Route::put('/cart-items/{id}', [CartItemController::class, 'update']);
+Route::delete('/cart-items/{id}', [CartItemController::class, 'destroy']);
 
 include 'auth.php';

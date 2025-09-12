@@ -29,7 +29,8 @@ class ProductController extends Controller
             'original_price' => 'required|numeric|min:0',
             'discount_percent' => 'nullable|integer|min:0|max:100',
             'availability' => 'required|string',
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Multiple images
+            'stock' => 'required|integer|min:0',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', 
             'unit' => 'required|string',
         ]);
 
@@ -42,7 +43,7 @@ class ProductController extends Controller
             $count++;
         }
 
-        // Buat product tanpa image_url
+        // Buat product dengan kolom stock
         $product = Product::create([
             'category_id' => $request->category_id,
             'name' => $request->name,
@@ -53,6 +54,7 @@ class ProductController extends Controller
             'original_price' => $request->original_price,
             'discount_percent' => $request->discount_percent,
             'availability' => $request->availability,
+            'stock' => $request->stock,
             'unit' => $request->unit,
         ]);
 
@@ -93,6 +95,7 @@ class ProductController extends Controller
             'original_price' => 'sometimes|required|numeric|min:0',
             'discount_percent' => 'nullable|integer|min:0|max:100',
             'availability' => 'sometimes|required|string',
+            'stock' => 'sometimes|required|integer|min:0',
             'images.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
             'unit' => 'sometimes|required|string',
         ]);
@@ -118,6 +121,7 @@ class ProductController extends Controller
         $product->original_price = $request->original_price ?? $product->original_price;
         $product->discount_percent = $request->discount_percent ?? $product->discount_percent;
         $product->availability = $request->availability ?? $product->availability;
+        $product->stock = $request->stock ?? $product->stock;
         $product->unit = $request->unit ?? $product->unit;
         $product->save();
 

@@ -21,6 +21,7 @@ class Product extends Model
         'original_price',
         'discount_percent',
         'availability',
+        'stock',
         'unit',
     ];
 
