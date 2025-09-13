@@ -8,19 +8,17 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartItemController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderItemController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::apiResource('addresses', AddressController::class);
-    Route::post('addresses/{id}/default', [AddressController::class, 'setDefault']);
-});
-
 Route::apiResource('categories', CategoryController::class);
 
 Route::apiResource('products', ProductController::class);
+Route::get('/admin/products', [ProductController::class, 'adminIndex']);
 Route::get('products/category/{categoryId}', [ProductController::class, 'getByCategory']);
 Route::get('products/search/{query}', [ProductController::class, 'search']);
 Route::get('products/slug/{slug}', [ProductController::class, 'getBySlug']);
@@ -38,5 +36,26 @@ Route::delete('/carts/{id}', [CartController::class, 'destroy']);
 Route::post('/cart-items', [CartItemController::class, 'store']);
 Route::put('/cart-items/{id}', [CartItemController::class, 'update']);
 Route::delete('/cart-items/{id}', [CartItemController::class, 'destroy']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::apiResource('addresses', AddressController::class);
+    Route::post('addresses/{id}/default', [AddressController::class, 'setDefault']);
+
+    // Orders REST API
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
+    Route::post('/orders/checkout-cart', [OrderController::class, 'checkoutCart']);
+    Route::post('/orders/buy-now', [OrderController::class, 'buyNow']);
+    Route::put('/orders/{id}', [OrderController::class, 'update']);
+    Route::delete('/orders/{id}', [OrderController::class, 'destroy']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/order-items', [OrderItemController::class, 'index']);
+    Route::get('/order-items/{id}', [OrderItemController::class, 'show']);
+    Route::put('/order-items/{id}', [OrderItemController::class, 'update']);
+    Route::delete('/order-items/{id}', [OrderItemController::class, 'destroy']);
+    Route::get('/admin/orders', [OrderController::class, 'adminIndex']);
+});
 
 include 'auth.php';

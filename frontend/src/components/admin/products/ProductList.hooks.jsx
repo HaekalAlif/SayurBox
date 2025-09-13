@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  getProducts,
   deleteProduct,
   getImageUrl,
-} from "../../../service/products/product";
+  getAdminProducts,
+} from "@/service/products/product";
 
 export const useProductList = () => {
   const [products, setProducts] = useState([]);
@@ -17,12 +17,13 @@ export const useProductList = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await getProducts();
-      setProducts(response.data);
+      const response = await getAdminProducts();
+      setProducts(Array.isArray(response.data) ? response.data : []);
       setError(null);
     } catch (err) {
       setError("Failed to load products. Please try again.");
       console.error(err);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -30,10 +31,11 @@ export const useProductList = () => {
 
   useEffect(() => {
     fetchProducts();
+    // eslint-disable-next-line
   }, []);
 
   const handleEdit = (productId) => {
-    navigate(`/admin/products/edit/${productId}`);
+    navigate(`/admin/product-form?id=${productId}`);
   };
 
   const handleDeleteConfirm = (productId) => {
@@ -44,7 +46,7 @@ export const useProductList = () => {
     try {
       setLoading(true);
       await deleteProduct(productId);
-      setProducts(products.filter((product) => product.id !== productId));
+      setProducts((prev) => prev.filter((product) => product.id !== productId));
       setConfirmDelete(null);
       setError(null);
     } catch (err) {
@@ -63,11 +65,15 @@ export const useProductList = () => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.short_description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = Array.isArray(products)
+    ? products.filter(
+        (product) =>
+          product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.short_description
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("id-ID", {

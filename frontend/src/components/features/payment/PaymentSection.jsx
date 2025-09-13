@@ -1,118 +1,94 @@
-import React, { useState } from "react";
+import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { usePaymentSection } from "./PaymentSection.hooks";
+import { updateOrder } from "@/service/orders/order";
+import { updateProduct } from "@/service/products/product";
 
 const PaymentSection = () => {
-  const [selectedDeliverySlot, setSelectedDeliverySlot] = useState("slot_1");
-  const [useCustomPackaging, setUseCustomPackaging] = useState(false);
-  const [isGift, setIsGift] = useState(false);
-  const [giftMessage, setGiftMessage] = useState("");
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("cod");
-  const [showAddressModal, setShowAddressModal] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState(0);
-
   const navigate = useNavigate();
-
-  const addressList = [
-    {
-      name: "Fulan bin fulana",
-      phone: "+6289800859687",
-      address: "Jl. Tugu Monas No.1, Gambir, Kecamatan Gambir, Kota Jakar....",
-    },
-    {
-      name: "Fulani binti fulana",
-      phone: "+6289800859687",
-      address: "Jl. Tugu Monas No.1, Gambir, Kecamatan Gambir, Kota Jakar....",
-    },
-  ];
-
-  const deliverySlots = [
-    {
-      id: "slot_1",
-      label: "Slot Dini Hari",
-      timeRange: "05:00 - 08:00 WIB",
-      price: 2500,
-      estimatedDelivery: "Estimasi tiba pada 05:00 - 08:00 WIB",
-      realPrice: 5000,
-    },
-    {
-      id: "slot_2",
-      label: "Slot Pagi Hari",
-      timeRange: "09:00 - 12:00 WIB",
-      price: 2500,
-      estimatedDelivery: "Estimasi tiba pada 09:00 - 12:00 WIB",
-      realPrice: 5000,
-    },
-    {
-      id: "slot_3",
-      label: "Slot Siang Hari",
-      timeRange: "13:00 - 17:00 WIB",
-      price: 2500,
-      estimatedDelivery: "Estimasi tiba pada 13:00 - 17:00 WIB",
-      realPrice: 5000,
-    },
-    {
-      id: "slot_4",
-      label: "Slot Malam Hari",
-      timeRange: "18:00 - 22:00 WIB",
-      price: 2500,
-      estimatedDelivery: "Estimasi tiba pada 18:00 - 22:00 WIB",
-      realPrice: 5000,
-    },
-  ];
-
-  const orderItems = [
-    {
-      id: 1,
-      productName: "Alpukat Mentega",
-      image: "assets/products/produk-1.png",
-      price: 15625,
-      unit: "1 Pcs",
-      discount: 300,
-      finalPrice: 2500,
-      quantity: 1,
-      badge: {
-        text: "Asli",
-        color: "#FF3B30",
-      },
-    },
-  ];
-
-  const paymentMethods = [
-    {
-      id: "cod",
-      label: "Sayur/Tunai (Bayar di tempat)",
-      description:
-        "Bayar tunai & dapat mengembalikan produk yang tidak sesuai di tempat",
-      icon: "assets/payment/sayur-tunai.png",
-    },
-    {
-      id: "bni",
-      label: "BNI Virtual Account",
-      description: "Bayar ke BNI Virtual Account Transferpay!",
-      icon: "assets/payment/bni.png",
-    },
-  ];
-
-  const subtotal = 12900;
-  const productDiscount = -700;
-  const deliveryFee = 15000;
-  const packagingFee = useCustomPackaging ? 5000 : 0;
-  const reservationFee = 2500;
-  const selectedSlotDiscount =
-    deliverySlots.find((slot) => slot.id === selectedDeliverySlot)?.discount ||
-    0;
-  const totalPayment =
-    subtotal +
-    productDiscount +
-    deliveryFee +
-    packagingFee +
-    reservationFee -
-    selectedSlotDiscount;
+  const { id: orderId } = useParams();
+  const {
+    loading,
+    orderItems,
+    subtotal,
+    productDiscount,
+    packagingFee,
+    reservationFee,
+    deliverySlots,
+    paymentMethods,
+    selectedDeliverySlot,
+    setSelectedDeliverySlot,
+    useCustomPackaging,
+    setUseCustomPackaging,
+    isGift,
+    setIsGift,
+    giftMessage,
+    setGiftMessage,
+    selectedPaymentMethod,
+    setSelectedPaymentMethod,
+    showAddressModal,
+    setShowAddressModal,
+    addressList,
+    selectedAddress,
+    setSelectedAddress,
+    totalPayment,
+  } = usePaymentSection();
 
   const handleBackClick = () => {
     window.history.back();
   };
+
+  // Helper untuk tampilkan alamat dengan struktur API
+  const selectedAddr = addressList[selectedAddress] || {};
+  const addressName = selectedAddr.recipient_name || selectedAddr.name || "-";
+  const addressPhone = selectedAddr.phone || "-";
+  const addressFull = selectedAddr.full_address || selectedAddr.address || "-";
+  const addressLabel = selectedAddr.address_label || "";
+
+  // Ambil biaya pengiriman dari slot yang dipilih
+  const selectedSlotObj =
+    deliverySlots.find((slot) => slot.id === selectedDeliverySlot) ||
+    deliverySlots[0];
+  const deliveryFee = selectedSlotObj.price || 0;
+
+  // Handler untuk tombol bayar
+  const handlePay = async () => {
+    try {
+      await updateOrder(orderId, {
+        payment_status: "PAID",
+        order_status: "PACKED",
+        shipping_fee: deliveryFee,
+        final_amount:
+          subtotal -
+          productDiscount +
+          deliveryFee +
+          packagingFee +
+          reservationFee,
+      });
+
+      // Update setiap produk di order menjadi SOLD
+      for (const item of orderItems) {
+        // Ambil id produk dari relasi
+        const productId = item.product_id || item.product?.id;
+        if (productId) {
+          await updateProduct(productId, { availability: "sold" });
+        }
+      }
+
+      navigate(`/payment-success/${orderId}`);
+    } catch (err) {
+      alert("Gagal update status pembayaran!");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <span className="text-lg font-bold text-green-700">Loading...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -159,21 +135,26 @@ const PaymentSection = () => {
                   <div className="flex p-2 space-y-3 space-x-4">
                     <div>
                       <img
-                        src="assets/payment/maps.png"
+                        src="/assets/payment/maps.png"
                         className="w-20 h-18 rounded-md"
+                        alt="maps"
                       />
                     </div>
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <div className="flex gap-x-6">
                           <p className="font-semibold text-gray-900">
-                            Fulan bin Fulana
+                            {addressName}
                           </p>
-                          <p className="text-gray-600">+6281234567897</p>
+                          <p className="text-gray-600">{addressPhone}</p>
                         </div>
                         <p className="text-gray-600 mt-2 text-sm">
-                          Jl. Melati no.45 RT 3 RW 6, Kelurahan Suka Maju, Kec.
-                          Sukaraja, Jakarta Selatan, DKI Jakarta, Indonesia
+                          {addressFull}
+                          {addressLabel ? (
+                            <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-bold">
+                              {addressLabel}
+                            </span>
+                          ) : null}
                         </p>
                       </div>
                     </div>
@@ -205,7 +186,7 @@ const PaymentSection = () => {
                 </h2>
                 <div className="py-2 px-4 bg-white gap-x-5 rounded-lg flex border border-gray-100 mb-3">
                   <img
-                    src="assets/payment/calendar.png"
+                    src="/assets/payment/calendar.png"
                     alt="Calendar"
                     className="w-10"
                   />
@@ -266,7 +247,6 @@ const PaymentSection = () => {
                           <p className="font-semibold text-gray-900">
                             Rp. {slot.price.toLocaleString()}
                           </p>
-
                           <p className="text-lg text-green-600">
                             <span className="text-gray-400 line-through ">
                               Rp. {slot.realPrice.toLocaleString()}
@@ -284,8 +264,9 @@ const PaymentSection = () => {
                   Ganti Kemasan
                 </p>
                 <img
-                  src="assets/payment/information.png"
+                  src="/assets/payment/information.png"
                   className="w-5 h-5 mt-1"
+                  alt="info"
                 />
               </div>
 
@@ -305,8 +286,9 @@ const PaymentSection = () => {
                     </label>
 
                     <img
-                      src="assets/payment/box.png"
+                      src="/assets/payment/box.png"
                       className="w-14 h-14 mt-1"
+                      alt="box"
                     />
                     <div>
                       <p className="text-md font-semibold text-black">Kardus</p>
@@ -324,7 +306,6 @@ const PaymentSection = () => {
               </div>
 
               {/* Rincian Pesanan */}
-
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Rincian Pesanan
               </h2>
@@ -360,7 +341,11 @@ const PaymentSection = () => {
                             Rp. {item.price.toLocaleString()}
                           </span>
                           <span className="text-xs font-bold bg-red-500 text-white px-2 py-0.5 rounded">
-                            84%
+                            {item.discount > 0
+                              ? `${Math.round(
+                                  (item.discount / item.price) * 100
+                                )}%`
+                              : ""}
                           </span>
                         </div>
                       </div>
@@ -376,9 +361,9 @@ const PaymentSection = () => {
               <div className="bg-white rounded-lg p-6 border border-green-300">
                 <div className="flex items-center  space-x-3 mb-4 pb-6 border-b border-green-500 ">
                   <img
-                    src="assets/payment/gift.png"
-                    className="w-14 h-14
-                "
+                    src="/assets/payment/gift.png"
+                    className="w-14 h-14"
+                    alt="gift"
                   />
                   <div className="flex justify-between items-center w-full pl-4">
                     <div className="justify-between">
@@ -421,7 +406,7 @@ const PaymentSection = () => {
                   rows={3}
                 />
                 <p className="text-xs text-gray-800 text-right">
-                  0/500 karakter
+                  {giftMessage.length}/500 karakter
                 </p>
               </div>
             </div>
@@ -452,7 +437,11 @@ const PaymentSection = () => {
                       onClick={() => setSelectedPaymentMethod(method.id)}
                     >
                       <div className="flex items-center space-x-4">
-                        <img src={method.icon} className="w-14 h-5 " />
+                        <img
+                          src={method.icon}
+                          className="w-14 h-5 "
+                          alt={method.label}
+                        />
                         <div className="flex-1">
                           <p className="font-semibold text-gray-900">
                             {method.label}
@@ -489,7 +478,11 @@ const PaymentSection = () => {
                   onClick={() => navigate("/voucher-checkout")}
                 >
                   <div className="basis-[10%] flex-shrink-0 flex items-center">
-                    <img src="assets/payment/voucher.png" className="w-9" />
+                    <img
+                      src="/assets/payment/voucher.png"
+                      className="w-9"
+                      alt="voucher"
+                    />
                   </div>
                   <div className="basis-[70%] flex items-center font-bold text-lg pl-6 cursor-pointer">
                     <span>Pakai Voucher-mu!</span>
@@ -508,14 +501,16 @@ const PaymentSection = () => {
                   </h2>
                   <div className="space-y-3">
                     <div className="flex justify-between text-md">
-                      <span className="font-medium">Subtotal (1 Produk)</span>
+                      <span className="font-medium">
+                        Subtotal ({orderItems.length} Produk)
+                      </span>
                       <span className="font-medium">
                         Rp. {subtotal.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <div className="flex space-x-2">
-                        <img src="assets/payment/discount.png" />
+                        <img src="/assets/payment/discount.png" alt="diskon" />
                         <span>Diskon Produk</span>
                       </div>
                       <span className="font-medium text-green-700">
@@ -533,14 +528,6 @@ const PaymentSection = () => {
                         Rp. {deliveryFee.toLocaleString()}
                       </span>
                     </div>
-                    {selectedSlotDiscount > 0 && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Diskon Pengiriman</span>
-                        <span className="font-medium text-green-600">
-                          -Rp. {selectedSlotDiscount.toLocaleString()}
-                        </span>
-                      </div>
-                    )}
                     <div className="pt-3">
                       <p className="font-medium text-gray-900 mb-2">
                         Biaya Lainnya
@@ -549,8 +536,9 @@ const PaymentSection = () => {
                         <div className="flex items-start space-x-12">
                           <span className="text-gray-600">Biaya Kemasan</span>
                           <img
-                            src="assets/payment/information.png"
+                            src="/assets/payment/information.png"
                             className="w-5 h-5"
+                            alt="info"
                           />
                         </div>
                         <div className="flex space-x-2 items-center">
@@ -560,7 +548,7 @@ const PaymentSection = () => {
                             </span>
                           </p>
                           <span className="font-bold">
-                            Rp. {reservationFee.toLocaleString()}
+                            Rp. {packagingFee.toLocaleString()}
                           </span>
                         </div>
                       </div>
@@ -569,8 +557,9 @@ const PaymentSection = () => {
                         <div className="flex items-start space-x-12">
                           <span className="text-gray-600">Biaya Reservasi</span>
                           <img
-                            src="assets/payment/information.png"
+                            src="/assets/payment/information.png"
                             className="w-5 h-5"
+                            alt="info"
                           />
                         </div>
                         <div className="flex space-x-2 items-center">
@@ -594,8 +583,10 @@ const PaymentSection = () => {
                       </span>
                     </div>
                   </div>
-                  <button className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg font-semibold text-lg mt-6 transition-all duration-200 cursor-pointer"
-                  onClick={() => navigate("/payment-success") } >
+                  <button
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg font-semibold text-lg mt-6 transition-all duration-200 cursor-pointer"
+                    onClick={handlePay}
+                  >
                     Bayar
                   </button>
                 </div>
@@ -635,13 +626,18 @@ const PaymentSection = () => {
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="font-bold text-lg text-black">
-                            {item.name}
+                            {item.recipient_name || item.name}
                           </div>
                           <div className="text-gray-700 text-base">
                             {item.phone}
                           </div>
                           <div className="text-gray-700 text-sm">
-                            {item.address}
+                            {item.full_address || item.address}
+                            {item.address_label ? (
+                              <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-bold">
+                                {item.address_label}
+                              </span>
+                            ) : null}
                           </div>
                         </div>
                         <label className="inline-flex items-center cursor-pointer">
@@ -680,7 +676,6 @@ const PaymentSection = () => {
                     className="w-full bg-green-600 text-white font-bold text-lg py-4 rounded-lg cursor-pointer hover:bg-green-700 transition-colors"
                     onClick={() => {
                       setShowAddressModal(false);
-                      // Simpan pilihan alamat jika perlu
                     }}
                   >
                     Pilih Alamat

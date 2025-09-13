@@ -38,6 +38,9 @@ import Login from "./pages/auth/login/Login.jsx";
 import Register from "./pages/auth/register/Register";
 import ProductForm from "./pages/admin/product-form/ProductForm";
 import Products from "./pages/admin/products/ProductList";
+import OrderListAdmin from "./pages/admin/orders/OrderList";
+import OrderDetailAdmin from "./pages/admin/order-detail/OrderDetail";
+import AdminLayout from "./components/layout/admin/Layout";
 
 function App() {
   return (
@@ -88,6 +91,15 @@ function App() {
         />
 
         <Route
+          path="/checkout/:id"
+          element={
+            <Layout>
+              <Payment />
+            </Layout>
+          }
+        />
+
+        <Route
           path="/payment-method"
           element={
             <Layout>
@@ -98,6 +110,15 @@ function App() {
 
         <Route
           path="/payment-success"
+          element={
+            <Layout>
+              <PaymentSuccess />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/payment-success/:id"
           element={
             <Layout>
               <PaymentSuccess />
@@ -250,7 +271,7 @@ function App() {
         />
 
         <Route
-          path="/orders/order-detail"
+          path="/order/:id"
           element={
             <Layout>
               <OrderDetail />
@@ -342,18 +363,36 @@ function App() {
         <Route
           path="/admin/product-form"
           element={
-            <Layout>
+            <AdminLayout>
               <ProductForm />
-            </Layout>
+            </AdminLayout>
           }
         />
 
         <Route
           path="/admin/products"
           element={
-            <Layout>
+            <AdminLayout>
               <Products />
-            </Layout>
+            </AdminLayout>
+          }
+        />
+
+        <Route
+          path="/admin/order/:id"
+          element={
+            <AdminLayout>
+              <OrderDetailAdmin />
+            </AdminLayout>
+          }
+        />
+
+        <Route
+          path="/admin/orders"
+          element={
+            <AdminLayout>
+              <OrderListAdmin />
+            </AdminLayout>
           }
         />
 

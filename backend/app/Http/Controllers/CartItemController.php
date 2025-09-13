@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class CartItemController extends Controller
 {
     // POST /api/cart-items    
-   public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'cart_id' => 'required|exists:carts,id',
@@ -23,7 +23,6 @@ class CartItemController extends Controller
             ->first();
 
         if ($existing) {
-            // Status 200, bukan error, dan pesan jelas
             return response()->json([
                 'message' => 'Produk sudah ada di keranjang!',
                 'cart_item' => $existing
@@ -31,12 +30,14 @@ class CartItemController extends Controller
         }
 
         $product = Product::findOrFail($request->product_id);
-        $subtotal = $product->price * $request->quantity;
+        $price = $product->price;
+        $subtotal = $price * $request->quantity;
 
         $cartItem = CartItem::create([
             'cart_id' => $request->cart_id,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
+            'price' => $price,
             'subtotal' => $subtotal,
         ]);
 
@@ -53,8 +54,10 @@ class CartItemController extends Controller
         ]);
 
         $product = $cartItem->product;
+        $price = $product->price;
         $cartItem->quantity = $request->quantity;
-        $cartItem->subtotal = $product->price * $request->quantity;
+        $cartItem->price = $price; 
+        $cartItem->subtotal = $price * $request->quantity;
         $cartItem->save();
 
         return response()->json($cartItem);

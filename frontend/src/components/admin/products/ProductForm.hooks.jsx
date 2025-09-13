@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   getProduct,
   createProduct,
@@ -9,8 +9,10 @@ import {
 import { getCategories } from "../../../service/categories/category";
 
 export const useProductForm = () => {
-  const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const id = params.get("id");
   const isEditMode = !!id;
 
   const [loading, setLoading] = useState(false);
@@ -63,7 +65,11 @@ export const useProductForm = () => {
           description: product.description,
           original_price: product.original_price,
           discount_percent: product.discount_percent || "",
-          availability: product.availability,
+          // Jika value awal "sold", ubah ke "available" agar dropdown bisa diubah
+          availability:
+            product.availability === "sold"
+              ? "available"
+              : product.availability,
           stock: product.stock ?? "",
           images: [],
           unit: product.unit,

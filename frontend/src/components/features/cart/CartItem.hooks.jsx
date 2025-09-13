@@ -2,12 +2,19 @@ import { useState, useEffect, useRef } from "react";
 import { getCart } from "@/service/cart/cart";
 import { useNavigate } from "react-router-dom";
 import { updateCartItem, deleteCartItem } from "@/service/cart/cartItem";
+import { checkoutCart } from "@/service/orders/order";
 
 export const useCartItem = (userId) => {
   const [selectedDeliveryTime, setSelectedDeliveryTime] = useState("today");
   const [selectAll, setSelectAll] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    error: false,
+  });
 
   const deliveryOptions = [
     {
@@ -36,7 +43,6 @@ export const useCartItem = (userId) => {
         const cart = response.data;
         if (cart && cart.items) {
           const mappedProducts = cart.items.map((item) => {
-            // Ambil gambar primary dari database, tanpa fallback ke assets
             let imageUrl = "";
             if (
               Array.isArray(item.product?.images) &&
@@ -51,7 +57,6 @@ export const useCartItem = (userId) => {
                 imageUrl = `/storage/${item.product.images[0].image_url}`;
               }
             }
-            // Tidak ada fallback ke assets, biarkan kosong jika tidak ada gambar
             return {
               id: item.id,
               productId: item.product_id,
@@ -77,11 +82,14 @@ export const useCartItem = (userId) => {
             };
           });
           setProducts(mappedProducts);
+          setSelectAll(true); // default: semua terpilih
         } else {
           setProducts([]);
+          setSelectAll(false);
         }
       } catch (err) {
         setProducts([]);
+        setSelectAll(false);
       } finally {
         setLoading(false);
       }
@@ -89,20 +97,22 @@ export const useCartItem = (userId) => {
     if (userId) fetchCart();
   }, [userId]);
 
+  // Select All handler
   const handleSelectAll = () => {
     const newSelectAll = !selectAll;
     setSelectAll(newSelectAll);
-    setProducts(
-      products.map((product) => ({
+    setProducts((prev) =>
+      prev.map((product) => ({
         ...product,
         isSelected: newSelectAll,
       }))
     );
   };
 
+  // Single product select handler
   const handleProductSelect = (productId) => {
-    setProducts(
-      products.map((product) =>
+    setProducts((prev) =>
+      prev.map((product) =>
         product.id === productId
           ? { ...product, isSelected: !product.isSelected }
           : product
@@ -110,13 +120,23 @@ export const useCartItem = (userId) => {
     );
   };
 
+  // Sync selectAll state if all/none selected
+  useEffect(() => {
+    if (products.length === 0) {
+      setSelectAll(false);
+    } else {
+      const allSelected = products.every((p) => p.isSelected);
+      setSelectAll(allSelected);
+    }
+  }, [products]);
+
   const handleQuantityChange = async (productId, newQuantity) => {
     const product = products.find((p) => p.id === productId);
     if (!product) return;
     try {
       await updateCartItem(productId, newQuantity);
-      setProducts(
-        products.map((p) =>
+      setProducts((prev) =>
+        prev.map((p) =>
           p.id === productId ? { ...p, quantity: newQuantity } : p
         )
       );
@@ -126,7 +146,7 @@ export const useCartItem = (userId) => {
   const handleDeleteProduct = async (productId) => {
     try {
       await deleteCartItem(productId);
-      setProducts(products.filter((product) => product.id !== productId));
+      setProducts((prev) => prev.filter((product) => product.id !== productId));
     } catch (err) {}
   };
 
@@ -146,10 +166,9 @@ export const useCartItem = (userId) => {
     navigate(-1);
   };
 
+  // Produk yang di-checklist saja
   const selectedProducts = products.filter((product) => product.isSelected);
   const totalItems = selectedProducts.length;
-
-  // Total harga dari produk yang dichecklist
   const totalPrice = selectedProducts.reduce((sum, p) => sum + p.subtotal, 0);
 
   // Carousel logic
@@ -168,13 +187,37 @@ export const useCartItem = (userId) => {
     handleScroll();
   }, []);
 
-  const handleCheckout = () => {
-    navigate("/checkout");
-  };
-
   // Untuk validasi penambahan barang ke keranjang (di fitur lain)
   const isProductInCart = (productId) => {
     return products.some((product) => product.productId === productId);
+  };
+
+  // Checkout hanya produk yang di-checklist
+  const handleCheckout = async () => {
+    if (selectedProducts.length === 0) return;
+    setCheckoutLoading(true);
+    try {
+      // Kirim hanya id produk yang di-checklist
+      const productIds = selectedProducts.map((p) => p.id);
+      const res = await checkoutCart({
+        delivery_slot: selectedDeliveryTime,
+        cart_item_ids: productIds,
+      });
+      const orderId = res.data?.order?.id;
+      if (orderId) {
+        navigate(`/checkout/${orderId}`);
+      } else {
+        setToast({ show: true, message: "Gagal membuat order!", error: true });
+      }
+    } catch (err) {
+      setToast({ show: true, message: "Checkout gagal!", error: true });
+    } finally {
+      setCheckoutLoading(false);
+      setTimeout(
+        () => setToast({ show: false, message: "", error: false }),
+        2000
+      );
+    }
   };
 
   return {
@@ -201,5 +244,7 @@ export const useCartItem = (userId) => {
     loading,
     isProductInCart,
     totalPrice,
+    checkoutLoading,
+    toast,
   };
 };

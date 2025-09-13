@@ -92,3 +92,7 @@ export function getProductBySlug(slug) {
 export function getProductsByCategorySlug(slug) {
   return api.get(`/api/products/category/slug/${slug}`);
 }
+
+export function getAdminProducts() {
+  return api.get("/api/admin/products");
+}

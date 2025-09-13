@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronDown, ChevronUp } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { getOrder } from "@/service/orders/order";
 
 const PaymentSuccessSection = () => {
   const [timeLeft, setTimeLeft] = useState(7195); // 01:59:55 in seconds
   const [expandedAccordion, setExpandedAccordion] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [order, setOrder] = useState(null);
 
   const navigate = useNavigate();
+  const { id: orderId } = useParams();
 
-  const virtualAccount = "880428668688679676";
-  const orderId = "#DH-WGFNCPMJHUT-NR";
-  const totalAmount = "Rp 24.525";
+  useEffect(() => {
+    if (!orderId) return;
+    getOrder(orderId).then((res) => setOrder(res.data));
+  }, [orderId]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,6 +43,11 @@ const PaymentSuccessSection = () => {
   const handleBackClick = () => {
     window.history.back();
   };
+
+  const virtualAccount = "880428668688679676";
+  const totalAmount = order
+    ? `Rp ${Number(order.final_amount).toLocaleString()}`
+    : "-";
 
   const handleCopyVA = async () => {
     try {
@@ -102,7 +111,7 @@ const PaymentSuccessSection = () => {
           {/* Success Illustration */}
           <div className="mb-8">
             <img
-              src="assets/payment/success-icon.png"
+              src="/assets/payment/success-icon.png"
               alt="Success Image"
               className="w-full max-w-60 mx-auto"
             />
@@ -141,7 +150,7 @@ const PaymentSuccessSection = () => {
           <div className="mb-6 flex justify-center">
             <div className="border border-gray-400 w-120 rounded-xl p-4 flex flex-col items-center">
               <img
-                src="assets/payment/bni.png"
+                src="/assets/payment/bni.png"
                 alt="Logo BNI"
                 className="h-6 mb-3"
               />
@@ -197,7 +206,7 @@ const PaymentSuccessSection = () => {
           {/* Action Button */}
           <button
             className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-base transition-all duration-200 cursor-pointer"
-            onClick={() => navigate("/orders/order-detail")}
+            onClick={() => navigate(`/order/${orderId}`)}
           >
             Lihat Order Saya
           </button>

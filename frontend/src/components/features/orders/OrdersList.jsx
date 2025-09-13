@@ -1,190 +1,38 @@
-import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, Search, Star } from "lucide-react";
+import React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useOrderList } from "./OrderList.hooks";
+import { useNavigate } from "react-router-dom";
 
 const OrdersList = () => {
-  const [selectedStatus, setSelectedStatus] = useState("belum");
-  const [searchQuery, setSearchQuery] = useState("");
+  const {
+    loading,
+    selectedStatus,
+    setSelectedStatus,
+    searchQuery,
+    setSearchQuery,
+    inProcessOrders,
+    lastOrders,
+  } = useOrderList();
+
+  const navigate = useNavigate();
 
   const handleBackClick = () => {
     window.history.back();
   };
 
   const statusButtons = [
-    { id: "semua", label: "Semua", active: true },
-    { id: "berlangsung", label: "Berlangsung", active: false },
-    { id: "berhasil", label: "Berhasil", active: false },
-    { id: "dibatalkan", label: "Dibatalkan", active: false },
-  ];
-
-  const inProcessOrders = [
-    {
-      id: 1,
-      status: "Menunggu Konfirmasi Pembayaran",
-      statusIcon: "payment",
-      statusIconColor: "#B0EBDD",
-      statusTextColor: "#1B3D35",
-      countdownTimer: {
-        text: "Selesaikan sebelum :",
-        time: "01:59:55",
-        backgroundColor: "#FF0000",
-        textColor: "#FFFFFF",
-      },
-      orderItem: {
-        image: "/assets/orders/product-image.png",
-        title: "Alpukat Mentega",
-        orderId: "#DH-W6FNCPMUJHUT-NR",
-        total: "Rp 24.525",
-        note: "Pesanan akan otomatis dibatalkan jika tidak menyelesaikan proses pembayaran sampai batas waktu yang sudah ditentukan",
-        noteBackgroundColor: "#F5F5F5",
-        noteTextColor: "#333333",
-        actions: [
-          {
-            text: "Batalkan Pesanan",
-            backgroundColor: "#FF0000",
-            textColor: "#FFFFFF",
-          },
-          {
-            text: "Ubah Metode Bayar",
-            backgroundColor: "#1FAE2E",
-            textColor: "#FFFFFF",
-          },
-        ],
-      },
-      borderBottom: true,
-    },
-    {
-      id: 2,
-      status: "Pesanan Disiapkan",
-      statusIcon: "prepare",
-      statusIconColor: "#B0EBDD",
-      statusTextColor: "#1B3D35",
-      countdownTimer: {
-        text: "Estimasi jam tiba",
-        time: "Besok 14:00 - 17:00",
-        textColor: "#000000",
-      },
-      orderItem: {
-        image: "/assets/orders/product-image.png",
-        title: "Alpukat Mentega",
-        orderId: "#DH-W6FNCPMUJHUT-NR",
-        total: "Rp 24.525",
-      },
-      borderBottom: true,
-    },
-    {
-      id: 3,
-      status: "Pesanan Dikirimkan",
-      statusIcon: "send",
-      statusIconColor: "#B0EBDD",
-      statusTextColor: "#1B3D35",
-      countdownTimer: {
-        text: "Estimasi jam tiba",
-        time: "Besok 14:00 - 17:00",
-        textColor: "#000000",
-      },
-      orderItem: {
-        image: "/assets/orders/product-image.png",
-        title: "Alpukat Mentega",
-        orderId: "#DH-W6FNCPMUJHUT-NR",
-        total: "Rp 24.525",
-        actions: [
-          {
-            text: "Lacak Pesanan",
-            backgroundColor: "#1FAE2E",
-            textColor: "#FFFFFF",
-          },
-        ],
-      },
-      borderBottom: true,
-    },
-    {
-      id: 4,
-      status: "Pesanan Tiba di Alamat",
-      statusIcon: "arrived",
-      statusIconColor: "#B0EBDD",
-      statusTextColor: "#1B3D35",
-      countdownTimer: {
-        text: "Tiba pada :",
-        time: "Jumat, 7 April 2025 17:00 WIB",
-        textColor: "#000000",
-      },
-      orderItem: {
-        image: "/assets/orders/product-image.png",
-        title: "Alpukat Mentega",
-        orderId: "#DH-W6FNCPMUJHUT-NR",
-        total: "Rp 24.525",
-        actions: [
-          {
-            text: "Selesaikan Pesanan",
-            backgroundColor: "#1FAE2E",
-            textColor: "#FFFFFF",
-          },
-        ],
-      },
-      borderBottom: true,
-    },
-  ];
-
-  const lastOrders = [
-    {
-      id: 5,
-      status: "Pesanan Selesai",
-      statusIcon: "arrived",
-      statusIconColor: "#B0EBDD",
-      statusTextColor: "#1B3D35",
-      countdownTimer: {
-        text: "Selesai pada :",
-        time: "Jumat, 5 April 2025 16:30 WIB",
-        textColor: "#000000",
-      },
-      orderItem: {
-        image: "/assets/orders/product-image.png",
-        title: "Alpukat Mentega",
-        orderId: "#DH-W6FNCPMUJHUT-AA",
-        total: "Rp 24.525",
-        actions: [
-          {
-            text: "Beli Lagi",
-            backgroundColor: "#1FAE2E",
-            textColor: "#FFFFFF",
-          },
-        ],
-      },
-      borderBottom: true,
-    },
-    {
-      id: 6,
-      status: "Pesanan Dibatalkan",
-      statusIcon: "cancel",
-      statusIconColor: "#B0EBDD",
-      statusTextColor: "#1B3D35",
-      countdownTimer: {
-        text: "Dibatalkan pada :",
-        time: "4 April 2025",
-        textColor: "#000000",
-      },
-      orderItem: {
-        image: "/assets/orders/product-image.png",
-        title: "Tomat Segar",
-        orderId: "#DH-W6FNCPMUJHUT-BB",
-        total: "Rp 18.000",
-        actions: [
-          {
-            text: "Beli Lagi",
-            backgroundColor: "#1FAE2E",
-            textColor: "#FFFFFF",
-          },
-        ],
-      },
-      borderBottom: true,
-    },
+    { id: "semua", label: "Semua" },
+    { id: "berlangsung", label: "Berlangsung" },
+    { id: "berhasil", label: "Berhasil" },
+    { id: "dibatalkan", label: "Dibatalkan" },
   ];
 
   const OrderCard = ({ order }) => (
     <div
-      className={`bg-white rounded-lg p-4 mb-3 shadow-md ${
+      className={`bg-white rounded-lg p-4 mb-3 shadow-md cursor-pointer ${
         order.borderBottom ? "border-b-2 border-gray-200" : ""
       }`}
+      onClick={() => navigate(`/order/${order.id}`)}
     >
       <div className="flex">
         <div
@@ -206,9 +54,7 @@ const OrdersList = () => {
               {order.status}
             </h3>
           </div>
-
           <div className="flex mt-2 w-50">
-            {/* Countdown Timer */}
             {order.countdownTimer && (
               <div className=" flex items-center space-x-2">
                 <p className="text-xs text-gray-600 ">
@@ -231,10 +77,7 @@ const OrdersList = () => {
           <ChevronRight size={32} />
         </div>
       </div>
-
       <hr className="my-4" />
-
-      {/* Estimate */}
       {order.estimate && (
         <div className="mb-4">
           <p className="text-sm text-gray-600">{order.estimate.label}</p>
@@ -246,8 +89,6 @@ const OrdersList = () => {
           </p>
         </div>
       )}
-
-      {/* Order Item */}
       <div className="mb-4">
         <div className="flex items-start space-x-4 mb-2">
           <img
@@ -266,8 +107,6 @@ const OrdersList = () => {
           Total Belanja : <strong>{order.orderItem.total}</strong>
         </p>
       </div>
-
-      {/* Note */}
       {order.orderItem.note && (
         <div
           className="p-3 rounded-md mb-4 text-xs"
@@ -279,17 +118,19 @@ const OrdersList = () => {
           {order.orderItem.note}
         </div>
       )}
-
-      {/* Actions */}
       {order.orderItem.actions && (
         <div className="flex space-x-3">
-          {order.orderItem.actions.map((action) => (
+          {order.orderItem.actions.map((action, idx) => (
             <button
-              key={action.id}
+              key={idx}
               className="px-4 py-2 rounded-md font-semibold text-xs transition-colors flex-1 cursor-pointer"
               style={{
                 backgroundColor: action.backgroundColor,
                 color: action.textColor,
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                action.onClick();
               }}
             >
               {action.text}
@@ -319,7 +160,6 @@ const OrdersList = () => {
             <h1 className="text-2xl font-bold text-center mb-6">
               Daftar Pesanan
             </h1>
-
             <div className="flex">
               {/* Left Panel */}
               <div className="w-[40%] p-4 space-y-6 border max-h-80 rounded-md shadow-md">
@@ -339,7 +179,6 @@ const OrdersList = () => {
                     </button>
                   </div>
                 </div>
-
                 {/* Status Buttons */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -362,7 +201,6 @@ const OrdersList = () => {
                   </div>
                 </div>
               </div>
-
               {/* Right Panel */}
               <div className="w-[60%] px-4 space-y-6 ">
                 {/* SayurFresh Info Card */}
@@ -395,7 +233,6 @@ const OrdersList = () => {
                     </div>
                   </div>
                 </div>
-
                 <div
                   className="p-4 rounded-sm"
                   style={{ backgroundColor: "#F5FFCE" }}
@@ -404,21 +241,40 @@ const OrdersList = () => {
                   <div>
                     <h3 className="text-lg font-semibold mb-4">Dalam Proses</h3>
                     <div>
-                      {inProcessOrders.map((order) => (
-                        <OrderCard key={order.id} order={order} />
-                      ))}
+                      {loading ? (
+                        <div className="text-center py-8 text-green-700 font-bold">
+                          Loading...
+                        </div>
+                      ) : inProcessOrders.length === 0 ? (
+                        <div className="text-center py-8 text-gray-500">
+                          Tidak ada pesanan dalam proses.
+                        </div>
+                      ) : (
+                        inProcessOrders.map((order) => (
+                          <OrderCard key={order.id} order={order} />
+                        ))
+                      )}
                     </div>
                   </div>
-
                   {/* Last Orders */}
                   <div>
                     <h3 className="text-lg font-semibold mb-4">
                       Terakhir Dipesan
                     </h3>
                     <div>
-                      {lastOrders.map((order) => (
-                        <OrderCard key={order.id} order={order} />
-                      ))}
+                      {loading ? (
+                        <div className="text-center py-8 text-green-700 font-bold">
+                          Loading...
+                        </div>
+                      ) : lastOrders.length === 0 ? (
+                        <div className="text-center py-8 text-gray-500">
+                          Tidak ada riwayat pesanan.
+                        </div>
+                      ) : (
+                        lastOrders.map((order) => (
+                          <OrderCard key={order.id} order={order} />
+                        ))
+                      )}
                     </div>
                   </div>
                 </div>

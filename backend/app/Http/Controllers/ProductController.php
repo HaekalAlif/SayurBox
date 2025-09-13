@@ -11,8 +11,19 @@ use Illuminate\Support\Str;
 class ProductController extends Controller
 {
     // GET /api/products
-    public function index()
+    public function index(Request $request)
     {
+        // Hanya tampilkan produk yang availability-nya bukan "sold"
+        $products = Product::with(['category', 'images'])
+            ->where('availability', '!=', 'sold')
+            ->get();
+        return response()->json($products);
+    }
+
+    // GET /api/admin/products
+    public function adminIndex(Request $request)
+    {
+        // Ambil semua produk tanpa filter apapun
         $products = Product::with(['category', 'images'])->get();
         return response()->json($products);
     }
