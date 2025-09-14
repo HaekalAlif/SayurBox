@@ -1,32 +1,70 @@
-import React, { useState } from "react";
-import { ChevronLeft, Calendar, Edit, Upload } from "lucide-react";
+import React from "react";
+import { ChevronLeft, Edit } from "lucide-react";
+import { useAccountSection } from "./AccountSection.hooks";
+import BaseModal from "@/components/base/BaseModal";
 
 const AccountSection = () => {
-  const [selectedGender, setSelectedGender] = useState("male");
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    birthDate: "2002-04-09",
-    email: "dummy@gmail.com",
-  });
+  const {
+    formData,
+    loading,
+    error,
+    success,
+    isFormDirty,
+    isExitModalOpen,
+    setIsExitModalOpen,
+    isSaveModalOpen,
+    setIsSaveModalOpen,
+    handleInputChange,
+    handleSaveData,
+  } = useAccountSection();
 
   const handleBackClick = () => {
+    if (isFormDirty) {
+      setIsExitModalOpen(true);
+    } else {
+      window.history.back();
+    }
+  };
+
+  const handleConfirmExit = () => {
+    setIsExitModalOpen(false);
     window.history.back();
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSaveData = () => {
-    console.log("Saving data:", formData);
+  const openSaveConfirmation = () => {
+    if (isFormDirty) {
+      setIsSaveModalOpen(true);
+    }
   };
 
   return (
     <div className="min-h-screen bg-white relative mb-12">
+      {/* Modal Konfirmasi Keluar */}
+      <BaseModal
+        open={isExitModalOpen}
+        onClose={() => setIsExitModalOpen(false)}
+        onConfirm={handleConfirmExit}
+        title="Buang Perubahan?"
+        description="Semua data yang sudah diubah tidak akan tersimpan."
+        confirmText="Keluar"
+        cancelText="Batal"
+        confirmColor="bg-red-500 hover:bg-red-600"
+        cancelColor="border-green-600 text-green-600 hover:bg-green-50"
+      />
+
+      {/* Modal Konfirmasi Simpan */}
+      <BaseModal
+        open={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        onConfirm={handleSaveData}
+        title="Simpan Perubahan?"
+        description="Data diri akan disimpan, kamu bisa merubahnya lain kali"
+        confirmText="Simpan"
+        cancelText="Batal"
+        confirmColor="bg-green-600 hover:bg-green-700"
+        cancelColor="border-green-600 text-green-600 hover:bg-green-50"
+      />
+
       {/* Header with Back Button */}
       <div className="top-0 h-0 bg-white z-10 pl-4">
         <button
@@ -39,6 +77,18 @@ const AccountSection = () => {
 
       {/* Main Container */}
       <div className="border border-green-500 bg-gray-50 rounded-xl p-6 mt-10 mx-auto px-16 py-10 max-w-5xl">
+        {/* Success/Error Toast */}
+        {success && (
+          <div className="fixed top-24 right-10 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50 animate-pulse">
+            {success}
+          </div>
+        )}
+        {error && (
+          <div className="fixed top-24 right-10 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50 animate-pulse">
+            {error}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Side - Photo Upload */}
           <div className="shadow-md flex w-[60%] flex-col bg-white max-w-70 items-center p-4 rounded-lg">
@@ -88,7 +138,7 @@ const AccountSection = () => {
                   <input
                     type="tel"
                     placeholder="Masukkan Nomor Handphone"
-                    value={formData.phone}
+                    value={formData.phone || ""}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                     className="w-full px-3 py-2 text-sm  border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   />
@@ -101,21 +151,12 @@ const AccountSection = () => {
                   <div className="relative">
                     <input
                       type="date"
-                      value={formData.birthDate}
+                      value={formData.birth_date || ""}
                       onChange={(e) =>
-                        handleInputChange("birthDate", e.target.value)
+                        handleInputChange("birth_date", e.target.value)
                       }
                       className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                      style={{
-                        appearance: "none",
-                        WebkitAppearance: "none",
-                        MozAppearance: "none",
-                        position: "relative",
-                        zIndex: 10,
-                        backgroundColor: "white",
-                      }}
                     />
-                    {/* Icon Tanggal */}
                     <img
                       src="/assets/profile/date.png"
                       alt="icon tanggal"
@@ -131,7 +172,7 @@ const AccountSection = () => {
                   </label>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="relative inline-block">
-                      {selectedGender === "male" && (
+                      {formData.gender === "male" && (
                         <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center z-10">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -147,11 +188,10 @@ const AccountSection = () => {
                           </svg>
                         </div>
                       )}
-
                       <button
-                        onClick={() => setSelectedGender("male")}
+                        onClick={() => handleInputChange("gender", "male")}
                         className={`p-3 border-2 rounded-lg flex items-center space-x-3 transition-colors w-full cursor-pointer ${
-                          selectedGender === "male"
+                          formData.gender === "male"
                             ? "border-green-500"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
@@ -164,9 +204,8 @@ const AccountSection = () => {
                         <span className="font-medium">Laki - Laki</span>
                       </button>
                     </div>
-
                     <div className="relative inline-block">
-                      {selectedGender === "female" && (
+                      {formData.gender === "female" && (
                         <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center z-10">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -182,11 +221,10 @@ const AccountSection = () => {
                           </svg>
                         </div>
                       )}
-
                       <button
-                        onClick={() => setSelectedGender("female")}
+                        onClick={() => handleInputChange("gender", "female")}
                         className={`p-3 border-2 rounded-lg flex items-center space-x-3 transition-colors w-full cursor-pointer ${
-                          selectedGender === "female"
+                          formData.gender === "female"
                             ? "border-green-500"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
@@ -214,8 +252,6 @@ const AccountSection = () => {
               <h3 className="text-lg font-semibold text-gray-900">
                 Akun yang terhubung
               </h3>
-
-              {/* Google */}
               <div>
                 <div className="flex space-x-3">
                   <img src="/assets/profile/google.png" className="w-12 h-12" />
@@ -223,15 +259,12 @@ const AccountSection = () => {
                     <label className="text-sm font-medium text-gray-700">
                       Google
                     </label>
-
                     <div className="flex items-center justify-between bg-gray-50 rounded-md">
                       <span className="text-gray-900 text-xs">Hubungkan</span>
                     </div>
                   </div>
                 </div>
               </div>
-
-              {/* Facebook */}
               <div>
                 <div className="flex space-x-3">
                   <img
@@ -242,7 +275,6 @@ const AccountSection = () => {
                     <label className="text-sm font-medium text-gray-700">
                       Facebook
                     </label>
-
                     <div className="flex items-center justify-between bg-gray-50 rounded-md">
                       <span className="text-gray-900 text-xs">Terhubung</span>
                     </div>
@@ -256,8 +288,6 @@ const AccountSection = () => {
               <h3 className="text-lg font-semibold text-gray-900">
                 Informasi Akun
               </h3>
-
-              {/* Email */}
               <div className="mb-8">
                 <div className="flex items-center space-x-2 mb-1">
                   <label className="text-sm font-medium text-gray-700">
@@ -277,8 +307,6 @@ const AccountSection = () => {
                   />
                 </div>
               </div>
-
-              {/* Password */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Kata Sandi
@@ -295,10 +323,11 @@ const AccountSection = () => {
             {/* Save Button */}
             <div className="flex items-center justify-center ml-12 mt-12">
               <button
-                onClick={handleSaveData}
-                className="w-full max-w-xs h-12 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer"
+                onClick={openSaveConfirmation}
+                className="w-full max-w-xs h-12 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+                disabled={loading || !isFormDirty}
               >
-                Simpan Data
+                {loading ? "Menyimpan..." : "Simpan Data"}
               </button>
             </div>
           </div>

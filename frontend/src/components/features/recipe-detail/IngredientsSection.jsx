@@ -1,166 +1,199 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { getProducts, getImageUrl } from "@/service/products/product";
+import { useAuth } from "@/context/AuthContext";
+import { createCart, getCart } from "@/service/cart/cart";
+import { addCartItem } from "@/service/cart/cartItem";
+import { useCartItem } from "@/components/features/cart/CartItem.hooks";
+import SayurboxLoading from "@/components/base/SayurBoxLoading";
 
 const IngredientsSection = () => {
-  const scrollRef1 = useRef(null);
-  const [showLeft1, setShowLeft1] = useState(false);
-  const [showRight1, setShowRight1] = useState(false);
+  const scrollRef = useRef(null);
+  const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(false);
 
-  const fruitProducts = [
-    {
-      id: 1,
-      title: "Alpukat Mentega",
-      price: "Rp. 2.500",
-      originalPrice: "Rp. 15.625",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "/assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 2,
-      title: "Alpukat Mentega Premium",
-      price: "Rp. 3.000",
-      originalPrice: "Rp. 18.750",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "/assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 3,
-      title: "Alpukat Organik",
-      price: "Rp. 4.500",
-      originalPrice: "Rp. 28.125",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "/assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 4,
-      title: "Alpukat Segar",
-      price: "Rp. 2.200",
-      originalPrice: "Rp. 13.750",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "/assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 5,
-      title: "Alpukat Import",
-      price: "Rp. 5.500",
-      originalPrice: "Rp. 34.375",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "/assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-    {
-      id: 6,
-      title: "Alpukat Import 2",
-      price: "Rp. 5.500",
-      originalPrice: "Rp. 34.375",
-      discount: "84%",
-      unit: "1 Pcs, 1 Kg",
-      image: "/assets/products/produk-1.png",
-      badgeTop: "assets/landing/icons/badge-masak.png",
-      badgeLabel: "Best Quality for MASAK!",
-    },
-  ];
+  // --- State dari API dan Interaksi ---
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { user } = useAuth();
+  const userId = user?.id;
+  const [cartId, setCartId] = useState(null);
+  const [addingId, setAddingId] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
-  const checkScroll1 = () => {
-    const el = scrollRef1.current;
-    if (!el) return;
-    setShowLeft1(el.scrollLeft > 0);
-    setShowRight1(el.scrollLeft + el.clientWidth < el.scrollWidth);
-  };
-
+  // --- Logika Pengambilan Data Produk ---
   useEffect(() => {
-    const el1 = scrollRef1.current;
-
-    checkScroll1();
-
-    el1?.addEventListener("scroll", checkScroll1);
-    window.addEventListener("resize", checkScroll1);
-
-    return () => {
-      el1?.removeEventListener("scroll", checkScroll1);
-      window.removeEventListener("resize", checkScroll1);
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await getProducts();
+        const formattedProducts = response.data.map((product) => {
+          let imageUrl = "/assets/default-product.png";
+          if (Array.isArray(product.images) && product.images.length > 0) {
+            const primary = product.images.find((img) => img.is_primary);
+            imageUrl = getImageUrl(
+              primary ? primary.image_url : product.images[0].image_url
+            );
+          }
+          return {
+            id: product.id,
+            slug: product.slug,
+            title: product.name,
+            image: imageUrl,
+            unit: product.unit,
+            price: `Rp. ${Number(product.price).toLocaleString("id-ID")}`,
+            originalPrice: `Rp. ${Number(product.original_price).toLocaleString(
+              "id-ID"
+            )}`,
+            discount: product.discount_percent
+              ? `${product.discount_percent}%`
+              : null,
+          };
+        });
+        setProducts(formattedProducts.slice(0, 6)); // Ambil 6 produk pertama
+        setError(null);
+      } catch (err) {
+        setError("Gagal mengambil data produk");
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchProducts();
   }, []);
 
-  const scrollBy1 = (amount) => {
-    scrollRef1.current.scrollBy({ left: amount, behavior: "smooth" });
+  // --- Logika Keranjang Belanja ---
+  useEffect(() => {
+    const fetchCartId = async () => {
+      if (!userId) return;
+      try {
+        const res = await getCart(userId);
+        if (res.data && res.data.id) {
+          setCartId(res.data.id);
+        } else {
+          const newCart = await createCart(userId);
+          setCartId(newCart.data.id);
+        }
+      } catch {
+        const newCart = await createCart(userId);
+        setCartId(newCart.data.id);
+      }
+    };
+    fetchCartId();
+  }, [userId]);
+
+  const { isProductInCart } = useCartItem(userId);
+
+  const handleAddToCart = async (product) => {
+    if (!cartId || !product?.id) return;
+    if (isProductInCart(product.id)) {
+      setToastMessage("Produk sudah ada di keranjang!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+      return;
+    }
+    setAddingId(product.id);
+    try {
+      await addCartItem(cartId, product.id, 1);
+      setToastMessage("Berhasil menambahkan ke keranjang!");
+      setShowToast(true);
+    } catch (err) {
+      setToastMessage("Gagal menambahkan ke keranjang!");
+      setShowToast(true);
+    } finally {
+      setAddingId(null);
+      setTimeout(() => setShowToast(false), 2500);
+    }
   };
 
-  const ProductCard = ({ product }) => (
-    <div>
-      <div className="flex-shrink-0">
-        <div className="w-56 h-full rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow max-w-2xl">
-          {/* Image Area */}
-          <div className="relative w-full h-46">
-            {/* Badge Top */}
-            <div className="absolute top-2 left-2 z-10">
-              <img
-                src={product.badgeTop}
-                alt={product.badgeLabel}
-                className="w-16 h-6 object-contain"
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
-              />
-            </div>
+  // --- Logika Scroll Carousel ---
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setShowLeft(el.scrollLeft > 0);
+    setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1); // Toleransi 1px
+  }, []);
 
-            {/* Product Image */}
+  useEffect(() => {
+    const el = scrollRef.current;
+    checkScroll();
+    el?.addEventListener("scroll", checkScroll);
+    window.addEventListener("resize", checkScroll);
+    return () => {
+      el?.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [checkScroll, products]); // Re-check on products load
+
+  const scrollBy = (amount) => {
+    scrollRef.current?.scrollBy({ left: amount, behavior: "smooth" });
+  };
+
+  // --- Komponen Card Produk ---
+  const ProductCard = ({ product }) => (
+    <div className="flex-shrink-0">
+      <div className="w-56 h-full rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow max-w-2xl">
+        <div className="relative w-full h-46">
+          <a href={`/product/${product.slug}`}>
             <img
               src={product.image}
               alt={product.title}
               className="w-full h-full object-cover"
-              onError={(e) => {
-                e.target.style.display = "none";
-                e.target.nextSibling.style.display = "flex";
-              }}
             />
-            {/* Fallback Image */}
-            <div className="w-full h-full bg-green-50 flex items-center justify-center hidden">
-              <span className="text-6xl">🥑</span>
-            </div>
-
-            {/* Add Icon */}
-            <button className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer">
+          </a>
+          <button
+            className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer"
+            onClick={() => handleAddToCart(product)}
+            disabled={addingId === product.id}
+          >
+            {addingId === product.id ? (
+              <svg
+                className="animate-spin w-8 h-8 text-white"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                />
+              </svg>
+            ) : (
               <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
-            </button>
+            )}
+          </button>
+        </div>
+        <div className="p-3">
+          <div className="mb-1">
+            <span className="text-base font-bold text-gray-800">
+              {product.price}
+            </span>
           </div>
-
-          {/* Price & Info */}
-          <div className="p-3">
-            <div className="mb-1">
-              <span className="text-base font-bold text-gray-800">
-                {product.price}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-2">
+            {product.discount && (
               <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
                 {product.discount}
               </span>
-              <span className="line-through text-gray-400 text-xs">
-                {product.originalPrice}
-              </span>
-            </div>
-
-            <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
+            )}
+            <span className="line-through text-gray-400 text-xs">
+              {product.originalPrice}
+            </span>
+          </div>
+          <a href={`/product/${product.slug}`}>
+            <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2 hover:underline">
               {product.title}
             </h4>
-            <p className="text-xs text-gray-500">{product.unit}</p>
-          </div>
+          </a>
+          <p className="text-xs text-gray-500">{product.unit}</p>
         </div>
       </div>
     </div>
@@ -168,47 +201,59 @@ const IngredientsSection = () => {
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-white">
+      {/* Toast Notifikasi */}
+      {showToast && (
+        <div className="fixed top-20 right-4 z-50 bg-green-600 text-white py-3 px-4 rounded-md shadow-lg">
+          {toastMessage}
+        </div>
+      )}
+
       <div>
         <div className="mb-4">
           <div className="relative">
-            <div className="">
+            <div className="mb-4">
               <button className="bg-green-100 text-sm text-left text-green-900 px-4 py-2 font-semibold rounded">
                 Beli Bahannya di Sini :
               </button>
             </div>
-            {/* Arrow Left */}
-            {showLeft1 && (
+            {showLeft && (
               <button
-                onClick={() => scrollBy1(-300)}
+                onClick={() => scrollBy(-300)}
                 className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition"
               >
                 <ChevronLeft className="w-6 h-6 text-white" />
               </button>
             )}
-
-            {/* Arrow Right */}
-            {showRight1 && (
+            {showRight && (
               <button
-                onClick={() => scrollBy1(300)}
+                onClick={() => scrollBy(300)}
                 className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition"
               >
                 <ChevronRight className="w-6 h-6 text-white" />
               </button>
             )}
-
             <div
               className="flex items-center gap-4 overflow-x-auto px-2 h-88 md:px-0 scroll-smooth scrollbar-hide"
-              ref={scrollRef1}
+              ref={scrollRef}
             >
-              {fruitProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              {loading ? (
+                <div className="w-full flex justify-center items-center h-72">
+                  <SayurboxLoading />
+                </div>
+              ) : error ? (
+                <div className="w-full text-center py-12 text-red-600 font-bold">
+                  {error}
+                </div>
+              ) : (
+                products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Custom CSS untuk hide scrollbar*/}
       <style jsx>{`
         .scrollbar-hide {
           -ms-overflow-style: none;

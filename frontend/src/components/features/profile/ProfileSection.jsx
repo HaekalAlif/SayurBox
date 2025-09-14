@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import BaseModal from "@/components/base/BaseModal";
+import { deleteAccount } from "@/service/auth/auth";
 
 const ProfileSection = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleBackClick = () => {
     window.history.back();
@@ -13,6 +16,18 @@ const ProfileSection = () => {
 
   const handleNavigate = (path) => {
     navigate(path);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      await deleteAccount();
+      setUser(null); // Clear user from context and local storage
+      setIsDeleteModalOpen(false);
+      navigate("/"); // Redirect to home page
+    } catch (error) {
+      console.error("Failed to delete account:", error);
+      // Optionally, show an error toast
+    }
   };
 
   const menuItems = [
@@ -29,21 +44,36 @@ const ProfileSection = () => {
     {
       title: "Kebijakan Privasi",
       icon: "assets/profile/policy.png",
+      action: () => {},
     },
     {
       title: "Syarat & Ketentuan",
       icon: "assets/profile/terms.png",
+      action: () => {},
     },
     {
       title: "Hapus Akun",
       icon: "assets/profile/setting.png",
+      action: () => setIsDeleteModalOpen(true), // Open confirmation modal
+      textColor: "text-red-500",
     },
   ];
 
-console.log("User in ProfileSection:", user);
-
   return (
     <div className="min-h-screen relative bg-white">
+      {/* Delete Confirmation Modal */}
+      <BaseModal
+        open={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Hapus Akun?"
+        description="Konfirmasi bahwa akun Anda saat ini akan dihapus"
+        confirmText="Ya"
+        cancelText="Kembali"
+        confirmColor="bg-red-500 hover:bg-red-600"
+        cancelColor="border-green-600 text-green-600 hover:bg-green-50"
+      />
+
       {/* Header with Back Button */}
       <div className="top-0 h-4 bg-white z-10 pl-4">
         <button
@@ -147,7 +177,7 @@ console.log("User in ProfileSection:", user);
                   <img src={item.icon} alt={item.title} className="w-7" />
                   <span
                     className={`font-medium ${
-                      item.textColor ? "text-red-500" : "text-gray-900"
+                      item.textColor ? item.textColor : "text-gray-900"
                     }`}
                   >
                     {item.title}

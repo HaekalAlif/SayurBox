@@ -33,7 +33,7 @@ export function useRegister() {
       const res = response?.data || response;
       setUser(res.user);
 
-      navigate("/");
+      navigate("/login");
 
       return res;
     } catch (err) {

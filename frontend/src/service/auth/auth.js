@@ -30,3 +30,15 @@ export const sendVerificationEmail = async () => {
 export const logout = async () => {
   return api.post("/api/logout");
 };
+
+export const updateProfile = async (data) => {
+  return api.put("/api/user/profile", data);
+};
+
+export const getAuthUser = async () => {
+  return api.get("/api/user");
+};
+
+export const deleteAccount = async () => {
+  return api.delete("/api/user/profile");
+};

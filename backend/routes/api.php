@@ -10,6 +10,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
+use App\Http\Controllers\ProfileController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -57,5 +58,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/order-items/{id}', [OrderItemController::class, 'destroy']);
     Route::get('/admin/orders', [OrderController::class, 'adminIndex']);
 });
+
+Route::middleware('auth:sanctum')->put('/user/profile', [ProfileController::class, 'update']);
+Route::middleware('auth:sanctum')->delete('/user/profile', [ProfileController::class, 'destroy']);
 
 include 'auth.php';

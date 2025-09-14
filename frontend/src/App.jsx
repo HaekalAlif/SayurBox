@@ -41,6 +41,7 @@ import Products from "./pages/admin/products/ProductList";
 import OrderListAdmin from "./pages/admin/orders/OrderList";
 import OrderDetailAdmin from "./pages/admin/order-detail/OrderDetail";
 import AdminLayout from "./components/layout/admin/Layout";
+import SpecialLayout from "./components/layout/special/Layout";
 
 function App() {
   return (
@@ -282,81 +283,81 @@ function App() {
         <Route
           path="/faq/sayur-panen"
           element={
-            <Layout>
+            <SpecialLayout>
               <SayurPanenFaq />
-            </Layout>
+            </SpecialLayout>
           }
         />
 
         <Route
           path="/faq/sayur-poin"
           element={
-            <Layout>
+            <SpecialLayout>
               <SayurPoin />
-            </Layout>
+            </SpecialLayout>
           }
         />
 
         <Route
           path="/faq/product-availability"
           element={
-            <Layout>
+            <SpecialLayout>
               <KetersediaanProduk />
-            </Layout>
+            </SpecialLayout>
           }
         />
 
         <Route
           path="/faq/payment-method"
           element={
-            <Layout>
+            <SpecialLayout>
               <MetodePembayaran />
-            </Layout>
+            </SpecialLayout>
           }
         />
 
         <Route
           path="/faq"
           element={
-            <Layout>
+            <SpecialLayout>
               <Faq />
-            </Layout>
+            </SpecialLayout>
           }
         />
 
         <Route
           path="/sayur-poin"
           element={
-            <Layout>
+            <SpecialLayout>
               <SayurPoinUser />
-            </Layout>
+            </SpecialLayout>
           }
         />
 
         <Route
           path="/sayur-poin/detail"
           element={
-            <Layout>
+            <SpecialLayout>
               <SayurPoinDetail />
-            </Layout>
+            </SpecialLayout>
           }
         />
 
         <Route
           path="/sayur-poin/faq"
           element={
-            <Layout>
+            <SpecialLayout>
               <SayurPoinFaq />
-            </Layout>
+            </SpecialLayout>
           }
         />
 
         <Route
           path="/sayur-panen"
           element={
-            <Layout>
+            <SpecialLayout>
               <SayurPanen />
-            </Layout>
+            </SpecialLayout>
           }
         />
 
