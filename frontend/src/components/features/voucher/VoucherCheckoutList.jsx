@@ -24,7 +24,14 @@ const VoucherCheckoutList = () => {
   }));
 
   return (
-    <div className="min-h-screen">
+    <div
+      className="min-h-screen w-full bg-pattern"
+      style={{
+        backgroundImage: `url("/bg-pattern-sayurbox.png")`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "130px",
+      }}
+    >
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
@@ -47,15 +54,15 @@ const VoucherCheckoutList = () => {
       `}</style>
 
       {/* Header with Back Button */}
-      <div className="top-0 bg-white z-10 pl-4">
+      <div className="absolute top-0 mt-50 z-10 pl-4">
         <button
           onClick={handleBackClick}
-          className="relative top-12 left-6 cursor-pointer items-center w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform"
+          className="relative top-12 left-6 cursor-pointer items-center w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform "
         >
           <ChevronLeft className="w-10 h-10 ml-1" />
         </button>
       </div>
-      <div className=" max-w-3xl mx-auto">
+      <div className=" max-w-3xl mx-auto pt-12">
         <div className="text-2xl font-bold">
           <h1>Voucher Saya</h1>
         </div>
@@ -82,7 +89,7 @@ const VoucherCheckoutList = () => {
           {/* Exchange Points Button */}
           <button
             onClick={handleExchangePoints}
-            className="w-[95%] flex items-center justify-between p-4 rounded-sm mb-4 transition-colors hover:opacity-90 border border-green-600"
+            className="w-[95%] flex items-center justify-between p-4 rounded-sm mb-4 transition-colors hover:opacity-90 border border-green-600 cursor-pointer"
             style={{ backgroundColor: "#B1E9AB" }}
           >
             <div className="flex items-center space-x-6">
@@ -134,7 +141,10 @@ const VoucherCheckoutList = () => {
 
           {/* Pilih Voucher Button */}
           <div className="mt-6">
-            <button className="w-[100%] bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-md text-lg transition-colors">
+            <button
+              className="w-[100%] bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-md text-lg transition-colors cursor-pointer"
+              onClick={handleBackClick}
+            >
               Pilih Voucher
             </button>
           </div>

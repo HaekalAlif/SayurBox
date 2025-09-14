@@ -5,19 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CartItemController extends Controller
 {
-    // POST /api/cart-items    
+    // POST /api/cart-items
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'cart_id' => 'required|exists:carts,id',
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
         ]);
 
-        // Cek apakah item sudah ada di keranjang
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
         $existing = CartItem::where('cart_id', $request->cart_id)
             ->where('product_id', $request->product_id)
             ->first();
@@ -26,18 +30,16 @@ class CartItemController extends Controller
             return response()->json([
                 'message' => 'Produk sudah ada di keranjang!',
                 'cart_item' => $existing
-            ], 200);
+            ], 409); // Use 409 Conflict for existing resource
         }
 
         $product = Product::findOrFail($request->product_id);
-        $price = $product->price;
-        $subtotal = $price * $request->quantity;
+        $subtotal = $product->price * $request->quantity;
 
         $cartItem = CartItem::create([
             'cart_id' => $request->cart_id,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
-            'price' => $price,
             'subtotal' => $subtotal,
         ]);
 
@@ -49,15 +51,23 @@ class CartItemController extends Controller
     {
         $cartItem = CartItem::findOrFail($id);
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'quantity' => 'required|integer|min:1',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
         $product = $cartItem->product;
-        $price = $product->price;
+
+        // Pastikan kuantitas tidak melebihi stok
+        if ($request->quantity > $product->stock) {
+            return response()->json(['message' => 'Kuantitas melebihi stok yang tersedia.'], 422);
+        }
+
         $cartItem->quantity = $request->quantity;
-        $cartItem->price = $price; 
-        $cartItem->subtotal = $price * $request->quantity;
+        $cartItem->subtotal = $product->price * $request->quantity;
         $cartItem->save();
 
         return response()->json($cartItem);
@@ -66,8 +76,11 @@ class CartItemController extends Controller
     // DELETE /api/cart-items/{id}
     public function destroy($id)
     {
-        $cartItem = CartItem::findOrFail($id);
-        $cartItem->delete();
-        return response()->json(['message' => 'Cart item deleted']);
+        $cartItem = CartItem::find($id);
+        if ($cartItem) {
+            $cartItem->delete();
+            return response()->json(['message' => 'Cart item deleted']);
+        }
+        return response()->json(['message' => 'Item not found'], 404);
     }
 }

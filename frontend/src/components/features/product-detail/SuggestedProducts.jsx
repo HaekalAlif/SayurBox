@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { useSuggestedProducts } from "./SuggestedProducts.hooks";
 import SayurboxLoading from "@/components/base/SayurBoxLoading";
@@ -6,14 +6,30 @@ import { useAuth } from "@/context/AuthContext";
 import { useCartItem } from "@/components/features/cart/CartItem.hooks";
 import { addCartItem } from "@/service/cart/cartItem";
 import { getCart, createCart } from "@/service/cart/cart";
+import { useNavigate } from "react-router-dom";
 
 const SuggestedProducts = () => {
+  const navigate = useNavigate();
   const scrollRef1 = useRef(null);
   const scrollRef2 = useRef(null);
   const [showLeft1, setShowLeft1] = useState(false);
   const [showRight1, setShowRight1] = useState(false);
   const [showLeft2, setShowLeft2] = useState(false);
   const [showRight2, setShowRight2] = useState(false);
+
+  // Refs to track drag state for each carousel
+  const dragInfo1 = useRef({
+    isDown: false,
+    startX: 0,
+    scrollLeft: 0,
+    isDragging: false,
+  });
+  const dragInfo2 = useRef({
+    isDown: false,
+    startX: 0,
+    scrollLeft: 0,
+    isDragging: false,
+  });
 
   const { user } = useAuth();
   const userId = user?.id;
@@ -24,27 +40,24 @@ const SuggestedProducts = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // Ambil cart id user (sekali saja)
   useEffect(() => {
     const fetchCartId = async () => {
       if (!userId) return;
       try {
         const res = await getCart(userId);
-        if (res.data && res.data.id) {
-          setCartId(res.data.id);
-        } else {
-          const newCart = await createCart(userId);
-          setCartId(newCart.data.id);
-        }
+        setCartId(res.data?.id);
       } catch {
-        const newCart = await createCart(userId);
-        setCartId(newCart.data.id);
+        try {
+          const newCart = await createCart(userId);
+          setCartId(newCart.data?.id);
+        } catch (e) {
+          console.error("Failed to create or get cart:", e);
+        }
       }
     };
     fetchCartId();
   }, [userId]);
 
-  // Ambil produk dari hooks (API, random 10)
   const {
     products: fruitProducts,
     loading: loading1,
@@ -56,52 +69,46 @@ const SuggestedProducts = () => {
     error: error2,
   } = useSuggestedProducts();
 
-  // Scroll logic section 1
-  const checkScroll1 = () => {
-    const el = scrollRef1.current;
+  const checkScroll = useCallback((ref, setShowLeft, setShowRight) => {
+    const el = ref.current;
     if (!el) return;
-    setShowLeft1(el.scrollLeft > 0);
-    setShowRight1(el.scrollLeft + el.clientWidth < el.scrollWidth);
-  };
-
-  // Scroll logic section 2
-  const checkScroll2 = () => {
-    const el = scrollRef2.current;
-    if (!el) return;
-    setShowLeft2(el.scrollLeft > 0);
-    setShowRight2(el.scrollLeft + el.clientWidth < el.scrollWidth);
-  };
+    const hasOverflow = el.scrollWidth > el.clientWidth;
+    setShowLeft(el.scrollLeft > 0);
+    setShowRight(
+      hasOverflow && el.scrollLeft < el.scrollWidth - el.clientWidth - 1
+    );
+  }, []);
 
   useEffect(() => {
+    const checkAllScrolls = () => {
+      checkScroll(scrollRef1, setShowLeft1, setShowRight1);
+      checkScroll(scrollRef2, setShowLeft2, setShowRight2);
+    };
     const el1 = scrollRef1.current;
     const el2 = scrollRef2.current;
 
-    checkScroll1();
-    checkScroll2();
-
-    el1?.addEventListener("scroll", checkScroll1);
-    el2?.addEventListener("scroll", checkScroll2);
-    window.addEventListener("resize", checkScroll1);
-    window.addEventListener("resize", checkScroll2);
+    el1?.addEventListener("scroll", checkAllScrolls);
+    el2?.addEventListener("scroll", checkAllScrolls);
+    window.addEventListener("resize", checkAllScrolls);
+    checkAllScrolls();
 
     return () => {
-      el1?.removeEventListener("scroll", checkScroll1);
-      el2?.removeEventListener("scroll", checkScroll2);
-      window.removeEventListener("resize", checkScroll1);
-      window.removeEventListener("resize", checkScroll2);
+      el1?.removeEventListener("scroll", checkAllScrolls);
+      el2?.removeEventListener("scroll", checkAllScrolls);
+      window.removeEventListener("resize", checkAllScrolls);
     };
-  }, []);
+  }, [fruitProducts, relatedProducts, checkScroll]);
 
-  const scrollBy1 = (amount) => {
-    scrollRef1.current.scrollBy({ left: amount, behavior: "smooth" });
-  };
+  const scrollBy = (ref, amount) =>
+    ref.current?.scrollBy({ left: amount, behavior: "smooth" });
 
-  const scrollBy2 = (amount) => {
-    scrollRef2.current.scrollBy({ left: amount, behavior: "smooth" });
-  };
-
-  // Handle tambah ke cart
-  const handleAddToCart = async (product) => {
+  const handleAddToCart = async (product, e) => {
+    e.stopPropagation(); // Prevent card click
+    e.preventDefault(); // Prevent link navigation
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
     if (!cartId || !product?.id) return;
     if (isProductInCart(product.id)) {
       setToastMessage("Produk sudah ada di keranjang!");
@@ -114,61 +121,86 @@ const SuggestedProducts = () => {
       await addCartItem(cartId, product.id, 1);
       setToastMessage("Berhasil menambahkan ke keranjang!");
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
     } catch (err) {
       setToastMessage("Gagal menambahkan ke keranjang!");
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
     } finally {
+      setTimeout(() => setShowToast(false), 2500);
       setAddingId(null);
     }
   };
 
-  const ProductCard = ({ product }) => (
-    <a
-      href={`/product/${product.slug}`}
-      className="cursor-pointer"
-      key={product.id}
-    >
-      <div className="flex-shrink-0">
-        <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
-          {/* Image Area */}
-          <div className="relative w-full h-46">
-            {/* Badge Top */}
-            <div className="absolute top-2 left-2 z-10">
-              <img
-                src={product.badgeTop}
-                alt={product.badgeLabel}
-                className="w-16 h-6 object-contain"
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
-              />
-            </div>
+  // Generic Drag Handlers
+  const createDragHandlers = (scrollRef, dragInfo) => ({
+    onMouseDown: (e) => {
+      const slider = scrollRef.current;
+      if (!slider) return;
+      dragInfo.current = {
+        isDown: true,
+        startX: e.pageX - slider.offsetLeft,
+        scrollLeft: slider.scrollLeft,
+        isDragging: false,
+      };
+      slider.style.cursor = "grabbing";
+      slider.style.userSelect = "none";
+    },
+    onMouseLeave: () => {
+      dragInfo.current.isDown = false;
+      const slider = scrollRef.current;
+      if (slider) {
+        slider.style.cursor = "grab";
+      }
+    },
+    onMouseUp: () => {
+      dragInfo.current.isDown = false;
+      const slider = scrollRef.current;
+      if (slider) {
+        slider.style.cursor = "grab";
+        slider.style.userSelect = "auto";
+      }
+      // Reset isDragging after a short delay to allow click event to check it
+      setTimeout(() => {
+        dragInfo.current.isDragging = false;
+      }, 50);
+    },
+    onMouseMove: (e) => {
+      if (!dragInfo.current.isDown) return;
+      e.preventDefault();
+      const slider = scrollRef.current;
+      if (!slider) return;
+      const x = e.pageX - slider.offsetLeft;
+      const walk = x - dragInfo.current.startX;
+      if (Math.abs(walk) > 5) {
+        // Threshold to confirm dragging
+        dragInfo.current.isDragging = true;
+      }
+      slider.scrollLeft = dragInfo.current.scrollLeft - walk;
+    },
+  });
 
-            {/* Product Image */}
+  const ProductCard = ({ product, dragInfo }) => {
+    return (
+      <a
+        href={`/product/${product.slug}`}
+        className="flex-shrink-0"
+        onClick={(e) => {
+          // If it was a drag action, prevent navigation
+          if (dragInfo.current.isDragging) {
+            e.preventDefault();
+          }
+        }}
+      >
+        <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
+          <div className="relative w-full h-46">
             <img
               src={product.image}
               alt={product.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.target.style.display = "none";
-                e.target.nextSibling.style.display = "flex";
-              }}
+              className="w-full h-full object-cover pointer-events-none"
             />
-            {/* Fallback Image */}
-            <div className="w-full h-full bg-green-50 flex items-center justify-center hidden">
-              <span className="text-6xl">🥑</span>
-            </div>
-
-            {/* Add Icon */}
             <button
               type="button"
-              className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                handleAddToCart(product);
-              }}
+              className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg"
+              onClick={(e) => handleAddToCart(product, e)}
               disabled={addingId === product.id}
               title="Tambah ke keranjang"
             >
@@ -197,140 +229,125 @@ const SuggestedProducts = () => {
               )}
             </button>
           </div>
-
-          {/* Price & Info */}
-          <div className="p-3">
+          <div className="p-3 pointer-events-none">
             <div className="mb-1">
               <span className="text-base font-bold text-gray-800">
-                {product.price}
+                Rp {product.price.toLocaleString("id-ID")}
               </span>
             </div>
-
             <div className="flex items-center gap-2 mb-2">
               {product.discount && (
                 <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
                   {product.discount}
                 </span>
               )}
-              <span className="line-through text-gray-400 text-xs">
-                {product.originalPrice}
-              </span>
+              {product.originalPrice > 0 && (
+                <span className="line-through text-gray-400 text-xs">
+                  Rp {product.originalPrice.toLocaleString("id-ID")}
+                </span>
+              )}
             </div>
-
             <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
               {product.title}
             </h4>
             <p className="text-xs text-gray-500">{product.unit}</p>
           </div>
         </div>
+      </a>
+    );
+  };
+
+  const renderCarousel = (
+    products,
+    loading,
+    error,
+    ref,
+    showLeft,
+    showRight,
+    scrollFn,
+    dragInfo
+  ) => (
+    <div className="relative">
+      {showLeft && (
+        <button
+          onClick={() => scrollFn(ref, -300)}
+          className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer"
+        >
+          <ChevronLeft className="w-6 h-6 text-white" />
+        </button>
+      )}
+      {showRight && (
+        <button
+          onClick={() => scrollFn(ref, 300)}
+          className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer"
+        >
+          <ChevronRight className="w-6 h-6 text-white" />
+        </button>
+      )}
+      <div
+        className="flex items-center gap-4 overflow-x-auto px-2 h-88 md:px-0 scrollbar-hide"
+        ref={ref}
+        style={{ cursor: "grab", scrollBehavior: "auto" }}
+        {...createDragHandlers(ref, dragInfo)}
+      >
+        {loading ? (
+          <SayurboxLoading />
+        ) : error ? (
+          <div className="text-center py-12 text-red-600 font-bold">
+            {error}
+          </div>
+        ) : (
+          products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              dragInfo={dragInfo}
+            />
+          ))
+        )}
       </div>
-    </a>
+    </div>
   );
 
   return (
     <div className="px-4 py-8">
-      {/* Toast */}
       {showToast && (
         <div className="fixed top-20 right-4 z-50 bg-green-600 text-white py-3 px-4 rounded-md shadow-lg flex items-center">
           <span className="mr-2">{toastMessage}</span>
         </div>
       )}
-
       <div className="max-w-6xl mx-auto">
-        {/* Section 1: Lainnya dari : Buah */}
         <div className="mb-4">
-          <h2 className="text-xl font-bold text-gray-900 ">
+          <h2 className="text-xl font-bold text-gray-900">
             Lainnya dari : Buah
           </h2>
-
-          <div className="relative">
-            {/* Arrow Left */}
-            {showLeft1 && (
-              <button
-                onClick={() => scrollBy1(-300)}
-                className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer"
-              >
-                <ChevronLeft className="w-6 h-6 text-white" />
-              </button>
-            )}
-
-            {/* Arrow Right */}
-            {showRight1 && (
-              <button
-                onClick={() => scrollBy1(300)}
-                className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition cursor-pointer"
-              >
-                <ChevronRight className="w-6 h-6 text-white" />
-              </button>
-            )}
-
-            <div
-              className="flex items-center gap-4 overflow-x-auto px-2 h-88 md:px-0 scroll-smooth scrollbar-hide"
-              ref={scrollRef1}
-            >
-              {loading1 ? (
-                <SayurboxLoading />
-              ) : error1 ? (
-                <div className="text-center py-12 text-red-600 font-bold">
-                  {error1}
-                </div>
-              ) : (
-                fruitProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))
-              )}
-            </div>
-          </div>
+          {renderCarousel(
+            fruitProducts,
+            loading1,
+            error1,
+            scrollRef1,
+            showLeft1,
+            showRight1,
+            scrollBy,
+            dragInfo1
+          )}
         </div>
-
-        {/* Section 2: Yang lain beli juga! */}
         <div className="mb-4">
-          <h2 className="text-xl font-bold text-gray-900 ">
+          <h2 className="text-xl font-bold text-gray-900">
             Yang lain beli juga!
           </h2>
-
-          <div className="relative">
-            {/* Arrow Left*/}
-            {showLeft2 && (
-              <button
-                onClick={() => scrollBy2(-300)}
-                className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition"
-              >
-                <ChevronLeft className="w-6 h-6 text-white" />
-              </button>
-            )}
-
-            {/* Arrow Right*/}
-            {showRight2 && (
-              <button
-                onClick={() => scrollBy2(300)}
-                className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 w-12 h-12 bg-[#684C34] rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition"
-              >
-                <ChevronRight className="w-6 h-6 text-white" />
-              </button>
-            )}
-
-            <div
-              className="flex items-center gap-4 overflow-x-auto h-88 px-2 md:px-0 scroll-smooth scrollbar-hide"
-              ref={scrollRef2}
-            >
-              {loading2 ? (
-                <SayurboxLoading />
-              ) : error2 ? (
-                <div className="text-center py-12 text-red-600 font-bold">
-                  {error2}
-                </div>
-              ) : (
-                relatedProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))
-              )}
-            </div>
-          </div>
+          {renderCarousel(
+            relatedProducts,
+            loading2,
+            error2,
+            scrollRef2,
+            showLeft2,
+            showRight2,
+            scrollBy,
+            dragInfo2
+          )}
         </div>
       </div>
-
-      {/* Custom CSS untuk hide scrollbar */}
       <style jsx>{`
         .scrollbar-hide {
           -ms-overflow-style: none;

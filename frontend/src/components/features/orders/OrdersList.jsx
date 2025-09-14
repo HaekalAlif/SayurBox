@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useOrderList } from "./OrderList.hooks";
 import { useNavigate } from "react-router-dom";
+import BaseModal from "@/components/base/BaseModal";
+import SayurboxLoading from "@/components/base/SayurBoxLoading";
 
 const OrdersList = () => {
   const {
@@ -12,9 +14,33 @@ const OrdersList = () => {
     setSearchQuery,
     inProcessOrders,
     lastOrders,
+    cancelOrder,
   } = useOrderList();
 
   const navigate = useNavigate();
+
+  // Modal state
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelOrderId, setCancelOrderId] = useState(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  // Function to handle order cancellation
+  const handleConfirmCancel = async () => {
+    if (!cancelOrderId) return;
+
+    setIsCancelling(true);
+    try {
+      await cancelOrder(cancelOrderId);
+      // Success, modal will close
+    } catch (error) {
+      console.error("Failed to cancel order:", error);
+      // Error handling if needed
+    } finally {
+      setIsCancelling(false);
+      setShowCancelModal(false);
+      setCancelOrderId(null);
+    }
+  };
 
   const handleBackClick = () => {
     window.history.back();
@@ -130,7 +156,12 @@ const OrdersList = () => {
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                action.onClick();
+                if (action.type === "cancel") {
+                  setCancelOrderId(order.id);
+                  setShowCancelModal(true);
+                } else if (action.onClick) {
+                  action.onClick();
+                }
               }}
             >
               {action.text}
@@ -142,27 +173,48 @@ const OrdersList = () => {
   );
 
   return (
-    <div className="">
+    <div
+      className="min-h-screen w-full bg-pattern"
+      style={{
+        backgroundImage: `url("bg-pattern-sayurbox.png")`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "130px",
+      }}
+    >
+      {/* Modal Konfirmasi Batalkan - Dengan loading state */}
+      <BaseModal
+        open={showCancelModal}
+        onClose={() => !isCancelling && setShowCancelModal(false)}
+        title="Batalkan Pesanan"
+        description="Apakah Anda yakin ingin membatalkan pesanan ini? Tindakan ini tidak dapat dibatalkan."
+        confirmText={isCancelling ? "Memproses..." : "Batalkan"}
+        cancelText="Kembali"
+        onConfirm={handleConfirmCancel}
+        confirmColor="bg-red-600 hover:bg-red-700"
+        cancelColor="border-green-600 text-green-600 hover:bg-green-50"
+        disabled={isCancelling}
+      />
+
       {/* Back Button */}
       <div className="bg-white z-10 pl-3">
         <button
           onClick={handleBackClick}
-          className="relative top-13 left-6 cursor-pointer items-center w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform"
+          className="absolute top-13 left-6 cursor-pointer items-center mt-46 w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform"
         >
           <ChevronLeft className="w-10 h-10 ml-1" />
         </button>
       </div>
-      <div className="min-h-screen items-center flex justify-center mx-auto mb-8">
+      <div className="min-h-screen items-center flex justify-center mx-auto mb-8 pt-12 pb-12">
         {/* Main Content */}
         <div className="max-w-4xl">
-          <div className=" flex flex-col border-2 shadow-md rounded-xl bg-white p-6 mx-auto ">
+          <div className="flex flex-col border-2 shadow-md rounded-xl bg-white p-6 mx-auto">
             {/* Title inside card */}
             <h1 className="text-2xl font-bold text-center mb-6">
               Daftar Pesanan
             </h1>
-            <div className="flex">
+            <div className="flex flex-col md:flex-row">
               {/* Left Panel */}
-              <div className="w-[40%] p-4 space-y-6 border max-h-80 rounded-md shadow-md">
+              <div className="w-full md:w-[40%] p-4 space-y-6 border rounded-md shadow-md mb-4 md:mb-0 md:mr-4">
                 {/* Search Input */}
                 <div className="w-full">
                   <div className="relative">
@@ -175,7 +227,11 @@ const OrdersList = () => {
                       style={{ borderColor: "#BEE4B4" }}
                     />
                     <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-full">
-                      <img src="/assets/header/search.png" className="w-8" />
+                      <img
+                        src="/assets/header/search.png"
+                        className="w-8"
+                        alt="Search"
+                      />
                     </button>
                   </div>
                 </div>
@@ -184,12 +240,12 @@ const OrdersList = () => {
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
                     Status Pesanan
                   </h3>
-                  <div className="space-y-2 w-[70%]">
+                  <div className="space-y-2 w-full md:w-[70%]">
                     {statusButtons.map((status) => (
                       <button
                         key={status.id}
                         onClick={() => setSelectedStatus(status.id)}
-                        className={`w-full py-2 px-4 rounded-full text-sm font-medium transition-colors ${
+                        className={`w-full py-2 px-4 rounded-full text-sm font-medium transition-colors cursor-pointer ${
                           selectedStatus === status.id
                             ? "bg-green-600 text-white"
                             : "border border-green-600 text-green-600 hover:bg-green-50"
@@ -202,7 +258,7 @@ const OrdersList = () => {
                 </div>
               </div>
               {/* Right Panel */}
-              <div className="w-[60%] px-4 space-y-6 ">
+              <div className="w-full md:w-[60%] px-0 md:px-4 space-y-6">
                 {/* SayurFresh Info Card */}
                 <div
                   className="p-4 rounded-sm"
@@ -210,7 +266,7 @@ const OrdersList = () => {
                 >
                   <div className="mb-4 rounded-sm flex">
                     <div className="flex items-center space-x-3">
-                      <img src="/assets/orders/xp.png" alt="" />
+                      <img src="/assets/orders/xp.png" alt="XP" />
                       <div>
                         <h3 className="font-bold">SayurPanen - Level Benih</h3>
                       </div>
@@ -242,9 +298,7 @@ const OrdersList = () => {
                     <h3 className="text-lg font-semibold mb-4">Dalam Proses</h3>
                     <div>
                       {loading ? (
-                        <div className="text-center py-8 text-green-700 font-bold">
-                          Loading...
-                        </div>
+                        <SayurboxLoading />
                       ) : inProcessOrders.length === 0 ? (
                         <div className="text-center py-8 text-gray-500">
                           Tidak ada pesanan dalam proses.
@@ -263,9 +317,7 @@ const OrdersList = () => {
                     </h3>
                     <div>
                       {loading ? (
-                        <div className="text-center py-8 text-green-700 font-bold">
-                          Loading...
-                        </div>
+                        <SayurboxLoading />
                       ) : lastOrders.length === 0 ? (
                         <div className="text-center py-8 text-gray-500">
                           Tidak ada riwayat pesanan.

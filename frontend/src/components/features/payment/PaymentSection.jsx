@@ -1,9 +1,11 @@
 import React from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { usePaymentSection } from "./PaymentSection.hooks";
 import { updateOrder } from "@/service/orders/order";
 import { updateProduct } from "@/service/products/product";
+import SayurboxLoading from "@/components/base/SayurBoxLoading";
 
 const PaymentSection = () => {
   const navigate = useNavigate();
@@ -46,6 +48,21 @@ const PaymentSection = () => {
   const addressFull = selectedAddr.full_address || selectedAddr.address || "-";
   const addressLabel = selectedAddr.address_label || "";
 
+  // Ganti showInfo tunggal dengan objek untuk setiap popup
+  const [infoPopups, setInfoPopups] = useState({
+    packagingInfo: false,
+    packagingFeeInfo: false,
+    reservationFeeInfo: false,
+  });
+
+  // Fungsi untuk toggle popup yang spesifik
+  const toggleInfoPopup = (popupKey) => {
+    setInfoPopups((prevPopups) => ({
+      ...prevPopups,
+      [popupKey]: !prevPopups[popupKey],
+    }));
+  };
+
   // Ambil biaya pengiriman dari slot yang dipilih
   const selectedSlotObj =
     deliverySlots.find((slot) => slot.id === selectedDeliverySlot) ||
@@ -83,17 +100,13 @@ const PaymentSection = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <span className="text-lg font-bold text-green-700">Loading...</span>
-      </div>
-    );
+    return <SayurboxLoading />;
   }
 
   return (
     <div className="min-h-screen bg-white">
       {/* Back Button */}
-      <div className=" absolute bg-white z-10 pl-4">
+      <div className="absolute bg-white z-10 pl-4">
         <button
           onClick={handleBackClick}
           className="relative left-6 cursor-pointer items-center w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform"
@@ -191,8 +204,8 @@ const PaymentSection = () => {
                     className="w-10"
                   />
                   <div className="flex my-auto gap-x-4">
-                    <p className="text-gray-800 font-sm ">Pengiriman :</p>
-                    <p className="text-black font-medium ">
+                    <p className="text-gray-800 font-sm">Pengiriman :</p>
+                    <p className="text-black font-medium">
                       Jumat 1 Februari 2025
                     </p>
                   </div>
@@ -248,7 +261,7 @@ const PaymentSection = () => {
                             Rp. {slot.price.toLocaleString()}
                           </p>
                           <p className="text-lg text-green-600">
-                            <span className="text-gray-400 line-through ">
+                            <span className="text-gray-400 line-through">
                               Rp. {slot.realPrice.toLocaleString()}
                             </span>
                           </p>
@@ -259,15 +272,30 @@ const PaymentSection = () => {
                 </div>
               </div>
 
-              <div className="flex gap-x-2">
+              <div className="relative flex items-start gap-x-2">
                 <p className="font-semibold text-lg text-gray-900">
                   Ganti Kemasan
                 </p>
-                <img
-                  src="/assets/payment/information.png"
-                  className="w-5 h-5 mt-1"
-                  alt="info"
-                />
+                <div className="relative">
+                  <img
+                    src="/assets/payment/information.png"
+                    className="w-5 h-5 mt-1 cursor-pointer"
+                    alt="info"
+                    onClick={() => toggleInfoPopup("packagingInfo")}
+                  />
+
+                  {/* Pop up di sebelah kanan icon */}
+                  {infoPopups.packagingInfo && (
+                    <div className="absolute left-full top-1 ml-2 z-20 w-100 bg-gray-200 text-gray-800 text-sm p-3 rounded-lg shadow-md">
+                      <p>
+                        Penggunaan kardus direkomendasikan untuk melindungi
+                        produk dari kerusakan. Dengan mencentang pilihan ini,
+                        kemasan dari pesanan kamu akan diganti dari tas belanja
+                        menjadi kardus Sayurbox.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Ganti Kemasan */}
@@ -310,14 +338,14 @@ const PaymentSection = () => {
                 Rincian Pesanan
               </h2>
               <div
-                className=" rounded-sm p-6 shadow-sm"
+                className="rounded-sm p-6 shadow-sm"
                 style={{ backgroundColor: "#B1E9AB" }}
               >
                 <div className="space-y-4">
                   {orderItems.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center space-x-8  px-2"
+                      className="flex items-center space-x-8 px-2"
                     >
                       <div className="w-22 h-22 bg-gray-100 rounded-lg overflow-hidden">
                         <img
@@ -359,7 +387,7 @@ const PaymentSection = () => {
 
               {/* Kirim sebagai hadiah */}
               <div className="bg-white rounded-lg p-6 border border-green-300">
-                <div className="flex items-center  space-x-3 mb-4 pb-6 border-b border-green-500 ">
+                <div className="flex items-center space-x-3 mb-4 pb-6 border-b border-green-500">
                   <img
                     src="/assets/payment/gift.png"
                     className="w-14 h-14"
@@ -439,7 +467,7 @@ const PaymentSection = () => {
                       <div className="flex items-center space-x-4">
                         <img
                           src={method.icon}
-                          className="w-14 h-5 "
+                          className="w-14 h-5"
                           alt={method.label}
                         />
                         <div className="flex-1">
@@ -488,14 +516,14 @@ const PaymentSection = () => {
                     <span>Pakai Voucher-mu!</span>
                   </div>
                   <div className="basis-[20%] flex items-center justify-end">
-                    <ChevronRight className="text-green-700 font-bold mt-0.5 w-10 " />
+                    <ChevronRight className="text-green-700 font-bold mt-0.5 w-10" />
                   </div>
                 </div>
 
                 <hr className="my-4 border border-green-700" />
 
                 {/* Rincian Pembayaran */}
-                <div className="bg-white py-1 ">
+                <div className="bg-white py-1">
                   <h2 className="text-lg font-bold text-gray-900 mb-4">
                     Rincian Pembayaran
                   </h2>
@@ -519,7 +547,7 @@ const PaymentSection = () => {
                     </div>
                     <div className="flex justify-between">
                       <div>
-                        <span className="font-medium ">Biaya Pengiriman</span>
+                        <span className="font-medium">Biaya Pengiriman</span>
                         <p className="text-xs mt-2">
                           Tambah Rp. 85.000 untuk mendapatkan GRATIS ONGKIR
                         </p>
@@ -533,17 +561,37 @@ const PaymentSection = () => {
                         Biaya Lainnya
                       </p>
                       <div className="flex justify-between text-sm items-start">
-                        <div className="flex items-start space-x-12">
+                        {/* Kiri */}
+                        <div className="flex items-start space-x-12 relative">
                           <span className="text-gray-600">Biaya Kemasan</span>
-                          <img
-                            src="/assets/payment/information.png"
-                            className="w-5 h-5"
-                            alt="info"
-                          />
+
+                          <div className="relative">
+                            <img
+                              src="/assets/payment/information.png"
+                              className="w-5 h-5 cursor-pointer"
+                              alt="info"
+                              onClick={() =>
+                                toggleInfoPopup("packagingFeeInfo")
+                              }
+                            />
+
+                            {/* Popup muncul di sebelah kanan icon */}
+                            {infoPopups.packagingFeeInfo && (
+                              <div className="absolute left-full top-0 ml-2 z-20 w-100 bg-gray-200 text-gray-800 text-sm p-3 rounded-lg shadow-md">
+                                <p>
+                                  Biaya ini untuk memastikan Sayurbox dapat
+                                  terus memberikan layanan terbaik dan
+                                  meningkatkan pengalaman belanja Anda.
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         </div>
+
+                        {/* Kanan */}
                         <div className="flex space-x-2 items-center">
                           <p>
-                            <span className="text-gray-400 line-through ">
+                            <span className="text-gray-400 line-through">
                               Rp. 5.000
                             </span>
                           </p>
@@ -553,18 +601,40 @@ const PaymentSection = () => {
                         </div>
                       </div>
 
-                      <div className="flex justify-between text-sm items-start mt-2 mb-6">
-                        <div className="flex items-start space-x-12">
+                      <div className="flex justify-between text-sm items-start mt-1">
+                        {/* Kiri */}
+                        <div className="flex items-start space-x-12 relative">
                           <span className="text-gray-600">Biaya Reservasi</span>
-                          <img
-                            src="/assets/payment/information.png"
-                            className="w-5 h-5"
-                            alt="info"
-                          />
+
+                          <div className="relative">
+                            <img
+                              src="/assets/payment/information.png"
+                              className="w-5 h-5 cursor-pointer"
+                              alt="info"
+                              onClick={() =>
+                                toggleInfoPopup("reservationFeeInfo")
+                              }
+                            />
+
+                            {/* Popup muncul di sebelah kanan icon */}
+                            {infoPopups.reservationFeeInfo && (
+                              <div className="absolute left-full top-0 ml-2 z-20 w-100 bg-gray-200 text-gray-800 text-sm p-3 rounded-lg shadow-md">
+                                <p>
+                                  Biaya ini mencakup biaya untuk mengemas produk
+                                  dengan aman, biaya kemasan sesuai kebutuhan,
+                                  seperti plastik dan ice gel untuk produk beku,
+                                  serta biaya kemasan akhir untuk pengiriman ke
+                                  tempatmu
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         </div>
+
+                        {/* Kanan */}
                         <div className="flex space-x-2 items-center">
                           <p>
-                            <span className="text-gray-400 line-through ">
+                            <span className="text-gray-400 line-through">
                               Rp. 5.000
                             </span>
                           </p>
@@ -575,7 +645,7 @@ const PaymentSection = () => {
                       </div>
                     </div>
                     <div className="border-t border-green-700 pt-5 flex justify-between">
-                      <span className="text-lg font-bold text-gray-900 ">
+                      <span className="text-lg font-bold text-gray-900">
                         Total Pembayaran
                       </span>
                       <span className="text-lg font-bold text-gray-900">

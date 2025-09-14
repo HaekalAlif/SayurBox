@@ -44,19 +44,16 @@ const FaqSection = () => {
     {
       icon: "/assets/faq/shipping.png",
       label: "Pengiriman",
-      path: "/faq/shipping",
     },
     {
       icon: "/assets/faq/refund.png",
       label: "Pengembalian \nDana",
-      path: "/faq/refund",
     },
     {
       icon: "/assets/faq/voucher.png",
       label: "Voucher & \nPromo",
-      path: "/faq/voucher",
     },
-    { icon: "/assets/faq/etc.png", label: "Lain-lain", path: "/faq/etc" },
+    { icon: "/assets/faq/etc.png", label: "Lain-lain" },
   ];
 
   const faqItems = [
@@ -104,7 +101,14 @@ const FaqSection = () => {
   ];
 
   return (
-    <div className="min-h-screen p-10">
+    <div
+      className="min-h-screen w-full bg-pattern pt-12 mb-12"
+      style={{
+        backgroundImage: `url("/bg-pattern-sayurbox.png")`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "130px",
+      }}
+    >
       {/* Back Button */}
       <div className="bg-white z-10 absolute">
         <button

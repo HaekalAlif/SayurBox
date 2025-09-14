@@ -28,7 +28,7 @@ export const useOrderDetailSection = () => {
   const handleCancelOrder = async () => {
     if (!orderId) return;
     try {
-      await updateOrder(orderId, { order_status: "CANCEL" });
+      await updateOrder(orderId, { order_status: "CANCELLED" });
       // Refresh data order
       getOrder(orderId).then((res) => setOrder(res.data));
     } catch (err) {
@@ -45,6 +45,7 @@ export const useOrderDetailSection = () => {
       });
       // Refresh data order
       getOrder(orderId).then((res) => setOrder(res.data));
+      navigate("/payment-success/" + orderId);
     } catch (err) {
       alert("Gagal melakukan pembayaran!");
     }

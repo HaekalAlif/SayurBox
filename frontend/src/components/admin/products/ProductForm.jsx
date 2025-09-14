@@ -1,5 +1,6 @@
 import React from "react";
 import { useProductForm } from "./ProductForm.hooks";
+import SayurboxLoading from "@/components/base/SayurBoxLoading";
 
 const ProductForm = () => {
   const {
@@ -16,11 +17,7 @@ const ProductForm = () => {
   } = useProductForm();
 
   if (loading && isEditMode) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-green-600 font-semibold">Loading...</div>
-      </div>
-    );
+    return <SayurboxLoading />;
   }
 
   return (

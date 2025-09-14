@@ -19,22 +19,6 @@ export const useOrderList = () => {
       .finally(() => setLoading(false));
   }, [user]);
 
-  // Batalkan pesanan
-  const handleCancelOrder = async (orderId) => {
-    try {
-      await updateOrder(orderId, { order_status: "CANCELLED" });
-      // Refresh orders
-      getOrders().then((res) => setOrders(res.data || []));
-    } catch (err) {
-      // Optional: handle error
-    }
-  };
-
-  // Ubah metode pembayaran
-  const handleChangePayment = (orderId) => {
-    navigate(`/checkout/${orderId}`);
-  };
-
   // Filter orders by status
   const filterOrders = (orders) => {
     if (selectedStatus === "semua") return orders;
@@ -87,13 +71,13 @@ export const useOrderList = () => {
             text: "Batalkan Pesanan",
             backgroundColor: "#FF0000",
             textColor: "#FFFFFF",
-            onClick: () => handleCancelOrder(order.id),
+            type: "cancel", // Tambahkan type untuk identifikasi
           },
           {
             text: "Ubah Metode Bayar",
             backgroundColor: "#1FAE2E",
             textColor: "#FFFFFF",
-            onClick: () => handleChangePayment(order.id),
+            onClick: () => navigate(`/checkout/${order.id}`),
           },
         ];
         break;
@@ -239,6 +223,19 @@ export const useOrderList = () => {
     )
     .map(mapOrderToCard);
 
+  // Function untuk melakukan pembatalan pesanan (akan dipanggil setelah konfirmasi)
+  const cancelOrder = async (orderId) => {
+    try {
+      await updateOrder(orderId, { order_status: "CANCELLED" });
+      // Refresh orders
+      getOrders().then((res) => setOrders(res.data || []));
+      return true;
+    } catch (err) {
+      console.error("Error cancelling order:", err);
+      return false;
+    }
+  };
+
   return {
     loading,
     selectedStatus,
@@ -247,5 +244,6 @@ export const useOrderList = () => {
     setSearchQuery,
     inProcessOrders,
     lastOrders,
+    cancelOrder,
   };
 };

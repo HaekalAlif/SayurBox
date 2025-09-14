@@ -20,17 +20,24 @@ const VoucherList = () => {
   }));
 
   return (
-    <div className="min-h-screen">
+    <div
+      className="min-h-screen w-full bg-pattern"
+      style={{
+        backgroundImage: `url("/bg-pattern-sayurbox.png")`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "130px",
+      }}
+    >
       {/* Header with Back Button */}
-      <div className="top-0 bg-white z-10 pl-4">
+      <div className=" absolute top-0 z-10 pl-4 mt-50">
         <button
           onClick={handleBackClick}
           className="relative top-12 left-6 cursor-pointer items-center w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform"
         >
-          <ChevronLeft className="w-10 h-10 ml-1" />
+          <ChevronLeft className="w-10 h-10 ml-1 " />
         </button>
       </div>
-      <div className=" max-w-3xl mx-auto">
+      <div className=" max-w-3xl mx-auto pt-12">
         <div className="text-2xl font-bold">
           <h1>Voucher Saya</h1>
         </div>

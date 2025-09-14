@@ -1,6 +1,25 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 
+// Simple Modal component
+const SimpleModal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-xl max-w-3xl w-full mx-4 overflow-hidden shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+
 const carouselData = [
   {
     image: "/assets/sayur-panen/benih.png",
@@ -123,6 +142,8 @@ const CARD_GAP = 32;
 const SayurPanenSection = () => {
   const scrollRef = useRef(null);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+  const [showXpInfoModal, setShowXpInfoModal] = useState(false);
 
   // Scroll ke card yang dipilih
   const scrollToIdx = (idx) => {
@@ -156,6 +177,14 @@ const SayurPanenSection = () => {
   };
   const handleNext = () => {
     if (activeIdx < carouselData.length - 1) scrollToIdx(activeIdx + 1);
+  };
+
+  const handleModalClose = () => {
+    setShowWelcomeModal(false);
+  };
+
+  const handleShowXpInfo = () => {
+    setShowXpInfoModal(true);
   };
 
   // Card carousel
@@ -247,7 +276,8 @@ const SayurPanenSection = () => {
                     >
                       <span>{item.textRow.left}</span>
                       <button
-                        className={`flex items-center font-semibold ${
+                        onClick={handleShowXpInfo}
+                        className={`flex items-center font-semibold cursor-pointer ${
                           idx === 0 ? "text-green-700" : "text-white"
                         }`}
                       >
@@ -309,9 +339,80 @@ const SayurPanenSection = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white">
+    <div
+      className="min-h-screen w-full bg-pattern"
+      style={{
+        backgroundImage: `url("/bg-pattern-sayurbox.png")`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "130px",
+      }}
+    >
+      {/* Welcome Level Modal */}
+      <SimpleModal isOpen={showWelcomeModal} onClose={handleModalClose}>
+        <div className="p-6 pb-4 flex items-center justify-center">
+          <div className="flex gap-2 items-center bg-[#906C4D] px-4 py-2 rounded-sm">
+            <img src={leafIcon} alt="Leaf" className="w-5 h-5" />
+            <span className="text-white font-bold text-lg">
+              Levelmu Sekarang: Benih
+            </span>
+          </div>
+        </div>
+        <div className="px-8 py-6">
+          <p className="text-center font-medium mb-8">
+            Berdasarkan kalkulasi transaksi mu selama 3 bulan terakhir, levelmu
+            saat ini adalah: Benih
+          </p>
+          <button
+            onClick={handleModalClose}
+            className="w-full bg-green-600 text-white py-3 px-4 rounded-sm font-medium hover:bg-green-700 transition cursor-pointer"
+          >
+            Ok, Saya Mengerti
+          </button>
+        </div>
+      </SimpleModal>
+
+      {/* XP Info Modal */}
+      <SimpleModal
+        isOpen={showXpInfoModal}
+        onClose={() => setShowXpInfoModal(false)}
+      >
+        <div className="p-6">
+          <h3 className="text-lg font-bold text-green-700 mb-4">
+            Cara Mendapatkan XP
+          </h3>
+          <p className="text-sm mb-3 text-green-700">
+            Setiap transaksi Rp1.000, kamu akan mendapatkan 1 XP
+          </p>
+
+          <h3 className="text-lg font-bold mt-6 mb-3">
+            Cara Naik ke Lvl Berikutnya
+          </h3>
+          <p className="text-sm mb-2">
+            Belanja dan kumpulkan 750 XP selama di level saat ini.
+          </p>
+
+          <div className="bg-[#F5FFCE] p-4 rounded-lg border border-yellow-300 my-4">
+            <p className="text-sm">
+              Lakukan sebelum tanggal <strong>20 Juli 2025</strong>. Perhitungan
+              level setiap <strong>3 bulan sekali</strong>. Kamu akan naik level
+              ketika <strong>XP sudah memenuhi kriteria</strong>, abertahan jika{" "}
+              <strong>setidaknya mencapai xp minimal</strong> sebelum jatuh
+              tempo, atau turun level jika xp kamu{" "}
+              <strong>dibawah kriteria sampai jatuh tempo</strong>.
+            </p>
+          </div>
+
+          <button
+            onClick={() => setShowXpInfoModal(false)}
+            className="w-full bg-green-600 text-white py-3 px-4 rounded-md font-medium hover:bg-green-700 transition mt-4 cursor-pointer"
+          >
+            Ok, Saya Mengerti
+          </button>
+        </div>
+      </SimpleModal>
+
       {/* Back Button */}
-      <div className="top-0 bg-white z-10 pl-4">
+      <div className="absolute z-10 pl-4">
         <button
           onClick={handleBackClick}
           className="relative top-16 left-6 cursor-pointer items-center w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform"
@@ -319,10 +420,10 @@ const SayurPanenSection = () => {
           <ChevronLeft className="w-10 h-10 ml-1" />
         </button>
       </div>
-      <div className="mx-auto w-full max-w-[800px] rounded-2xl overflow-hidden">
+      <div className="mx-auto w-full max-w-[800px] rounded-2xl overflow-hidden pt-12">
         {/* Carousel */}
         <div className="relative">
-          <div className="bg-black py-5 w-full border border-green-200 ">
+          <div className="bg-black py-5 w-full border border-green-200 rounded-2xl">
             <div className="flex flex-col items-center">
               {/* Carousel Cards */}
               <div className="text-[#B1E9AB] font-bold text-3xl pb-8 pt-4">
@@ -404,7 +505,7 @@ const SayurPanenSection = () => {
         </div>
 
         {/* Rewards Section */}
-        <div className="bg-white rounded-2xl p-4 shadow border border-green-500 mb-10 relative -top-3">
+        <div className="bg-white rounded-2xl p-4 shadow border border-green-500 mb-10 relative -top-5">
           <div className="text-center font-bold text-2xl mb-4">
             {activeIdx === 0 && "Rewards di Level Benih"}
             {activeIdx === 1 && "Rewards di Level Bunga"}

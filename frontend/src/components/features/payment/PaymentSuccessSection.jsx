@@ -89,8 +89,12 @@ const PaymentSuccessSection = () => {
 
   return (
     <div
-      className="min-h-screen"
-      style={{ backgroundColor: "#F8FDF9", fontFamily: "Poppins, sans-serif" }}
+      className="min-h-screen w-full bg-pattern"
+      style={{
+        backgroundImage: `url("/bg-pattern-sayurbox.png")`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "130px",
+      }}
     >
       <div className="relative px-8">
         {/* Back Button */}

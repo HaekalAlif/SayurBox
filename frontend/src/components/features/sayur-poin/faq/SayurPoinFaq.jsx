@@ -10,9 +10,16 @@ const SayurPoinFaq = () => {
   const handleBackClick = () => window.history.back();
 
   return (
-    <div className="min-h-screen w-full bg-white">
+    <div
+      className="min-h-screen w-full bg-pattern"
+      style={{
+        backgroundImage: `url("/bg-pattern-sayurbox.png")`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "130px",
+      }}
+    >
       {/* Header with Back Button */}
-      <div className="top-0 bg-white z-10 pl-4">
+      <div className="absolute bg-white z-10 pl-4">
         <button
           onClick={handleBackClick}
           className="relative top-12 left-6 cursor-pointer items-center w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform"
@@ -21,7 +28,7 @@ const SayurPoinFaq = () => {
         </button>
       </div>
       {/* Container */}
-      <div className="mx-auto w-full max-w-[480px] bg-white rounded-2xl overflow-hidden mb-10">
+      <div className="mx-auto w-full max-w-[480px] rounded-2xl overflow-hidden mb-10 pt-12">
         {/* Hero Image */}
         <img
           src="/assets/sayur-poin/detail/image-4.png"

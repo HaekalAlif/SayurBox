@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAddAddress } from "./AddAddress.hooks";
+import BaseModal from "@/components/base/BaseModal";
 
 const AddAddress = () => {
   const navigate = useNavigate();
@@ -16,7 +17,24 @@ const AddAddress = () => {
     handleAddAddress,
   } = useAddAddress();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Cek apakah ada data yang sudah diisi di form
+  const isFormDirty = Object.values(formData).some(
+    (value) => value !== "" && value !== null
+  );
+
   const handleBackClick = () => {
+    // Jika form sudah diisi, tampilkan modal. Jika tidak, langsung kembali.
+    if (isFormDirty) {
+      setIsModalOpen(true);
+    } else {
+      window.history.back();
+    }
+  };
+
+  const handleConfirmExit = () => {
+    setIsModalOpen(false);
     window.history.back();
   };
 
@@ -45,6 +63,19 @@ const AddAddress = () => {
 
   return (
     <div className="min-h-screen bg-white mb-8">
+      {/* Modal Konfirmasi Keluar */}
+      <BaseModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirmExit}
+        title="Buang Perubahan?"
+        description="Semua data yang sudah terisi akan dihapus"
+        confirmText="Keluar"
+        cancelText="Batal"
+        confirmColor="bg-red-500 hover:bg-red-600"
+        cancelColor="border-green-600 text-green-600 hover:bg-green-50"
+      />
+
       {/* Header with Back Button */}
       <div className="top-0 h-0 bg-white z-10 pl-4">
         <button

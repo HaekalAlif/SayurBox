@@ -2,11 +2,28 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "./LoginForm.hooks";
 
+const ErrorModal = ({ title, message, onClose }) => (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center"
+    onClick={onClose} // Tutup modal jika klik di luar modal
+  >
+    <div
+      className="bg-white rounded-lg shadow-lg border border-red-400 px-8 py-4 max-w-lg w-full text-center"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <h3 className="text-lg font-bold mb-3">{title}</h3>
+      <p className="text-gray-700 mb-2">{message}</p>
+    </div>
+  </div>
+);
+
 const LoginForm = () => {
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [password, setPassword] = useState("");
   const { handleLogin, loading, error } = useLogin();
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: "", message: "" });
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -17,6 +34,20 @@ const LoginForm = () => {
       } else {
         navigate("/");
       }
+    } else if (error) {
+      // Deteksi error dan tampilkan modal sesuai jenis error
+      if (error.toLowerCase().includes("email")) {
+        setModalContent({
+          title: "E-Mail Salah!",
+          message: "E-mail yang anda masukkan salah/tidak terisi, coba lagi!",
+        });
+      } else {
+        setModalContent({
+          title: "Password Salah!",
+          message: "Password yang anda masukkan salah/tidak terisi, coba lagi!",
+        });
+      }
+      setShowModal(true);
     }
   };
 
@@ -29,6 +60,15 @@ const LoginForm = () => {
         overflow: "hidden",
       }}
     >
+      {/* Modal Error */}
+      {showModal && (
+        <ErrorModal
+          title={modalContent.title}
+          message={modalContent.message}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+
       {/* Left Side - Image & Info */}
       <div className="hidden md:flex w-1/2 relative">
         <img
@@ -79,7 +119,6 @@ const LoginForm = () => {
                 disabled={loading}
               />
             </div>
-            {error && <div className="text-red-600 text-sm mb-4">{error}</div>}
             <button
               type="submit"
               className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition-colors cursor-pointer"

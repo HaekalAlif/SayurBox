@@ -38,9 +38,16 @@ const SayurPoinUser = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white mb-12">
+    <div
+      className="min-h-screen w-full bg-pattern"
+      style={{
+        backgroundImage: `url("/bg-pattern-sayurbox.png")`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "130px",
+      }}
+    >
       {/* Header with Back Button */}
-      <div className="top-0 bg-white z-10 pl-4">
+      <div className="absolute top-0 z-10 pl-4 mt-44">
         <button
           onClick={handleBackClick}
           className="relative top-12 left-6 cursor-pointer items-center w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform"
@@ -50,10 +57,10 @@ const SayurPoinUser = () => {
       </div>
 
       {/* Main Container */}
-      <div className="mx-auto w-full max-w-[480px] bg-white rounded-md shadow-md overflow-hidden">
+      <div className="mx-auto w-full max-w-[480px] bg-white rounded-md shadow-md overflow-hidden pt-12 mb-12">
         {/* Hero Section */}
         <div
-          className="relative bg-[#166534] p-6 text-white text-left bg-cover bg-center py-12 pl-14"
+          className="relative bg-[#166534] p-6 text-white text-left bg-cover bg-center py-12 pl-14 rounded-t-xl"
           style={{
             backgroundImage: 'url("/assets/sayur-poin/bg-sayur-poin-user.png")',
           }}

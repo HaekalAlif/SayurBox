@@ -67,9 +67,16 @@ const SayurPoinSection = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div
+      className="min-h-screen w-full bg-pattern"
+      style={{
+        backgroundImage: `url("/bg-pattern-sayurbox.png")`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "130px",
+      }}
+    >
       {/* Back Button */}
-      <div className="bg-white z-10 pl-3">
+      <div className="absolute z-10 pl-3">
         <button
           onClick={handleBackClick}
           className="relative top-13 left-6 cursor-pointer items-center w-14 h-14 text-lg text-green-600 border border-green rounded-full border-green-400 hover:scale-110 transition-transform"
@@ -79,7 +86,7 @@ const SayurPoinSection = () => {
       </div>
 
       {/* Main Container */}
-      <div className="flex items-center justify-center min-h-screen p-4 mb-6">
+      <div className="flex items-center justify-center min-h-screen p-4 mb-6 pt-12">
         <div className="w-full max-w-2xl bg-white border border-green-700 rounded-2xl p-4 shadow-sm">
           {/* Header Section */}
           <div className="font-bold text-center text-2xl text-black mb-4">
@@ -154,7 +161,9 @@ const SayurPoinSection = () => {
                     e.target.style.display = "none";
                   }}
                 />
-                <span className="font-bold text-lg">Masih punya pertanyaan? Hubungi Kami</span>
+                <span className="font-bold text-lg">
+                  Masih punya pertanyaan? Hubungi Kami
+                </span>
               </div>
               <ChevronRight size={32} className="relative z-10" />
             </button>

@@ -155,7 +155,10 @@ const Product = () => {
                   }
                   alt={product.title}
                   className="w-full h-auto object-cover"
-                  style={{ maxHeight: "500px" }}
+                  style={{
+                    maxHeight: "500px",
+                    filter: selectedImageIndex === 0 ? "none" : "none",
+                  }}
                   onError={(e) => {
                     e.target.src = "/assets/default-product.png";
                   }}
@@ -203,6 +206,10 @@ const Product = () => {
                       src={images.main}
                       alt="Main"
                       className="w-44 h-44 object-cover"
+                      style={{
+                        filter:
+                          selectedImageIndex === 0 ? "none" : "opacity(50%)",
+                      }}
                       onError={(e) => {
                         e.target.src = "/assets/default-product.png";
                       }}
@@ -222,6 +229,12 @@ const Product = () => {
                         src={thumb}
                         alt={`Thumbnail ${index + 1}`}
                         className="w-44 h-44 object-cover"
+                        style={{
+                          filter:
+                            selectedImageIndex === index + 1
+                              ? "none"
+                              : "opacity(50%)",
+                        }}
                         onError={(e) => {
                           e.target.src = "/assets/default-product.png";
                         }}

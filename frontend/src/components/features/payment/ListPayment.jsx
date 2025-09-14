@@ -78,7 +78,6 @@ const ListPayment = () => {
 
   const handleConfirm = () => {
     console.log("Selected payment method:", selectedPayment);
-    // Handle confirmation logic here
   };
 
   const handleBackClick = () => {
@@ -172,8 +171,8 @@ const ListPayment = () => {
         {/* Confirm Button */}
         <div className="pt-6">
           <button
-            onClick={handleConfirm}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 shadow-sm"
+            onClick={handleBackClick}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 shadow-sm cursor-pointer"
           >
             Konfirmasi
           </button>

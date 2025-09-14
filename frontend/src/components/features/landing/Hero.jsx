@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 
 const Hero = () => {
   // Data kategori produk
@@ -62,6 +62,14 @@ const Hero = () => {
   // Ref dan state untuk slider
   const sliderRef = useRef(null);
   const [progress, setProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+  const rafId = useRef(null);
+  const velocity = useRef(0);
+  const lastX = useRef(0);
+  const lastTime = useRef(0);
+  const clickStartTime = useRef(0);
 
   // Hilangkan scrollbar dengan CSS
   useEffect(() => {
@@ -75,14 +83,102 @@ const Hero = () => {
   }, []);
 
   // Update progress bar saat scroll
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     const slider = sliderRef.current;
     if (!slider) return;
     const maxScroll = slider.scrollWidth - slider.clientWidth;
     const currentScroll = slider.scrollLeft;
     const percent = maxScroll === 0 ? 0 : currentScroll / maxScroll;
     setProgress(percent);
-  };
+  }, []);
+
+  // Handle untuk smooth scrolling dengan momentum
+  const handleDragStart = useCallback((clientX) => {
+    clickStartTime.current = Date.now();
+    setIsDragging(true);
+    startX.current = clientX;
+    scrollLeft.current = sliderRef.current.scrollLeft;
+    lastX.current = clientX;
+    lastTime.current = Date.now();
+    velocity.current = 0;
+
+    if (rafId.current) {
+      cancelAnimationFrame(rafId.current);
+      rafId.current = null;
+    }
+  }, []);
+
+  const handleDragMove = useCallback(
+    (clientX) => {
+      if (!isDragging) return;
+
+      const now = Date.now();
+      const dt = now - lastTime.current;
+      const dx = lastX.current - clientX;
+
+      if (dt > 0) {
+        // Calculate velocity (px/ms) with smoothing
+        const newVelocity = dx / dt;
+        velocity.current = velocity.current * 0.7 + newVelocity * 0.3;
+      }
+
+      sliderRef.current.scrollLeft =
+        scrollLeft.current + (startX.current - clientX);
+      lastX.current = clientX;
+      lastTime.current = now;
+      handleScroll();
+    },
+    [isDragging, handleScroll]
+  );
+
+  const handleDragEnd = useCallback(
+    (e) => {
+      if (!isDragging) return;
+
+      const dragDuration = Date.now() - clickStartTime.current;
+      // If it's a short drag (like a click), don't apply momentum
+      if (dragDuration < 100) {
+        setIsDragging(false);
+        return;
+      }
+
+      setIsDragging(false);
+
+      // Apply momentum effect
+      const startTime = Date.now();
+      const initialVelocity = velocity.current * 15; // Adjust for better feel
+
+      const momentumScroll = () => {
+        const elapsed = Date.now() - startTime;
+        // More natural easing curve
+        const easing = Math.exp(-elapsed / 325);
+        const delta = initialVelocity * easing;
+
+        if (Math.abs(delta) > 0.5) {
+          sliderRef.current.scrollLeft += delta;
+          handleScroll();
+          rafId.current = requestAnimationFrame(momentumScroll);
+        } else {
+          cancelAnimationFrame(rafId.current);
+          rafId.current = null;
+        }
+      };
+
+      if (Math.abs(velocity.current) > 0.1) {
+        rafId.current = requestAnimationFrame(momentumScroll);
+      }
+    },
+    [isDragging, handleScroll]
+  );
+
+  // Clean up RAF on unmount
+  useEffect(() => {
+    return () => {
+      if (rafId.current) {
+        cancelAnimationFrame(rafId.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const slider = sliderRef.current;
@@ -91,7 +187,28 @@ const Hero = () => {
     // Set awal ke 0
     setProgress(0);
     return () => slider.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [handleScroll]);
+
+  // Prevent default to avoid text selection during dragging
+  const preventDefaultHandler = useCallback(
+    (e) => {
+      if (isDragging) {
+        e.preventDefault();
+      }
+    },
+    [isDragging]
+  );
+
+  // Add event listeners to prevent text selection during dragging
+  useEffect(() => {
+    window.addEventListener("dragstart", preventDefaultHandler);
+    window.addEventListener("selectstart", preventDefaultHandler);
+
+    return () => {
+      window.removeEventListener("dragstart", preventDefaultHandler);
+      window.removeEventListener("selectstart", preventDefaultHandler);
+    };
+  }, [preventDefaultHandler]);
 
   return (
     <div className="pt-8 px-4 md:px-8">
@@ -158,13 +275,45 @@ const Hero = () => {
                   ref={sliderRef}
                   className="flex gap-6 px-6 pt-4 overflow-x-auto no-scrollbar"
                   style={{
-                    scrollBehavior: "smooth",
+                    scrollBehavior: isDragging ? "auto" : "smooth",
+                    cursor: isDragging ? "grabbing" : "grab",
+                    userSelect: "none",
+                    WebkitOverflowScrolling: "touch", // Enables momentum scrolling on iOS
                   }}
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // Prevent text selection
+                    handleDragStart(e.clientX);
+                  }}
+                  onMouseMove={(e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    handleDragMove(e.clientX);
+                  }}
+                  onMouseUp={handleDragEnd}
+                  onMouseLeave={handleDragEnd}
+                  onTouchStart={(e) => {
+                    handleDragStart(e.touches[0].clientX);
+                  }}
+                  onTouchMove={(e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    handleDragMove(e.touches[0].clientX);
+                  }}
+                  onTouchEnd={handleDragEnd}
                 >
                   {tabItems.map((tab, index) => (
                     <a
                       key={index}
                       href={tab.href}
+                      onClick={(e) => {
+                        // Only allow click if we're not dragging
+                        if (
+                          isDragging ||
+                          Date.now() - clickStartTime.current > 150
+                        ) {
+                          e.preventDefault();
+                        }
+                      }}
                       className="flex items-center gap-3 min-w-[300px] bg-[rgba(212,228,150,0.25)] rounded-sm py-3 px-4 hover:shadow-lg transition-shadow cursor-pointer"
                       style={{
                         height: "80px",

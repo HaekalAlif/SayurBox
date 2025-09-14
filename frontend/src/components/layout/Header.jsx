@@ -17,6 +17,7 @@ const Header = () => {
   const [selectedAddress, setSelectedAddress] = useState(0);
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Jumlah produk di cart dan order
@@ -151,11 +152,16 @@ const Header = () => {
   };
 
   const handleLogout = async () => {
+    setIsLoading(true);
     try {
-      await logout();
-    } catch (err) {}
-    setUser(null);
-    window.location.href = "/";
+      await logout(); 
+      setUser(null); 
+      window.location.href = "/"; 
+    } catch (err) {
+      console.error("Logout failed", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formatAddress = (address) => {
@@ -188,7 +194,7 @@ const Header = () => {
   const handleProductClick = (slug) => {
     setShowSearchDropdown(false);
     setSearchQuery("");
-    navigate(`/products/${slug}`);
+    navigate(`/product/${slug}`);
   };
 
   return (
@@ -321,9 +327,10 @@ const Header = () => {
               </>
             )}
             {/* Ikon Profil - Profile Container */}
+            {/* Ikon Profil - Profile Container */}
             <div className="relative" ref={profileContainerRef}>
               <div
-                className="w-18 h-18 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow cursor-pointer z-55"
+                className="w-18 h-18 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow cursor-pointer relative z-60"
                 style={{ backgroundColor: "#E6B800" }}
                 onClick={() => {
                   if (!isLoggedIn) {
@@ -333,7 +340,11 @@ const Header = () => {
                   }
                 }}
               >
-                <img src="/assets/header/profile.png" alt="" />
+                <img
+                  src="/assets/header/profile.png"
+                  alt=""
+                  className="relative z-60"
+                />
               </div>
               {/* Profile Dropdown */}
               {showProfile && isLoggedIn && (
@@ -341,7 +352,130 @@ const Header = () => {
                   className="absolute right-7 top-10 z-50 bg-white rounded-2xl shadow-xl p-8 flex gap-8 min-w-[520px] max-w-[600px]"
                   style={{ border: "1.5px solid #E6E6E6" }}
                 >
-                  {/* ...profile dropdown code... */}
+                  <div className="gap-6 flex flex-col w-full">
+                    <div className="flex gap-6">
+                      {/* Kiri: Card List */}
+                      <div className="flex flex-col gap-4 w-[260px]">
+                        {/* Voucher */}
+                        <div
+                          className="flex items-center bg-white rounded-xl shadow border border-[#E6E6E6] px-4 py-3 cursor-pointer hover:shadow-lg transition"
+                          onClick={() => goTo(paths.voucher)}
+                        >
+                          <img
+                            src="/assets/profile/voucher.png"
+                            className="w-12 h-12 mr-4"
+                            alt="Voucher"
+                          />
+                          <div className="flex-1">
+                            <div className="font-bold text-base text-[#BCA16A]">
+                              Voucher
+                            </div>
+                          </div>
+                          <ChevronRight className="w-6 h-6 text-[#BCA16A]" />
+                        </div>
+                        {/* SayurPoin */}
+                        <div
+                          className="flex items-center bg-white rounded-xl shadow border border-[#E6E6E6] px-4 py-3 cursor-pointer hover:shadow-lg transition"
+                          onClick={() => goTo(paths.sayurpoin)}
+                        >
+                          <img
+                            src="/assets/profile/point.png"
+                            className="w-12 h-12 mr-4"
+                            alt="SayurPoin"
+                          />
+                          <div className="flex-1">
+                            <div className="font-bold text-base text-[#BCA16A]">
+                              SayurPoin
+                            </div>
+                            <div className="text-sm text-gray-700">
+                              Poin : 3000
+                            </div>
+                          </div>
+                          <ChevronRight className="w-6 h-6 text-[#BCA16A]" />
+                        </div>
+                        {/* Resep */}
+                        <div
+                          className="flex items-center bg-white rounded-xl shadow border border-[#E6E6E6] px-4 py-3 cursor-pointer hover:shadow-lg transition"
+                          onClick={() => goTo(paths.resep)}
+                        >
+                          <img
+                            src="/assets/profile/recipe.png"
+                            className="w-12 h-12 mr-4"
+                            alt="Resep"
+                          />
+                          <div className="flex-1">
+                            <div className="font-bold text-base text-[#BCA16A]">
+                              Resep
+                            </div>
+                          </div>
+                          <ChevronRight className="w-6 h-6 text-[#BCA16A]" />
+                        </div>
+                      </div>
+                      {/* Kanan: Profile Info & Menu */}
+                      <div className="flex flex-col justify-between py-2 flex-1">
+                        <div>
+                          <div className="font-bold text-2xl mb-4">
+                            {user?.name || "User"}
+                          </div>
+                          <div className="flex flex-col gap-2 text-base font-medium">
+                            <button
+                              className="text-left cursor-pointer hover:underline"
+                              onClick={() => goTo(paths.profile)}
+                            >
+                              Ubah Profil
+                            </button>
+                            <button
+                              className="text-left cursor-pointer hover:underline"
+                              onClick={() => goTo(paths.pesanan)}
+                            >
+                              Pesanan
+                            </button>
+                            <button
+                              className="text-left cursor-pointer hover:underline"
+                              onClick={() => goTo(paths.keranjang)}
+                            >
+                              Keranjang
+                            </button>
+                            <button
+                              className="text-left cursor-pointer hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                              onClick={handleLogout}
+                              disabled={isLoading}
+                            >
+                              {isLoading ? "Loading..." : "Log Out"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* SayurPanen */}
+                    <div
+                      className="bg-[#F5FFCE] rounded-xl flex items-center justify-between px-4 py-3 border border-green-500 shadow cursor-pointer hover:shadow-lg transition"
+                      onClick={() => goTo(paths.sayurpanen)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <img
+                          src="/assets/profile/sayur-panen.png"
+                          className="w-10 h-10"
+                          alt="SayurPanen"
+                        />
+                        <div>
+                          <div className="font-bold text-base text-[#059669]">
+                            SayurPanen
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            +700xp lagi untuk naik level!
+                          </div>
+                          <div className="w-full bg-gray-200 rounded h-2 mt-2">
+                            <div
+                              className="h-2 rounded bg-green-500"
+                              style={{ width: "40%" }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-6 h-6 text-[#059669]" />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -362,7 +496,7 @@ const Header = () => {
               <MapPin className="w-4 h-4 text-gray-600 flex-shrink-0" />
               <span className="text-gray-800 font-medium truncate">
                 {!isLoggedIn
-                  ? "Login untuk memilih alamat"
+                  ? "Need Login First"
                   : loading
                   ? "Memuat alamat..."
                   : addresses.length === 0

@@ -2,10 +2,12 @@ import { ChevronLeft } from "lucide-react";
 import { useCartItem } from "./CartItem.hooks";
 import { useAuth } from "@/context/AuthContext";
 import SayurboxLoading from "@/components/base/SayurBoxLoading";
+import { useNavigate } from "react-router-dom";
 
 const CartItem = () => {
   const { user } = useAuth();
   const userId = user?.id;
+  const navigate = useNavigate();
 
   const {
     selectedDeliveryTime,
@@ -17,10 +19,7 @@ const CartItem = () => {
     handleProductSelect,
     handleQuantityChange,
     handleDeleteProduct,
-    handleQuantityDecrease,
-    handleQuantityIncrease,
     handleBackClick,
-    selectedProducts,
     totalItems,
     carouselRef,
     scrollValue,
@@ -32,7 +31,6 @@ const CartItem = () => {
     toast,
   } = useCartItem(userId);
 
-  // PromoProductItem component
   const PromoProductItem = ({ index }) => (
     <div
       key={index}
@@ -42,7 +40,7 @@ const CartItem = () => {
       <div className="flex items-center justify-between">
         <div className="w-26 h-20 rounded-md overflow-hidden bg-red-100">
           <img
-            src="assets/cart/marjan.jpg"
+            src="/assets/cart/marjan.jpg"
             alt="Product"
             className="w-full h-full object-cover"
           />
@@ -94,7 +92,6 @@ const CartItem = () => {
       style={{ backgroundColor: "#D4E496" }}
     >
       <div className="flex items-start space-x-4">
-        {/* Checkbox */}
         <label className="relative w-10 h-10 inline-block">
           <input
             type="checkbox"
@@ -103,12 +100,12 @@ const CartItem = () => {
             className="custom-checkbox w-10 h-10 appearance-none rounded border-2 border-green-500 bg-white checked:bg-green-500 checked:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
           />
         </label>
-
-        {/* Image */}
         <div className="w-28 h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex-shrink-0 overflow-hidden shadow-sm">
           {product.image ? (
             <img
-              src={`${import.meta.env.VITE_API_BASE_URL}${product.image}`}
+              src={`${import.meta.env.VITE_API_BASE_URL}/storage/${
+                product.image
+              }`}
               alt={product.title}
               className="w-full h-full object-cover"
             />
@@ -118,9 +115,7 @@ const CartItem = () => {
             </div>
           )}
         </div>
-
-        <div className="flex justify-between gap-20 items-start py-2">
-          {/* Product Details (kiri) */}
+        <div className="flex-grow flex justify-between items-start py-2">
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-gray-900 text-base leading-tight mb-4">
               {product.title}
@@ -128,49 +123,47 @@ const CartItem = () => {
             <p className="text-md text-gray-600 font-medium mb-2">
               {product.variant}
             </p>
-            {/* Price */}
             <div className="flex items-center space-x-2">
               <span className="font-bold text-gray-900 text-lg">
-                {product.price}
+                Rp {product.price.toLocaleString("id-ID")}
               </span>
-              {product.originalPrice && (
+              {product.originalPrice > 0 && (
                 <>
                   <span className="text-sm text-gray-500 line-through">
-                    {product.originalPrice}
+                    Rp {product.originalPrice.toLocaleString("id-ID")}
                   </span>
-                  {product.discount && (
+                  {product.discount > 0 && (
                     <span className="text-xs bg-red-600 font-bold text-white px-2 py-1 rounded-md">
-                      -{product.discount}
+                      {product.discount}%
                     </span>
                   )}
                 </>
               )}
             </div>
           </div>
-          {/* Action Buttons (kanan) */}
-          <div className="flex flex-row items-center gap-4 mt-14 ml-10">
-            {/* Delete Button */}
+          <div className="flex flex-row items-center gap-4 mt-14 ml-auto">
             <button
               onClick={() => handleDeleteProduct(product.id)}
-              className="text-gray-400 hover:text-red-500  p-2 rounded-full transition-all duration-200"
+              className="text-gray-400 hover:text-red-500 p-2 rounded-full transition-all duration-200"
               title="Hapus item"
             >
               <img
-                src="assets/cart/trash.png"
+                src="/assets/cart/trash.png"
                 alt="Hapus"
                 className="w-6 h-8 cursor-pointer"
               />
             </button>
-            {/* Quantity */}
             <div className="flex items-center bg-white border-2 border-gray-200 rounded-full overflow-hidden shadow-sm">
               <button
-                onClick={() => handleQuantityDecrease(product)}
+                onClick={() =>
+                  handleQuantityChange(product.id, product.quantity - 1)
+                }
                 disabled={product.quantity <= product.minQuantity}
                 className="group px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer"
               >
                 <div className="w-10 h-10 flex items-center justify-center rounded-full group-active:bg-green-600">
                   <img
-                    src="assets/cart/minus.png"
+                    src="/assets/cart/minus.png"
                     alt="Kurangi"
                     className="w-6 h-6"
                   />
@@ -182,13 +175,15 @@ const CartItem = () => {
                 </span>
               </div>
               <button
-                onClick={() => handleQuantityIncrease(product)}
+                onClick={() =>
+                  handleQuantityChange(product.id, product.quantity + 1)
+                }
                 disabled={product.quantity >= product.maxQuantity}
                 className="group px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer"
               >
                 <div className="w-10 h-10 flex items-center justify-center rounded-full group-active:bg-green-600">
                   <img
-                    src="assets/cart/plus.png"
+                    src="/assets/cart/plus.png"
                     alt="Tambah"
                     className="w-6 h-6"
                   />
@@ -201,13 +196,10 @@ const CartItem = () => {
     </div>
   );
 
-  if (loading) {
-    return <SayurboxLoading />;
-  }
+  if (loading) return <SayurboxLoading />;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Back Button */}
       <div className="absolute bg-white z-10 pl-4">
         <button
           onClick={handleBackClick}
@@ -217,13 +209,9 @@ const CartItem = () => {
         </button>
       </div>
       <div className="mt-10">
-        {/* Header Section */}
         <div className="font-bold text-3xl text-black pl-46">Keranjang</div>
-        {/* 2-Column Grid Layout */}
         <div className="px-16 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-          {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Delivery Time Selection */}
             <div
               style={{ backgroundColor: "#D4E496" }}
               className="p-8 rounded-lg"
@@ -258,7 +246,6 @@ const CartItem = () => {
                 ))}
               </div>
             </div>
-            {/* Select All */}
             {products.length > 0 && (
               <div
                 className="mt-4 p-6 border-b border-gray-200"
@@ -280,14 +267,13 @@ const CartItem = () => {
                 </div>
               </div>
             )}
-            {/* Product List */}
             {products.length === 0 ? (
               <div className="space-y-4">
                 <div className="flex flex-col items-center justify-center">
                   <div className="text-center">
                     <div className="mb-6">
                       <img
-                        src="assets/cart/empty-cart.png"
+                        src="/assets/cart/empty-cart.png"
                         alt="Keranjang Kosong"
                         className="w-64 mx-auto"
                       />
@@ -299,8 +285,8 @@ const CartItem = () => {
                       Yuk belanja sekarang
                     </p>
                     <button
-                      onClick={() => window.history.back()}
-                      className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg text-md transition-all duration-200 shadow-sm"
+                      onClick={() => navigate("/")}
+                      className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg text-md transition-all duration-200 shadow-sm cursor-pointer"
                     >
                       Belanja Sekarang
                     </button>
@@ -314,7 +300,6 @@ const CartItem = () => {
                 ))}
               </div>
             )}
-            {/* Promo Carousel */}
             <div className="mt-6 p-4 bg-[#D4E496] rounded-lg border border-orange-200">
               <h3 className="px-4 font-bold text-gray-900 mb-4 text-lg">
                 Ayo Tebus Harga WOW!
@@ -344,17 +329,15 @@ const CartItem = () => {
               </div>
             </div>
           </div>
-          {/* Right Column - Cart Summary */}
           <div className="lg:col-span-1">
             <div>
               <div className="py-5 px-8 rounded-xl border border-2 border-gray-200 w-full max-w-sm mx-auto lg:mx-0">
-                {/* Gratis Ongkir */}
                 <div
                   className="flex items-center space-x-3 mb-4 p-3 bg-white rounded-lg border border-green-200"
                   style={{ backgroundColor: "#B1E9AB99" }}
                 >
                   <img
-                    src="assets/cart/truck.png"
+                    src="/assets/cart/truck.png"
                     alt="Truck Icon"
                     className="text-green-600 w-14 h-8"
                   />
@@ -365,43 +348,36 @@ const CartItem = () => {
                     </p>
                   </div>
                 </div>
-                {/* Total */}
                 <div className="flex items-center py-3 ">
                   <span className="font-bold text-gray-900 text-lg">
                     Total :{" "}
-                    {products.length === 0 || totalItems === 0
+                    {totalItems === 0
                       ? "Rp.-"
-                      : `Rp. ${Number(totalPrice).toLocaleString("id-ID")}`}
+                      : `Rp. ${totalPrice.toLocaleString("id-ID")}`}
                   </span>
                 </div>
-                {/* Points */}
                 {products.length > 0 && (
                   <div className="mb-4">
                     <div className="flex items-center text-sm">
-                      <img src="assets/cart/point.png" className="w-10 h-10" />
+                      <img src="/assets/cart/point.png" className="w-10 h-10" />
                       <span className="text-black font-bold ml-3">
                         +9 SayurPoint
                       </span>
                     </div>
                   </div>
                 )}
-                {/* XP */}
                 {products.length > 0 && (
                   <div className="mb-6">
                     <div className="flex items-center text-sm">
-                      <img src="assets/cart/xp.png" className="w-10 h-10" />
+                      <img src="/assets/cart/xp.png" className="w-10 h-10" />
                       <span className="text-black font-bold ml-3">+18 XP</span>
                     </div>
                   </div>
                 )}
-                {/* Spacing */}
                 {products.length === 0 && <div className="mb-6"></div>}
-                {/* Checkout Button */}
                 <button
                   className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-sm font-semibold text-lg transition-all duration-200 shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center"
-                  disabled={
-                    products.length === 0 || totalItems === 0 || checkoutLoading
-                  }
+                  disabled={totalItems === 0 || checkoutLoading}
                   onClick={handleCheckout}
                 >
                   {checkoutLoading ? (
@@ -425,14 +401,13 @@ const CartItem = () => {
                       />
                     </svg>
                   ) : null}
-                  {products.length === 0 ? "Keranjang Kosong" : "Checkout"}
+                  {totalItems === 0 ? "Keranjang Kosong" : "Checkout"}
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      {/* Toast Notification */}
       {toast.show && (
         <div
           className={`fixed top-20 right-4 z-50 px-4 py-3 rounded-md shadow-lg ${

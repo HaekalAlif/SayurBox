@@ -108,8 +108,33 @@ const ProductSection = () => {
             ) : (
               <div className="relative">
                 {products.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    No products found. Try adjusting your filters.
+                  <div className="flex flex-col items-center justify-center py-12 px-4">
+                    <div className="text-center">
+                      <div className="mb-6">
+                        <img
+                          src="/assets/catalog/empty-products.png"
+                          alt="Produk Tidak Ditemukan"
+                          className="w-64 mx-auto"
+                          onError={(e) => {
+                            e.target.src = "/assets/cart/empty-cart.png"; // Fallback ke gambar cart jika gambar catalog tidak ada
+                          }}
+                        />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-800 mb-2">
+                        Produk tidak ditemukan
+                      </h3>
+                      <p className="text-md text-gray-600 mb-6 max-w-md mx-auto">
+                        Maaf, kami tidak dapat menemukan produk yang sesuai
+                        dengan kriteria pencarian Anda. Coba sesuaikan filter
+                        atau cari dengan kata kunci lain.
+                      </p>
+                      <button
+                        onClick={() => (window.location.href = "/")}
+                        className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg text-md transition-all duration-200 shadow-sm"
+                      >
+                        Kembali ke Beranda
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <div
