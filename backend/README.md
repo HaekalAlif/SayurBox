@@ -1,61 +1,219 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SayurBox Backend API
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
 </p>
 
-## About Laravel
+## 📋 Deskripsi
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+SayurBox adalah aplikasi e-commerce untuk produk segar, dibangun dengan Laravel 12 dan MySQL. Aplikasi ini menawarkan fitur lengkap untuk pengguna dan admin, termasuk manajemen produk, keranjang belanja, checkout, dan pelacakan pesanan.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+-   Autentikasi pengguna aman dengan Sanctum
+-   Manajemen produk dan kategori
+-   Keranjang belanja interaktif
+-   Proses checkout lengkap
+-   Manajemen pesanan untuk pengguna dan admin
+-   API RESTful untuk integrasi dengan frontend
 
-## Learning Laravel
+## 🛠️ Teknologi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+-   **Laravel 12** - Framework PHP modern
+-   **MySQL** - Sistem database
+-   **Laravel Sanctum** - Autentikasi API token-based
+-   **Eloquent ORM** - Object-Relational Mapping
+-   **Blade Templates** - Template engine
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## ⚙️ Instalasi
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+````bash
+# Clone repository
+git clone https://github.com/HaekalAlif/SayurBox.git
+cd sayurbox/backend
 
-## Laravel Sponsors
+# Install dependencies
+composer install
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Copy .env example dan sesuaikan konfigurasi database
+cp .env.example .env
 
-### Premium Partners
+# Generate application key
+php artisan key:generate
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Jalankan migrasi dan seeder
+php artisan migrate --seed
 
-## Contributing
+# Start development server
+php artisan serve
+``` Backend API
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+<div align="center">
+  <img src="public/assets/logo-sayurbox.png" alt="SayurBox Logo" width="200">
+  <p>Backend API untuk aplikasi e-commerce SayurBox</p>
+</div>
 
-## Code of Conduct
+## 📋 Tentang Proyek
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Backend untuk aplikasi **SayurBox**, dibangun dengan Laravel 12. Proyek ini menyediakan REST API untuk autentikasi, manajemen produk, alamat, keranjang belanja, pesanan, pembayaran, serta integrasi dengan frontend React.
 
-## Security Vulnerabilities
+## 🚀 Tech Stack
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **Framework:** Laravel 12
+- **Database:** MySQL 8.0+
+- **Autentikasi:** Laravel Sanctum
+- **File Storage:** Laravel Storage dengan disk public
+- **Cache:** Laravel File Cache
+- **API:** RESTful API dengan JSON responses
+- **Validasi:** Laravel Form Request Validation
 
-## License
+## 🧰 Fitur Utama
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- ✅ Autentikasi (register, login, logout)
+- ✅ Manajemen Produk dan Kategori
+- ✅ Manajemen Keranjang Belanja
+- ✅ Sistem Alamat Pengiriman
+- ✅ Pemrosesan Pesanan
+- ✅ Status Tracking Pesanan
+- ✅ Admin Dashboard API
+- ✅ Upload dan Manajemen Gambar
+
+## ⚙️ Prasyarat
+
+- PHP >= 8.2
+- Composer
+- MySQL 8.0+ atau MariaDB 10.5+
+- PHP Extensions:
+  - BCMath
+  - Ctype
+  - Fileinfo
+  - JSON
+  - Mbstring
+  - OpenSSL
+  - PDO
+  - Tokenizer
+  - XML
+
+## 📦 Instalasi
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/HaekalAlif/SayurBox.git
+cd SayurBox/backend
+````
+
+### 2. Install Dependencies
+
+```bash
+composer install
+```
+
+### 3. Konfigurasi Environment
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+### 4. Konfigurasi Database
+
+Edit file `.env` dan sesuaikan konfigurasi database:
+
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=sayurbox
+DB_USERNAME=root
+DB_PASSWORD=your_password
+```
+
+### 5. Konfigurasi Sanctum untuk SPA
+
+Untuk integrasi dengan frontend, tambahkan domain frontend di `.env`:
+
+```
+FRONTEND_URL=http://localhost:5173
+SANCTUM_STATEFUL_DOMAINS=localhost:5173
+```
+
+### 6. Jalankan Migrasi & Seeder
+
+```bash
+php artisan migrate
+php artisan storage:link
+php artisan db:seed
+```
+
+## 🛠️ Menjalankan Server
+
+```bash
+php artisan serve
+```
+
+API akan tersedia di `http://localhost:8000/api`
+
+## 📝 API Endpoints
+
+### Auth
+
+| Method | Endpoint        | Deskripsi                       |
+| ------ | --------------- | ------------------------------- |
+| POST   | `/api/register` | Registrasi user baru            |
+| POST   | `/api/login`    | Login user                      |
+| POST   | `/api/logout`   | Logout user                     |
+| GET    | `/api/user`     | Get data user yang sedang login |
+
+### Produk
+
+| Method | Endpoint                               | Deskripsi                    |
+| ------ | -------------------------------------- | ---------------------------- |
+| GET    | `/api/products`                        | Daftar semua produk          |
+| GET    | `/api/products/{id}`                   | Detail produk berdasarkan ID |
+| GET    | `/api/products/category/{category_id}` | Produk berdasarkan kategori  |
+
+### Kategori
+
+| Method | Endpoint               | Deskripsi                      |
+| ------ | ---------------------- | ------------------------------ |
+| GET    | `/api/categories`      | Daftar semua kategori          |
+| GET    | `/api/categories/{id}` | Detail kategori berdasarkan ID |
+
+### Keranjang
+
+| Method | Endpoint               | Deskripsi                 |
+| ------ | ---------------------- | ------------------------- |
+| GET    | `/api/cart/{user_id}`  | Get keranjang user        |
+| POST   | `/api/cart`            | Buat keranjang baru       |
+| POST   | `/api/cart-items`      | Tambah item ke keranjang  |
+| PUT    | `/api/cart-items/{id}` | Update jumlah item        |
+| DELETE | `/api/cart-items/{id}` | Hapus item dari keranjang |
+
+### Pesanan
+
+| Method | Endpoint                    | Deskripsi               |
+| ------ | --------------------------- | ----------------------- |
+| GET    | `/api/orders`               | Daftar pesanan user     |
+| GET    | `/api/orders/{id}`          | Detail pesanan          |
+| POST   | `/api/orders/checkout-cart` | Checkout dari keranjang |
+| PUT    | `/api/orders/{id}`          | Update status pesanan   |
+
+### Admin
+
+| Method | Endpoint                 | Deskripsi                     |
+| ------ | ------------------------ | ----------------------------- |
+| GET    | `/api/admin/orders`      | Daftar semua pesanan (admin)  |
+| GET    | `/api/admin/orders/{id}` | Detail pesanan (admin)        |
+| PUT    | `/api/admin/orders/{id}` | Update status pesanan (admin) |
+| GET    | `/api/admin/users`       | Daftar semua user             |
+
+## 🧪 Testing
+
+```bash
+php artisan test
+```
+
+## 🔒 Security
+
+Endpoint sensitif dilindungi dengan middleware autentikasi Laravel Sanctum.
