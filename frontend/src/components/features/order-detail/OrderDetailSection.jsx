@@ -50,14 +50,11 @@ const OrderDetailSection = () => {
     error: false,
   });
 
-  // Tracking modal state
   const [showTrackingModal, setShowTrackingModal] = useState(false);
 
-  // Cancel modal state
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
 
-  // Address state
   const [addressList, setAddressList] = useState([]);
   const [selectedAddressIdx, setSelectedAddressIdx] = useState(0);
 
@@ -70,7 +67,6 @@ const OrderDetailSection = () => {
       .catch(() => setAddressList([]));
   }, [user]);
 
-  // Pilih alamat default dari order/addressList
   let address = null;
   if (Array.isArray(order?.address) && order.address.length > 0) {
     address = order.address.find((a) => a.is_default === 1) || order.address[0];
@@ -105,17 +101,14 @@ const OrderDetailSection = () => {
     );
   };
 
-  // Override handleTrackShipment to use modal
   const handleTrackShipmentToast = () => {
     setShowTrackingModal(true);
   };
 
-  // Handle cancel order with confirmation
   const handleCancelWithConfirmation = () => {
     setShowCancelModal(true);
   };
 
-  // Confirm cancel order
   const handleConfirmCancel = async () => {
     setIsCancelling(true);
     try {
@@ -185,7 +178,6 @@ const OrderDetailSection = () => {
   const items = order.items || [];
   const showActionButtons = order.order_status === "PENDING";
 
-  // Stepper warna merah jika CANCEL/CANCELLED, UI lain tetap
   const ProgressStepper = () => (
     <div className="mb-8 px-20">
       <div className="flex items-center">
@@ -450,7 +442,7 @@ const OrderDetailSection = () => {
                 <hr className="border-t border-gray-200 my-6" />
               </div>
 
-              {/* Timeline Detail - Dibawah horizontal progress */}
+              {/* Timeline Detail */}
               <div className="space-y-6">
                 {order.order_status === "COMPLETED" && (
                   <div className="flex">

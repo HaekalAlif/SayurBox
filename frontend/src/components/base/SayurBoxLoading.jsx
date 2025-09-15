@@ -4,9 +4,7 @@ const SayurboxLoading = () => {
   return (
     <div className="flex items-center justify-center w-full py-10">
       <div className="flex flex-col items-center">
-        {/* Logo-inspired loader */}
         <div className="relative h-20 w-20">
-          {/* Outer rotating circle */}
           <div className="absolute inset-0 animate-spin-slow">
             <svg viewBox="0 0 100 100" className="h-full w-full">
               <circle
@@ -22,12 +20,10 @@ const SayurboxLoading = () => {
             </svg>
           </div>
 
-          {/* Inner pulse circle */}
           <div className="absolute inset-0 flex items-center justify-center animate-pulse">
             <div className="h-12 w-12 rounded-full bg-green-500 opacity-80"></div>
           </div>
 
-          {/* Central leaf icon */}
           <div className="absolute inset-0 flex items-center justify-center">
             <svg viewBox="0 0 24 24" className="h-10 w-10 text-white">
               <path

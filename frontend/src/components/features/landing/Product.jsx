@@ -1,25 +1,25 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { useLandingProduct } from "./Product.hooks";
 import SayurboxLoading from "@/components/base/SayurBoxLoading";
 import { useAuth } from "@/context/AuthContext";
-import { addCartItem } from "@/service/cart/cartItem";
 import { createCart, getCart } from "@/service/cart/cart";
-import { useCartItem } from "@/components/features/cart/CartItem.hooks";
+import { addCartItem } from "@/service/cart/cartItem";
 
 const ProductSection = () => {
   const scrollRef = useRef(null);
   const { products, loading, error, tabs, activeTab, setActiveTab } =
     useLandingProduct();
-  const { user } = useAuth();
+
+  const { user, cart, fetchCart } = useAuth();
   const userId = user?.id;
+
   const [cartId, setCartId] = useState(null);
   const [addingId, setAddingId] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // Ambil cart id user (sekali saja)
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchCartId = async () => {
       if (!userId) return;
       try {
@@ -27,12 +27,11 @@ const ProductSection = () => {
         if (res.data && res.data.id) {
           setCartId(res.data.id);
         } else {
-          // Jika belum ada cart, buat baru
           const newCart = await createCart(userId);
           setCartId(newCart.data.id);
         }
       } catch {
-        // fallback: buat cart baru
+        // Jika getCart gagal (misal 404), buat cart baru
         const newCart = await createCart(userId);
         setCartId(newCart.data.id);
       }
@@ -44,28 +43,33 @@ const ProductSection = () => {
     setActiveTab(tabId);
   };
 
-  const { isProductInCart } = useCartItem(userId);
-
   const handleAddToCart = async (product) => {
     if (!cartId || !product?.id) return;
-    // Cek apakah produk sudah ada di keranjang
-    if (isProductInCart(product.id)) {
+
+    const isProductInCart = cart?.cart_items?.some(
+      (item) => item.product_id === product.id
+    );
+
+    if (isProductInCart) {
       setToastMessage("Produk sudah ada di keranjang!");
       setShowToast(true);
       setTimeout(() => setShowToast(false), 2500);
       return;
     }
+
     setAddingId(product.id);
     try {
       await addCartItem(cartId, product.id, 1);
       setToastMessage("Berhasil menambahkan ke keranjang!");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
+      if (fetchCart) {
+        await fetchCart();
+      }
     } catch (err) {
+      console.error("Gagal menambahkan ke keranjang:", err);
       setToastMessage("Gagal menambahkan ke keranjang!");
+    } finally {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 2500);
-    } finally {
       setAddingId(null);
     }
   };
@@ -154,11 +158,14 @@ const ProductSection = () => {
 };
 
 const ProductCard = ({ product, onAddToCart, adding }) => (
-  <a href={`/product/${product.slug}`} className="cursor-pointer group">
+  <div className="cursor-pointer group">
     <div className="flex-shrink-0">
-      <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
+      <div className="w-56 h-full rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow flex flex-col">
         {/* Image Area */}
-        <div className="relative w-full h-46">
+        <a
+          href={`/product/${product.slug}`}
+          className="relative w-full h-46 block"
+        >
           {/* Badge Top */}
           <div className="absolute top-2 left-2 z-10">
             <img
@@ -177,7 +184,7 @@ const ProductCard = ({ product, onAddToCart, adding }) => (
             alt={product.title}
             className="w-full h-full object-cover"
             onError={(e) => {
-              e.target.style.display = "none";
+              e.target.src = "/assets/default-product.png"; 
             }}
           />
 
@@ -187,6 +194,7 @@ const ProductCard = ({ product, onAddToCart, adding }) => (
             className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               onAddToCart(product);
             }}
             disabled={adding}
@@ -194,7 +202,7 @@ const ProductCard = ({ product, onAddToCart, adding }) => (
           >
             {adding ? (
               <svg
-                className="animate-spin w-8 h-8 text-white group-hover:text-green-600"
+                className="animate-spin w-8 h-8 text-white"
                 viewBox="0 0 24 24"
                 fill="none"
               >
@@ -213,13 +221,13 @@ const ProductCard = ({ product, onAddToCart, adding }) => (
                 />
               </svg>
             ) : (
-              <Plus className="w-8 h-8 text-white hover:text-green-600 transition-colors" />
+              <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
             )}
           </button>
-        </div>
+        </a>
 
         {/* Price & Info */}
-        <div className="p-3">
+        <div className="p-3 flex flex-col flex-grow">
           <div className="mb-1">
             <span className="text-base font-bold text-gray-800">
               {product.currentPrice}
@@ -237,14 +245,16 @@ const ProductCard = ({ product, onAddToCart, adding }) => (
             </span>
           </div>
 
-          <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
-            {product.title}
-          </h4>
-          <p className="text-xs text-gray-500">{product.unit}</p>
+          <a href={`/product/${product.slug}`} className="mt-auto">
+            <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
+              {product.title}
+            </h4>
+            <p className="text-xs text-gray-500">{product.unit}</p>
+          </a>
         </div>
       </div>
     </div>
-  </a>
+  </div>
 );
 
 export default ProductSection;

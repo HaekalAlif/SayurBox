@@ -12,7 +12,6 @@ const IngredientsSection = () => {
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
 
-  // --- State dari API dan Interaksi ---
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,7 +22,6 @@ const IngredientsSection = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // --- Logika Pengambilan Data Produk ---
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -52,7 +50,7 @@ const IngredientsSection = () => {
               : null,
           };
         });
-        setProducts(formattedProducts.slice(0, 6)); // Ambil 6 produk pertama
+        setProducts(formattedProducts.slice(0, 6)); 
         setError(null);
       } catch (err) {
         setError("Gagal mengambil data produk");
@@ -63,7 +61,6 @@ const IngredientsSection = () => {
     fetchProducts();
   }, []);
 
-  // --- Logika Keranjang Belanja ---
   useEffect(() => {
     const fetchCartId = async () => {
       if (!userId) return;
@@ -107,12 +104,11 @@ const IngredientsSection = () => {
     }
   };
 
-  // --- Logika Scroll Carousel ---
   const checkScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
     setShowLeft(el.scrollLeft > 0);
-    setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1); // Toleransi 1px
+    setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
   }, []);
 
   useEffect(() => {
@@ -124,13 +120,12 @@ const IngredientsSection = () => {
       el?.removeEventListener("scroll", checkScroll);
       window.removeEventListener("resize", checkScroll);
     };
-  }, [checkScroll, products]); // Re-check on products load
+  }, [checkScroll, products]);
 
   const scrollBy = (amount) => {
     scrollRef.current?.scrollBy({ left: amount, behavior: "smooth" });
   };
 
-  // --- Komponen Card Produk ---
   const ProductCard = ({ product }) => (
     <div className="flex-shrink-0">
       <div className="w-56 h-full rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow max-w-2xl">

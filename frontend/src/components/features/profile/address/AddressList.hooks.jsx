@@ -19,7 +19,6 @@ export function useAddressList() {
       .then((res) => {
         setAddresses(res.data);
         setLoading(false);
-        // Otomatis pilih yang is_default
         const defaultIdx = res.data.findIndex((addr) => addr.is_default);
         setSelectedAddress(defaultIdx !== -1 ? defaultIdx : 0);
       })

@@ -157,12 +157,36 @@ class OrderController extends Controller
         return response()->json(['message' => 'Order updated', 'order' => $order->load(['items.product.images'])]);
     }
 
-    // Delete order (optional, biasanya tidak dihapus, hanya di-cancel)
+    // Delete order (optional)
     public function destroy(Request $request, $id)
     {
         $userId = $request->user()->id;
         $order = Order::where('user_id', $userId)->findOrFail($id);
         $order->delete();
         return response()->json(['message' => 'Order deleted']);
+    }
+
+    public function adminShow($id)
+    {
+        $order = Order::with(['items.product.images', 'user'])->findOrFail($id);
+        return response()->json($order);
+    }
+
+    public function adminUpdate(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        
+        $validated = $request->validate([
+            'order_status' => 'required|string|in:PENDING,PACKED,SHIPPED,DELIVERED,COMPLETED,CANCELLED',
+        ]);
+
+        $order->update([
+            'order_status' => $validated['order_status'],
+        ]);
+
+        return response()->json([
+            'message' => 'Order updated successfully',
+            'data' => $order->load(['items.product.images', 'user']),
+        ]);
     }
 }

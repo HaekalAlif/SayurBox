@@ -31,7 +31,6 @@ export const useProductList = () => {
 
   useEffect(() => {
     fetchProducts();
-    // eslint-disable-next-line
   }, []);
 
   const handleEdit = (productId) => {

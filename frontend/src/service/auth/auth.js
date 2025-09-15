@@ -1,6 +1,5 @@
-import api from "../api"; // Import the configured instance
+import api from "../api"; 
 
-// This function will perform the "priming" request
 export const getCsrfCookie = () => api.get("/sanctum/csrf-cookie");
 
 export const register = async (data) => {

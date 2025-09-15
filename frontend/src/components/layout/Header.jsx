@@ -154,9 +154,9 @@ const Header = () => {
   const handleLogout = async () => {
     setIsLoading(true);
     try {
-      await logout(); 
-      setUser(null); 
-      window.location.href = "/"; 
+      await logout();
+      setUser(null);
+      window.location.href = "/";
     } catch (err) {
       console.error("Logout failed", err);
     } finally {
@@ -174,7 +174,8 @@ const Header = () => {
     cart: "/cart",
     bill: "/orders",
     cart2: "/catalog",
-    profile: "/profile",
+    profile: "/profile/account",
+    setting: "/profile",
     voucher: "/voucher",
     sayurpoin: "/sayur-poin",
     resep: "/recipe",
@@ -435,6 +436,12 @@ const Header = () => {
                               onClick={() => goTo(paths.keranjang)}
                             >
                               Keranjang
+                            </button>
+                            <button
+                              className="text-left cursor-pointer hover:underline"
+                              onClick={() => goTo(paths.setting)}
+                            >
+                              Pengaturan
                             </button>
                             <button
                               className="text-left cursor-pointer hover:underline disabled:opacity-50 disabled:cursor-not-allowed"

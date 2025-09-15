@@ -10,7 +10,6 @@ export const usePaymentSection = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // UI states
   const [selectedDeliverySlot, setSelectedDeliverySlot] = useState("slot_1");
   const [useCustomPackaging, setUseCustomPackaging] = useState(false);
   const [isGift, setIsGift] = useState(false);
@@ -90,7 +89,6 @@ export const usePaymentSection = () => {
     },
   ];
 
-  // Ambil biaya pengiriman dari slot yang dipilih
   const selectedSlotObj =
     deliverySlots.find((slot) => slot.id === selectedDeliverySlot) ||
     deliverySlots[0];
@@ -120,9 +118,9 @@ export const usePaymentSection = () => {
       }
 
       return {
-        id: item.id, // order_item id
-        product_id: item.product_id, // tambahkan ini!
-        product: item.product, // tambahkan ini!
+        id: item.id,
+        product_id: item.product_id,
+        product: item.product,
         productName: item.product?.name,
         image: imageUrl,
         price: Number(item.product?.original_price || item.product?.price),
@@ -147,7 +145,6 @@ export const usePaymentSection = () => {
     }, 0);
   }
 
-  // Perhitungan total pembayaran yang benar
   const totalPayment =
     subtotal - productDiscount + deliveryFee + packagingFee + reservationFee;
 

@@ -21,12 +21,11 @@ const ProfileSection = () => {
   const handleDeleteConfirm = async () => {
     try {
       await deleteAccount();
-      setUser(null); // Clear user from context and local storage
+      setUser(null);
       setIsDeleteModalOpen(false);
-      navigate("/"); // Redirect to home page
+      navigate("/");
     } catch (error) {
       console.error("Failed to delete account:", error);
-      // Optionally, show an error toast
     }
   };
 
@@ -54,7 +53,7 @@ const ProfileSection = () => {
     {
       title: "Hapus Akun",
       icon: "assets/profile/setting.png",
-      action: () => setIsDeleteModalOpen(true), // Open confirmation modal
+      action: () => setIsDeleteModalOpen(true), 
       textColor: "text-red-500",
     },
   ];

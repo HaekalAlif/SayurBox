@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap");
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -116,9 +118,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Baloo 2", sans-serif;
   }
 }
-
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
@@ -129,7 +131,7 @@
 }
 
 .custom-checkbox::after {
-  content: '';
+  content: "";
   display: none;
   width: 12px;
   height: 6px;

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { getProducts, getImageUrl } from "@/service/products/product";
 
-// Helper untuk random array
 function getRandomItems(array, count) {
   if (!Array.isArray(array)) return [];
   const shuffled = [...array].sort(() => Math.random() - 0.5);
@@ -30,8 +29,8 @@ export const useSuggestedProducts = () => {
             id: product.id,
             slug: product.slug,
             title: product.name,
-            price: Number(product.price), // Kirim sebagai angka
-            originalPrice: Number(product.original_price), // Kirim sebagai angka
+            price: Number(product.price),
+            originalPrice: Number(product.original_price),
             discount: product.discount_percent
               ? `${product.discount_percent}%`
               : null,

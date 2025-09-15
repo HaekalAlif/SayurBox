@@ -92,7 +92,6 @@ const ProductList = () => {
                 </tr>
               ) : (
                 filteredProducts.map((product) => {
-                  // Ambil gambar utama dari relasi images (primary atau pertama)
                   let imageUrl = "/assets/default-product.png";
                   if (
                     Array.isArray(product.images) &&

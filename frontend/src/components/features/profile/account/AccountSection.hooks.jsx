@@ -3,7 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { updateProfile } from "@/service/auth/auth";
 
 export const useAccountSection = () => {
-  const { user, fetchUser } = useAuth(); // fetchUser sekarang berasal dari context
+  const { user, fetchUser } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -57,7 +57,7 @@ export const useAccountSection = () => {
         gender: formData.gender,
       };
       await updateProfile(dataToUpdate);
-      await fetchUser(); // Panggilan ini sekarang akan memperbarui state global
+      await fetchUser();
       setSuccess("Data berhasil disimpan!");
     } catch (err) {
       console.error("Failed to update profile:", err);

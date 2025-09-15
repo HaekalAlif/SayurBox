@@ -5,7 +5,7 @@ import { useLogin } from "./LoginForm.hooks";
 const ErrorModal = ({ title, message, onClose }) => (
   <div
     className="fixed inset-0 z-50 flex items-center justify-center"
-    onClick={onClose} // Tutup modal jika klik di luar modal
+    onClick={onClose}
   >
     <div
       className="bg-white rounded-lg shadow-lg border border-red-400 px-8 py-4 max-w-lg w-full text-center"

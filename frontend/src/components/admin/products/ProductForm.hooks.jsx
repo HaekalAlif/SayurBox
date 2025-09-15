@@ -5,8 +5,8 @@ import {
   createProduct,
   updateProduct,
   getImageUrl,
-} from "../../../service/products/product";
-import { getCategories } from "../../../service/categories/category";
+} from "@/service/products/product";
+import { getCategories } from "@/service/categories/category";
 
 export const useProductForm = () => {
   const navigate = useNavigate();
@@ -65,7 +65,6 @@ export const useProductForm = () => {
           description: product.description,
           original_price: product.original_price,
           discount_percent: product.discount_percent || "",
-          // Jika value awal "sold", ubah ke "available" agar dropdown bisa diubah
           availability:
             product.availability === "sold"
               ? "available"
@@ -75,7 +74,6 @@ export const useProductForm = () => {
           unit: product.unit,
         });
 
-        // Set image previews from product.images array
         if (Array.isArray(product.images)) {
           setImagePreviews(
             product.images.map((img) => getImageUrl(img.image_url))
@@ -97,17 +95,14 @@ export const useProductForm = () => {
     }
   }, [id, isEditMode]);
 
-  // Handle change for all fields including multiple images
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
 
     if (type === "file") {
       const newFiles = Array.from(files);
-      // Gabungkan file lama dan baru
       const allFiles = [...formData.images, ...newFiles];
       setFormData({ ...formData, images: allFiles });
 
-      // Preview semua gambar (lama + baru)
       Promise.all(
         allFiles.map(
           (file) =>
@@ -125,7 +120,6 @@ export const useProductForm = () => {
     }
   };
 
-  // Hapus gambar dari preview dan dari formData.images
   const handleRemoveImage = (idx) => {
     const newImages = [...formData.images];
     newImages.splice(idx, 1);

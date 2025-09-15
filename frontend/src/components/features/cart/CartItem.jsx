@@ -3,6 +3,7 @@ import { useCartItem } from "./CartItem.hooks";
 import { useAuth } from "@/context/AuthContext";
 import SayurboxLoading from "@/components/base/SayurBoxLoading";
 import { useNavigate } from "react-router-dom";
+import { useRef, useState, useEffect } from "react";
 
 const CartItem = () => {
   const { user } = useAuth();
@@ -31,11 +32,118 @@ const CartItem = () => {
     toast,
   } = useCartItem(userId);
 
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const dragThreshold = 5;
+  const dragStartTimeRef = useRef(0);
+  const lastDragTimeRef = useRef(0);
+  const lastDragXRef = useRef(0);
+  const velocityRef = useRef(0);
+  const animationFrameRef = useRef(null);
+  const wasDraggingRef = useRef(false);
+
+  const handleMouseDown = (e) => {
+    if (!carouselRef.current) return;
+
+    setIsDragging(true);
+    dragStartTimeRef.current = Date.now();
+    wasDraggingRef.current = false;
+
+    const pageX = e.pageX || (e.touches && e.touches[0].pageX);
+    setStartX(pageX);
+    setScrollLeft(carouselRef.current.scrollLeft);
+
+    lastDragXRef.current = pageX;
+    lastDragTimeRef.current = Date.now();
+    velocityRef.current = 0;
+
+    document.body.style.overflow = "hidden";
+    carouselRef.current.style.cursor = "grabbing";
+
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging || !carouselRef.current) return;
+
+    const pageX = e.pageX || (e.touches && e.touches[0].pageX);
+    const dx = pageX - startX;
+    carouselRef.current.scrollLeft = scrollLeft - dx;
+
+    const now = Date.now();
+    const dt = now - lastDragTimeRef.current;
+
+    if (dt > 0) {
+      const dxVelocity = lastDragXRef.current - pageX;
+      velocityRef.current = 0.8 * velocityRef.current + 0.2 * (dxVelocity / dt);
+    }
+
+    lastDragXRef.current = pageX;
+    lastDragTimeRef.current = now;
+
+    if (Math.abs(dx) > dragThreshold) {
+      wasDraggingRef.current = true;
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+
+    document.body.style.overflow = "";
+    if (carouselRef.current) {
+      carouselRef.current.style.cursor = "grab";
+    }
+
+    if (Math.abs(velocityRef.current) > 0.5) {
+      const startTime = Date.now();
+      const initialVelocity = velocityRef.current * 20;
+
+      const momentumScroll = () => {
+        const elapsed = Date.now() - startTime;
+        const easing = Math.exp(-elapsed / 325);
+        const delta = initialVelocity * easing;
+
+        if (Math.abs(delta) > 0.5 && carouselRef.current) {
+          carouselRef.current.scrollLeft += delta;
+          animationFrameRef.current = requestAnimationFrame(momentumScroll);
+        } else {
+          cancelAnimationFrame(animationFrameRef.current);
+          animationFrameRef.current = null;
+        }
+      };
+
+      animationFrameRef.current = requestAnimationFrame(momentumScroll);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
+
+  const handleCardClick = (e) => {
+    if (wasDraggingRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      setTimeout(() => {
+        wasDraggingRef.current = false;
+      }, 10);
+    }
+  };
+
   const PromoProductItem = ({ index }) => (
     <div
       key={index}
       className="min-w-[300px] bg-white rounded-lg border border-green-200 shadow-sm p-4 snap-center flex-shrink-0 pointer-events-auto"
-      onMouseDown={(e) => e.preventDefault()}
+      onClick={handleCardClick}
     >
       <div className="flex items-center justify-between">
         <div className="w-26 h-20 rounded-md overflow-hidden bg-red-100">
@@ -59,7 +167,12 @@ const CartItem = () => {
           </div>
           <p className="font-bold text-gray-900 text-base mt-1">Rp. 14.900</p>
         </div>
-        <button className="w-10 h-10 -mt-12 rounded-full bg-green-600 text-white flex items-center justify-center cursor-pointer hover:bg-green-700 transition-all duration-200">
+        <button
+          className="w-10 h-10 -mt-12 rounded-full bg-green-600 text-white flex items-center justify-center cursor-pointer hover:bg-green-700 transition-all duration-200"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-5 h-5"
@@ -313,7 +426,15 @@ const CartItem = () => {
                     WebkitOverflowScrolling: "touch",
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
+                    cursor: isDragging ? "grabbing" : "grab",
                   }}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                  onTouchStart={handleMouseDown}
+                  onTouchMove={handleMouseMove}
+                  onTouchEnd={handleMouseUp}
                 >
                   {[1, 2, 3, 4, 5, 6].map((item, i) => (
                     <PromoProductItem key={i} index={i} />
@@ -417,6 +538,26 @@ const CartItem = () => {
           {toast.message}
         </div>
       )}
+
+      {/* CSS */}
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+
+        /* Mencegah highlight teks saat drag */
+        .touch-pan-x {
+          touch-action: pan-x;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+      `}</style>
     </div>
   );
 };

@@ -59,7 +59,6 @@ const Hero = () => {
     },
   ];
 
-  // Ref dan state untuk slider
   const sliderRef = useRef(null);
   const [progress, setProgress] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -71,7 +70,6 @@ const Hero = () => {
   const lastTime = useRef(0);
   const clickStartTime = useRef(0);
 
-  // Hilangkan scrollbar dengan CSS
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = `
@@ -82,7 +80,6 @@ const Hero = () => {
     return () => document.head.removeChild(style);
   }, []);
 
-  // Update progress bar saat scroll
   const handleScroll = useCallback(() => {
     const slider = sliderRef.current;
     if (!slider) return;
@@ -92,7 +89,7 @@ const Hero = () => {
     setProgress(percent);
   }, []);
 
-  // Handle untuk smooth scrolling dengan momentum
+  // Handle untuk smooth scrolling
   const handleDragStart = useCallback((clientX) => {
     clickStartTime.current = Date.now();
     setIsDragging(true);
@@ -117,7 +114,6 @@ const Hero = () => {
       const dx = lastX.current - clientX;
 
       if (dt > 0) {
-        // Calculate velocity (px/ms) with smoothing
         const newVelocity = dx / dt;
         velocity.current = velocity.current * 0.7 + newVelocity * 0.3;
       }
@@ -136,7 +132,6 @@ const Hero = () => {
       if (!isDragging) return;
 
       const dragDuration = Date.now() - clickStartTime.current;
-      // If it's a short drag (like a click), don't apply momentum
       if (dragDuration < 100) {
         setIsDragging(false);
         return;
@@ -144,13 +139,11 @@ const Hero = () => {
 
       setIsDragging(false);
 
-      // Apply momentum effect
       const startTime = Date.now();
-      const initialVelocity = velocity.current * 15; // Adjust for better feel
+      const initialVelocity = velocity.current * 15;
 
       const momentumScroll = () => {
         const elapsed = Date.now() - startTime;
-        // More natural easing curve
         const easing = Math.exp(-elapsed / 325);
         const delta = initialVelocity * easing;
 
@@ -171,7 +164,6 @@ const Hero = () => {
     [isDragging, handleScroll]
   );
 
-  // Clean up RAF on unmount
   useEffect(() => {
     return () => {
       if (rafId.current) {
@@ -184,12 +176,10 @@ const Hero = () => {
     const slider = sliderRef.current;
     if (!slider) return;
     slider.addEventListener("scroll", handleScroll);
-    // Set awal ke 0
     setProgress(0);
     return () => slider.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
-  // Prevent default to avoid text selection during dragging
   const preventDefaultHandler = useCallback(
     (e) => {
       if (isDragging) {
@@ -199,7 +189,6 @@ const Hero = () => {
     [isDragging]
   );
 
-  // Add event listeners to prevent text selection during dragging
   useEffect(() => {
     window.addEventListener("dragstart", preventDefaultHandler);
     window.addEventListener("selectstart", preventDefaultHandler);
@@ -278,10 +267,10 @@ const Hero = () => {
                     scrollBehavior: isDragging ? "auto" : "smooth",
                     cursor: isDragging ? "grabbing" : "grab",
                     userSelect: "none",
-                    WebkitOverflowScrolling: "touch", // Enables momentum scrolling on iOS
+                    WebkitOverflowScrolling: "touch", 
                   }}
                   onMouseDown={(e) => {
-                    e.preventDefault(); // Prevent text selection
+                    e.preventDefault();
                     handleDragStart(e.clientX);
                   }}
                   onMouseMove={(e) => {
@@ -306,7 +295,6 @@ const Hero = () => {
                       key={index}
                       href={tab.href}
                       onClick={(e) => {
-                        // Only allow click if we're not dragging
                         if (
                           isDragging ||
                           Date.now() - clickStartTime.current > 150

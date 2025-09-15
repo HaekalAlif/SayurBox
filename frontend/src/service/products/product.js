@@ -1,6 +1,5 @@
 import api from "../api";
 
-// Mendapatkan URL lengkap untuk gambar
 export function getImageUrl(path) {
   if (!path) return "/assets/default-product.png";
 
@@ -22,7 +21,6 @@ export function getProduct(id) {
 }
 
 export function createProduct(data) {
-  // Jika data berisi file gambar (multiple), gunakan FormData
   if (Array.isArray(data.images) && data.images.length > 0) {
     const formData = new FormData();
 
@@ -43,12 +41,10 @@ export function createProduct(data) {
     });
   }
 
-  // Jika tidak ada gambar, gunakan JSON biasa
   return api.post("/api/products", data);
 }
 
 export function updateProduct(id, data) {
-  // Jika data berisi file gambar (multiple), gunakan FormData
   if (Array.isArray(data.images) && data.images.length > 0) {
     const formData = new FormData();
 
@@ -69,7 +65,6 @@ export function updateProduct(id, data) {
     });
   }
 
-  // Jika tidak ada gambar, gunakan JSON biasa
   return api.put(`/api/products/${id}`, data);
 }
 

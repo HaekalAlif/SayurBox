@@ -5,13 +5,13 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import { getAuthUser } from "@/service/auth/auth"; // Impor service API
+import { getAuthUser } from "@/service/auth/auth";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUserState] = useState(null);
-  const [loading, setLoading] = useState(true); // Tambah state loading
+  const [loading, setLoading] = useState(true); 
 
   const setUser = (userData) => {
     setUserState(userData);
@@ -22,7 +22,6 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Fungsi untuk mengambil data user dari API dan memperbarui state
   const fetchUser = useCallback(async () => {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) {
@@ -31,16 +30,15 @@ export function AuthProvider({ children }) {
     }
     try {
       const response = await getAuthUser();
-      setUser(response.data); // Perbarui state dan localStorage
+      setUser(response.data); 
     } catch (error) {
       console.error("Failed to fetch user, logging out.", error);
-      setUser(null); // Jika token tidak valid, logout user
+      setUser(null);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Ambil user saat komponen pertama kali dimuat
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);

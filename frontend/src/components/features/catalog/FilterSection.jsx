@@ -90,7 +90,6 @@ const FilterSection = () => {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // Fetch categories from backend
     const fetchCategories = async () => {
       try {
         const response = await getCategories();
@@ -103,7 +102,6 @@ const FilterSection = () => {
   }, []);
 
   useEffect(() => {
-    // Set selected category from URL query param
     const categorySlug = searchParams.get("category");
     if (categorySlug) setSelectedCategorySlug(categorySlug);
   }, [searchParams]);
@@ -114,11 +112,9 @@ const FilterSection = () => {
 
   const handleCategoryClick = (slug) => {
     setSelectedCategorySlug(slug);
-    // Update URL query param
     navigate(`/catalog?category=${slug}`);
   };
 
-  // Ambil info judul dan subjudul sesuai kategori
   const info =
     categoryInfo[selectedCategorySlug] || {
       title: "By Sayurbox",

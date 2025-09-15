@@ -1,36 +1,96 @@
-import React, { useRef, useState } from "react";
-import { Plus, ChevronDown, AlertCircle, X } from "lucide-react";
+import React, { useRef, useState, useEffect } from "react";
+import { Plus, AlertCircle, X } from "lucide-react";
 import { useProductCatalog } from "./Product.hooks";
-import { Link } from "react-router-dom";
-import SayurboxLoading from "../../base/SayurBoxLoading";
+import { Link, useNavigate } from "react-router-dom";
+import SayurboxLoading from "@/components/base/SayurBoxLoading";
+import { useAuth } from "@/context/AuthContext";
+import { getCart, createCart } from "@/service/cart/cart";
+import { addCartItem } from "@/service/cart/cartItem";
 
 const ProductSection = () => {
   const scrollRef = useRef(null);
-  const [showToast, setShowToast] = useState(false);
+  const navigate = useNavigate();
 
-  // Menggunakan custom hook untuk fetch data produk
   const { products, loading, error, activeTab, handleTabChange } =
     useProductCatalog();
+  const { user, cart, fetchCart } = useAuth();
+  const userId = user?.id;
 
-  // Data tabs
+  const [cartId, setCartId] = useState(null);
+  const [addingId, setAddingId] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
   const tabs = [
     { id: "latest", label: "Semua" },
     { id: "choices", label: "Produk Terlaris" },
   ];
 
-  // Handler untuk menampilkan toast
-  const handleAddToCart = (e, productId) => {
-    e.preventDefault(); // Mencegah navigasi ke halaman detail
-    e.stopPropagation(); // Mencegah event bubble ke Link
+  useEffect(() => {
+    const fetchUserCart = async () => {
+      if (!userId) return;
+      try {
+        const res = await getCart(userId);
+        setCartId(res.data?.id || null);
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          try {
+            const newCart = await createCart(userId);
+            setCartId(newCart.data.id);
+          } catch (createErr) {
+            console.error("Gagal membuat keranjang baru:", createErr);
+          }
+        } else {
+          console.error("Gagal mengambil keranjang:", err);
+        }
+      }
+    };
+    fetchUserCart();
+  }, [userId]);
 
-    setShowToast(true);
+  // Handler untuk menambah produk ke keranjang
+  const handleAddToCart = async (e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-    // Otomatis sembunyikan toast setelah 3 detik
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
 
-    console.log("Product added to cart (coming soon):", productId);
+    if (!cartId) {
+      setToastMessage("Gagal mendapatkan info keranjang, coba lagi.");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      return;
+    }
+
+    const isProductInCart = cart?.cart_items?.some(
+      (item) => item.product_id === product.id
+    );
+
+    if (isProductInCart) {
+      setToastMessage("Produk sudah ada di keranjang!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      return;
+    }
+
+    setAddingId(product.id);
+    try {
+      await addCartItem(cartId, product.id, 1);
+      setToastMessage("Berhasil ditambahkan ke keranjang!");
+      if (fetchCart) {
+        await fetchCart();
+      }
+    } catch (err) {
+      setToastMessage("Gagal menambahkan ke keranjang.");
+      console.error("Add to cart error:", err);
+    } finally {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      setAddingId(null);
+    }
   };
 
   return (
@@ -38,7 +98,7 @@ const ProductSection = () => {
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-20 right-4 z-50 bg-green-600 text-white py-3 px-4 rounded-md shadow-lg flex items-center">
-          <span className="mr-2">Cart feature coming soon!</span>
+          <span className="mr-2">{toastMessage}</span>
           <button
             onClick={() => setShowToast(false)}
             className="text-white hover:text-green-200"
@@ -116,7 +176,7 @@ const ProductSection = () => {
                           alt="Produk Tidak Ditemukan"
                           className="w-64 mx-auto"
                           onError={(e) => {
-                            e.target.src = "/assets/cart/empty-cart.png"; // Fallback ke gambar cart jika gambar catalog tidak ada
+                            e.target.src = "/assets/cart/empty-cart.png";
                           }}
                         />
                       </div>
@@ -150,7 +210,8 @@ const ProductSection = () => {
                       >
                         <ProductCard
                           product={product}
-                          onAddToCart={(e) => handleAddToCart(e, product.id)}
+                          onAddToCart={(e) => handleAddToCart(e, product)}
+                          adding={addingId === product.id}
                         />
                       </Link>
                     ))}
@@ -165,12 +226,10 @@ const ProductSection = () => {
   );
 };
 
-const ProductCard = ({ product, onAddToCart }) => (
+const ProductCard = ({ product, onAddToCart, adding }) => (
   <div className="flex-shrink-0">
     <div className="w-full h-full rounded-sm shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
-      {/* Image Area */}
       <div className="relative w-full h-46 aspect-square">
-        {/* Badge Top - Only show if product is limited */}
         {product.availability === "limited" && (
           <div className="absolute top-2 left-2 z-10">
             <span className="bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded">
@@ -178,8 +237,6 @@ const ProductCard = ({ product, onAddToCart }) => (
             </span>
           </div>
         )}
-
-        {/* Product Image */}
         <img
           src={product.image}
           alt={product.title}
@@ -188,24 +245,41 @@ const ProductCard = ({ product, onAddToCart }) => (
             e.target.src = "/assets/default-product.png";
           }}
         />
-
-        {/* Add Icon */}
         <button
           onClick={onAddToCart}
-          className="absolute top-2 right-4 w-10 h-10 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer"
+          disabled={adding}
+          className="absolute top-2 right-4 w-10 h-10 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer disabled:bg-gray-300"
         >
-          <Plus className="w-6 h-6 text-white group-hover:text-green-600 transition-colors" />
+          {adding ? (
+            <svg
+              className="animate-spin h-5 w-5 text-white"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V4a10 10 0 00-10 10h2z"
+              ></path>
+            </svg>
+          ) : (
+            <Plus className="w-6 h-6 text-white group-hover:text-green-600 transition-colors" />
+          )}
         </button>
       </div>
-
-      {/* Price & Info */}
       <div className="p-3">
         <div className="mb-1">
           <span className="text-base font-bold text-gray-800">
             {product.currentPrice}
           </span>
         </div>
-
         {product.discount && (
           <div className="flex items-center gap-2 mb-2">
             <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
@@ -216,7 +290,6 @@ const ProductCard = ({ product, onAddToCart }) => (
             </span>
           </div>
         )}
-
         <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
           {product.title}
         </h4>

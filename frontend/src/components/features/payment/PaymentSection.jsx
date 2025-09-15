@@ -41,21 +41,18 @@ const PaymentSection = () => {
     window.history.back();
   };
 
-  // Helper untuk tampilkan alamat dengan struktur API
   const selectedAddr = addressList[selectedAddress] || {};
   const addressName = selectedAddr.recipient_name || selectedAddr.name || "-";
   const addressPhone = selectedAddr.phone || "-";
   const addressFull = selectedAddr.full_address || selectedAddr.address || "-";
   const addressLabel = selectedAddr.address_label || "";
 
-  // Ganti showInfo tunggal dengan objek untuk setiap popup
   const [infoPopups, setInfoPopups] = useState({
     packagingInfo: false,
     packagingFeeInfo: false,
     reservationFeeInfo: false,
   });
 
-  // Fungsi untuk toggle popup yang spesifik
   const toggleInfoPopup = (popupKey) => {
     setInfoPopups((prevPopups) => ({
       ...prevPopups,
@@ -63,13 +60,11 @@ const PaymentSection = () => {
     }));
   };
 
-  // Ambil biaya pengiriman dari slot yang dipilih
   const selectedSlotObj =
     deliverySlots.find((slot) => slot.id === selectedDeliverySlot) ||
     deliverySlots[0];
   const deliveryFee = selectedSlotObj.price || 0;
 
-  // Handler untuk tombol bayar
   const handlePay = async () => {
     try {
       await updateOrder(orderId, {
@@ -84,9 +79,7 @@ const PaymentSection = () => {
           reservationFee,
       });
 
-      // Update setiap produk di order menjadi SOLD
       for (const item of orderItems) {
-        // Ambil id produk dari relasi
         const productId = item.product_id || item.product?.id;
         if (productId) {
           await updateProduct(productId, { availability: "sold" });
@@ -284,7 +277,6 @@ const PaymentSection = () => {
                     onClick={() => toggleInfoPopup("packagingInfo")}
                   />
 
-                  {/* Pop up di sebelah kanan icon */}
                   {infoPopups.packagingInfo && (
                     <div className="absolute left-full top-1 ml-2 z-20 w-100 bg-gray-200 text-gray-800 text-sm p-3 rounded-lg shadow-md">
                       <p>
@@ -575,7 +567,6 @@ const PaymentSection = () => {
                               }
                             />
 
-                            {/* Popup muncul di sebelah kanan icon */}
                             {infoPopups.packagingFeeInfo && (
                               <div className="absolute left-full top-0 ml-2 z-20 w-100 bg-gray-200 text-gray-800 text-sm p-3 rounded-lg shadow-md">
                                 <p>
@@ -616,7 +607,6 @@ const PaymentSection = () => {
                               }
                             />
 
-                            {/* Popup muncul di sebelah kanan icon */}
                             {infoPopups.reservationFeeInfo && (
                               <div className="absolute left-full top-0 ml-2 z-20 w-100 bg-gray-200 text-gray-800 text-sm p-3 rounded-lg shadow-md">
                                 <p>

@@ -19,7 +19,6 @@ export const useOrderList = () => {
       .finally(() => setLoading(false));
   }, [user]);
 
-  // Filter orders by status
   const filterOrders = (orders) => {
     if (selectedStatus === "semua") return orders;
     if (selectedStatus === "berlangsung")
@@ -37,7 +36,6 @@ export const useOrderList = () => {
     return orders;
   };
 
-  // Search filter
   const searchedOrders = filterOrders(orders).filter(
     (o) =>
       o.id.toString().includes(searchQuery) ||
@@ -47,7 +45,6 @@ export const useOrderList = () => {
         ))
   );
 
-  // Map API order to UI orderCard props
   const mapOrderToCard = (order) => {
     let status = "";
     let statusIcon = "payment";
@@ -71,7 +68,7 @@ export const useOrderList = () => {
             text: "Batalkan Pesanan",
             backgroundColor: "#FF0000",
             textColor: "#FFFFFF",
-            type: "cancel", // Tambahkan type untuk identifikasi
+            type: "cancel",
           },
           {
             text: "Ubah Metode Bayar",
@@ -103,7 +100,7 @@ export const useOrderList = () => {
             text: "Lacak Pesanan",
             backgroundColor: "#1FAE2E",
             textColor: "#FFFFFF",
-            onClick: () => {}, // Implementasi tracking jika ada
+            onClick: () => {},
           },
         ];
         break;
@@ -122,7 +119,7 @@ export const useOrderList = () => {
             text: "Selesaikan Pesanan",
             backgroundColor: "#1FAE2E",
             textColor: "#FFFFFF",
-            onClick: () => {}, // Implementasi jika ada
+            onClick: () => {},
           },
         ];
         break;
@@ -141,7 +138,7 @@ export const useOrderList = () => {
             text: "Beli Lagi",
             backgroundColor: "#1FAE2E",
             textColor: "#FFFFFF",
-            onClick: () => {}, // Implementasi jika ada
+            onClick: () => {},
           },
         ];
         break;
@@ -160,7 +157,7 @@ export const useOrderList = () => {
             text: "Beli Lagi",
             backgroundColor: "#1FAE2E",
             textColor: "#FFFFFF",
-            onClick: () => {}, // Implementasi jika ada
+            onClick: () => {},
           },
         ];
         break;
@@ -223,11 +220,9 @@ export const useOrderList = () => {
     )
     .map(mapOrderToCard);
 
-  // Function untuk melakukan pembatalan pesanan (akan dipanggil setelah konfirmasi)
   const cancelOrder = async (orderId) => {
     try {
       await updateOrder(orderId, { order_status: "CANCELLED" });
-      // Refresh orders
       getOrders().then((res) => setOrders(res.data || []));
       return true;
     } catch (err) {

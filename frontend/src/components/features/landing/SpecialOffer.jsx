@@ -5,7 +5,6 @@ import SayurboxLoading from "@/components/base/SayurBoxLoading";
 import { useAuth } from "@/context/AuthContext";
 import { addCartItem } from "@/service/cart/cartItem";
 import { createCart, getCart } from "@/service/cart/cart";
-import { useCartItem } from "@/components/features/cart/CartItem.hooks";
 
 const SpecialOffer = () => {
   const scrollRef = useRef(null);
@@ -21,14 +20,13 @@ const SpecialOffer = () => {
   const clickStartTime = useRef(0);
 
   const { products, loading, error } = useSpecialOffer();
-  const { user } = useAuth();
+  const { user, cart, fetchCart } = useAuth();
   const userId = user?.id;
   const [cartId, setCartId] = useState(null);
   const [addingId, setAddingId] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // Ambil cart id user (sekali saja)
   useEffect(() => {
     const fetchCartId = async () => {
       if (!userId) return;
@@ -37,18 +35,47 @@ const SpecialOffer = () => {
         if (res.data && res.data.id) {
           setCartId(res.data.id);
         } else {
-          // Jika belum ada cart, buat baru
           const newCart = await createCart(userId);
           setCartId(newCart.data.id);
         }
       } catch {
-        // fallback: buat cart baru
         const newCart = await createCart(userId);
         setCartId(newCart.data.id);
       }
     };
     fetchCartId();
   }, [userId]);
+
+  const handleAddToCart = async (product) => {
+    if (!cartId || !product?.id) return;
+
+    const isProductInCart = cart?.cart_items?.some(
+      (item) => item.product_id === product.id
+    );
+
+    if (isProductInCart) {
+      setToastMessage("Produk sudah ada di keranjang!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+      return;
+    }
+
+    setAddingId(product.id);
+    try {
+      await addCartItem(cartId, product.id, 1);
+      setToastMessage("Berhasil menambahkan ke keranjang!");
+      if (fetchCart) {
+        await fetchCart();
+      }
+    } catch (err) {
+      console.error("Gagal menambahkan ke keranjang:", err);
+      setToastMessage("Gagal menambahkan ke keranjang!");
+    } finally {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+      setAddingId(null);
+    }
+  };
 
   const checkScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -57,7 +84,6 @@ const SpecialOffer = () => {
     setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth);
   }, []);
 
-  // Handle untuk smooth scrolling dengan momentum
   const handleDragStart = useCallback((clientX) => {
     clickStartTime.current = Date.now();
     setIsDragging(true);
@@ -82,7 +108,6 @@ const SpecialOffer = () => {
       const dx = lastX.current - clientX;
 
       if (dt > 0) {
-        // Calculate velocity (px/ms) with smoothing
         const newVelocity = dx / dt;
         velocity.current = velocity.current * 0.7 + newVelocity * 0.3;
       }
@@ -100,7 +125,6 @@ const SpecialOffer = () => {
     if (!isDragging) return;
 
     const dragDuration = Date.now() - clickStartTime.current;
-    // If it's a short drag (like a click), don't apply momentum
     if (dragDuration < 100) {
       setIsDragging(false);
       return;
@@ -108,13 +132,11 @@ const SpecialOffer = () => {
 
     setIsDragging(false);
 
-    // Apply momentum effect
     const startTime = Date.now();
-    const initialVelocity = velocity.current * 15; // Adjust for better feel
+    const initialVelocity = velocity.current * 15;
 
     const momentumScroll = () => {
       const elapsed = Date.now() - startTime;
-      // More natural easing curve
       const easing = Math.exp(-elapsed / 325);
       const delta = initialVelocity * easing;
 
@@ -145,7 +167,6 @@ const SpecialOffer = () => {
     };
   }, [checkScroll]);
 
-  // Clean up RAF on unmount
   useEffect(() => {
     return () => {
       if (rafId.current) {
@@ -154,7 +175,6 @@ const SpecialOffer = () => {
     };
   }, []);
 
-  // Add event listeners to prevent text selection during dragging
   const preventDefaultHandler = useCallback(
     (e) => {
       if (isDragging) {
@@ -185,32 +205,6 @@ const SpecialOffer = () => {
 
   const scrollBy = (amount) => {
     scrollRef.current.scrollBy({ left: amount, behavior: "smooth" });
-  };
-
-  const { isProductInCart } = useCartItem(userId);
-
-  const handleAddToCart = async (product) => {
-    if (!cartId || !product?.id) return;
-    // Cek apakah produk sudah ada di keranjang
-    if (isProductInCart(product.id)) {
-      setToastMessage("Produk sudah ada di keranjang!");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
-      return;
-    }
-    setAddingId(product.id);
-    try {
-      await addCartItem(cartId, product.id, 1);
-      setToastMessage("Berhasil menambahkan ke keranjang!");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
-    } catch (err) {
-      setToastMessage("Gagal menambahkan ke keranjang!");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
-    } finally {
-      setAddingId(null);
-    }
   };
 
   return (
@@ -271,10 +265,10 @@ const SpecialOffer = () => {
                     scrollBehavior: isDragging ? "auto" : "smooth",
                     cursor: isDragging ? "grabbing" : "grab",
                     userSelect: "none",
-                    WebkitOverflowScrolling: "touch", // Enables momentum scrolling on iOS
+                    WebkitOverflowScrolling: "touch",
                   }}
                   onMouseDown={(e) => {
-                    e.preventDefault(); // Prevent text selection
+                    e.preventDefault();
                     handleDragStart(e.clientX);
                   }}
                   onMouseMove={(e) => {
@@ -310,7 +304,6 @@ const SpecialOffer = () => {
                         className="cursor-pointer"
                         key={product.id}
                         onClick={(e) => {
-                          // Only allow click if we're not dragging
                           if (
                             isDragging ||
                             Date.now() - clickStartTime.current > 150
@@ -321,9 +314,7 @@ const SpecialOffer = () => {
                       >
                         <div className="flex-shrink-0">
                           <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
-                            {/* Image Area */}
                             <div className="relative w-full h-46">
-                              {/* Badge Top */}
                               <div className="absolute top-2 left-2 z-10">
                                 <img
                                   src={product.badgeTop}
@@ -334,8 +325,6 @@ const SpecialOffer = () => {
                                   }}
                                 />
                               </div>
-
-                              {/* Product Image */}
                               <img
                                 src={product.image}
                                 alt={product.title}
@@ -344,8 +333,6 @@ const SpecialOffer = () => {
                                   e.target.style.display = "none";
                                 }}
                               />
-
-                              {/* Add Icon */}
                               <button
                                 type="button"
                                 className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg cursor-pointer"
@@ -382,15 +369,12 @@ const SpecialOffer = () => {
                                 )}
                               </button>
                             </div>
-
-                            {/* Price & Info */}
                             <div className="p-3">
                               <div className="mb-1">
                                 <span className="text-base font-bold text-gray-800">
                                   {product.currentPrice}
                                 </span>
                               </div>
-
                               <div className="flex items-center gap-2 mb-2">
                                 {product.discount && (
                                   <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
@@ -401,7 +385,6 @@ const SpecialOffer = () => {
                                   {product.originalPrice}
                                 </span>
                               </div>
-
                               <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
                                 {product.title}
                               </h4>

@@ -68,7 +68,7 @@ export const useCartItem = (userId) => {
             discount: item.product?.discount_percent || 0,
             quantity: item.quantity,
             minQuantity: 1,
-            maxQuantity: item.product?.stock ?? 1, // Fallback ke 1 jika stok null
+            maxQuantity: item.product?.stock ?? 1,
             isSelected: true,
             image: imageUrl,
           };
@@ -84,7 +84,7 @@ export const useCartItem = (userId) => {
         // Jika cart tidak ditemukan, coba buat baru
         try {
           await createCart(userId);
-          setProducts([]); // Cart baru pasti kosong
+          setProducts([]);
         } catch (createErr) {
           console.error("Failed to create new cart:", createErr);
         }

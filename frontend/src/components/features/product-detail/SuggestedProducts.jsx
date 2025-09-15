@@ -3,7 +3,6 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { useSuggestedProducts } from "./SuggestedProducts.hooks";
 import SayurboxLoading from "@/components/base/SayurBoxLoading";
 import { useAuth } from "@/context/AuthContext";
-import { useCartItem } from "@/components/features/cart/CartItem.hooks";
 import { addCartItem } from "@/service/cart/cartItem";
 import { getCart, createCart } from "@/service/cart/cart";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +16,6 @@ const SuggestedProducts = () => {
   const [showLeft2, setShowLeft2] = useState(false);
   const [showRight2, setShowRight2] = useState(false);
 
-  // Refs to track drag state for each carousel
   const dragInfo1 = useRef({
     isDown: false,
     startX: 0,
@@ -31,9 +29,8 @@ const SuggestedProducts = () => {
     isDragging: false,
   });
 
-  const { user } = useAuth();
+  const { user, cart, fetchCart } = useAuth();
   const userId = user?.id;
-  const { isProductInCart } = useCartItem(userId);
 
   const [cartId, setCartId] = useState(null);
   const [addingId, setAddingId] = useState(null);
@@ -103,34 +100,43 @@ const SuggestedProducts = () => {
     ref.current?.scrollBy({ left: amount, behavior: "smooth" });
 
   const handleAddToCart = async (product, e) => {
-    e.stopPropagation(); // Prevent card click
-    e.preventDefault(); // Prevent link navigation
+    e.stopPropagation();
+    e.preventDefault();
+
     if (!userId) {
       navigate("/login");
       return;
     }
     if (!cartId || !product?.id) return;
-    if (isProductInCart(product.id)) {
+
+    const isProductInCart = cart?.cart_items?.some(
+      (item) => item.product_id === product.id
+    );
+
+    if (isProductInCart) {
       setToastMessage("Produk sudah ada di keranjang!");
       setShowToast(true);
       setTimeout(() => setShowToast(false), 2500);
       return;
     }
+
     setAddingId(product.id);
     try {
       await addCartItem(cartId, product.id, 1);
       setToastMessage("Berhasil menambahkan ke keranjang!");
-      setShowToast(true);
+      if (fetchCart) {
+        await fetchCart();
+      }
     } catch (err) {
       setToastMessage("Gagal menambahkan ke keranjang!");
-      setShowToast(true);
+      console.error("Add to cart error:", err);
     } finally {
+      setShowToast(true);
       setTimeout(() => setShowToast(false), 2500);
       setAddingId(null);
     }
   };
 
-  // Generic Drag Handlers
   const createDragHandlers = (scrollRef, dragInfo) => ({
     onMouseDown: (e) => {
       const slider = scrollRef.current;
@@ -147,9 +153,7 @@ const SuggestedProducts = () => {
     onMouseLeave: () => {
       dragInfo.current.isDown = false;
       const slider = scrollRef.current;
-      if (slider) {
-        slider.style.cursor = "grab";
-      }
+      if (slider) slider.style.cursor = "grab";
     },
     onMouseUp: () => {
       dragInfo.current.isDown = false;
@@ -158,7 +162,6 @@ const SuggestedProducts = () => {
         slider.style.cursor = "grab";
         slider.style.userSelect = "auto";
       }
-      // Reset isDragging after a short delay to allow click event to check it
       setTimeout(() => {
         dragInfo.current.isDragging = false;
       }, 50);
@@ -171,91 +174,87 @@ const SuggestedProducts = () => {
       const x = e.pageX - slider.offsetLeft;
       const walk = x - dragInfo.current.startX;
       if (Math.abs(walk) > 5) {
-        // Threshold to confirm dragging
         dragInfo.current.isDragging = true;
       }
       slider.scrollLeft = dragInfo.current.scrollLeft - walk;
     },
   });
 
-  const ProductCard = ({ product, dragInfo }) => {
-    return (
-      <a
-        href={`/product/${product.slug}`}
-        className="flex-shrink-0"
-        onClick={(e) => {
-          // If it was a drag action, prevent navigation
-          if (dragInfo.current.isDragging) {
-            e.preventDefault();
-          }
-        }}
-      >
-        <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
-          <div className="relative w-full h-46">
-            <img
-              src={product.image}
-              alt={product.title}
-              className="w-full h-full object-cover pointer-events-none"
-            />
-            <button
-              type="button"
-              className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg"
-              onClick={(e) => handleAddToCart(product, e)}
-              disabled={addingId === product.id}
-              title="Tambah ke keranjang"
-            >
-              {addingId === product.id ? (
-                <svg
-                  className="animate-spin w-8 h-8 text-white group-hover:text-green-600"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8z"
-                  />
-                </svg>
-              ) : (
-                <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
-              )}
-            </button>
-          </div>
-          <div className="p-3 pointer-events-none">
-            <div className="mb-1">
-              <span className="text-base font-bold text-gray-800">
-                Rp {product.price.toLocaleString("id-ID")}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 mb-2">
-              {product.discount && (
-                <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
-                  {product.discount}
-                </span>
-              )}
-              {product.originalPrice > 0 && (
-                <span className="line-through text-gray-400 text-xs">
-                  Rp {product.originalPrice.toLocaleString("id-ID")}
-                </span>
-              )}
-            </div>
-            <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
-              {product.title}
-            </h4>
-            <p className="text-xs text-gray-500">{product.unit}</p>
-          </div>
+  const ProductCard = ({ product, dragInfo }) => (
+    <a
+      href={`/product/${product.slug}`}
+      className="flex-shrink-0"
+      onClick={(e) => {
+        if (dragInfo.current.isDragging) {
+          e.preventDefault();
+        }
+      }}
+    >
+      <div className="w-56 h-76 rounded-xl shadow-md overflow-hidden bg-white hover:shadow-lg transition-shadow">
+        <div className="relative w-full h-46">
+          <img
+            src={product.image}
+            alt={product.title}
+            className="w-full h-full object-cover pointer-events-none"
+          />
+          <button
+            type="button"
+            className="absolute top-2 right-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center transition-colors hover:bg-white group shadow-md hover:shadow-lg"
+            onClick={(e) => handleAddToCart(product, e)}
+            disabled={addingId === product.id}
+            title="Tambah ke keranjang"
+          >
+            {addingId === product.id ? (
+              <svg
+                className="animate-spin w-8 h-8 text-white"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                />
+              </svg>
+            ) : (
+              <Plus className="w-8 h-8 text-white group-hover:text-green-600 transition-colors" />
+            )}
+          </button>
         </div>
-      </a>
-    );
-  };
+        <div className="p-3 pointer-events-none">
+          <div className="mb-1">
+            <span className="text-base font-bold text-gray-800">
+              Rp {product.price.toLocaleString("id-ID")}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 mb-2">
+            {product.discount && (
+              <span className="text-white font-semibold text-xs bg-red-500 px-1.5 py-0.5 rounded">
+                {product.discount}
+              </span>
+            )}
+            {product.originalPrice > 0 && (
+              <span className="line-through text-gray-400 text-xs">
+                Rp {product.originalPrice.toLocaleString("id-ID")}
+              </span>
+            )}
+          </div>
+          <h4 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
+            {product.title}
+          </h4>
+          <p className="text-xs text-gray-500">{product.unit}</p>
+        </div>
+      </div>
+    </a>
+  );
 
   const renderCarousel = (
     products,

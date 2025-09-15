@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronUp,
@@ -8,6 +8,7 @@ import {
   Home,
   Check,
   XCircle,
+  X,
 } from "lucide-react";
 import { useAdminOrderDetail } from "./OrderDetail.hooks";
 import SayurboxLoading from "@/components/base/SayurBoxLoading";
@@ -32,6 +33,7 @@ const OrderDetail = () => {
   const {
     order,
     loading,
+    error,
     statusOptions,
     newStatus,
     setNewStatus,
@@ -40,9 +42,48 @@ const OrderDetail = () => {
   } = useAdminOrderDetail();
 
   const [updating, setUpdating] = useState(false);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
+  useEffect(() => {
+    if (toast.show) {
+      const timer = setTimeout(() => {
+        setToast({ ...toast, show: false });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  const showToast = (message, type = "success") => {
+    setToast({
+      show: true,
+      message,
+      type,
+    });
+  };
 
   if (loading || !order) {
     return <SayurboxLoading />;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg max-w-md">
+          <h2 className="text-lg font-semibold mb-2">Error</h2>
+          <p>{error}</p>
+          <button
+            onClick={handleBackClick}
+            className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          >
+            Kembali
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const stepStatus = getStepStatus(order.order_status);
@@ -74,7 +115,6 @@ const OrderDetail = () => {
 
   const items = order.items || [];
 
-  // Modern dropdown
   const StatusDropdown = () => (
     <div className="relative w-64">
       <select
@@ -106,9 +146,19 @@ const OrderDetail = () => {
   );
 
   const onUpdateStatus = async () => {
+    if (updating) return;
+
     setUpdating(true);
     try {
-      await handleUpdateStatus();
+      const success = await handleUpdateStatus();
+      if (success) {
+        showToast("Status pesanan berhasil diperbarui", "success");
+      } else {
+        showToast("Gagal memperbarui status pesanan", "error");
+      }
+    } catch (err) {
+      console.error("Error in update handler:", err);
+      showToast("Terjadi kesalahan saat memperbarui status", "error");
     } finally {
       setUpdating(false);
     }
@@ -167,6 +217,23 @@ const OrderDetail = () => {
 
   return (
     <div className="min-h-screen">
+      {/* Toast Notification */}
+      {toast.show && (
+        <div
+          className={`fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg flex items-center justify-between ${
+            toast.type === "error" ? "bg-red-600" : "bg-green-600"
+          } text-white`}
+        >
+          <span>{toast.message}</span>
+          <button
+            onClick={() => setToast({ ...toast, show: false })}
+            className="ml-4 text-white hover:text-gray-200 focus:outline-none"
+          >
+            <X size={18} />
+          </button>
+        </div>
+      )}
+
       {/* Back Button */}
       <div className="bg-white z-10 pl-3">
         <button
@@ -284,6 +351,9 @@ const OrderDetail = () => {
                     }
                     alt={item.product?.name}
                     className="w-20 h-20 object-cover rounded-lg shadow"
+                    onError={(e) => {
+                      e.target.src = "/assets/orders/product-image.png";
+                    }}
                   />
                   <div>
                     <p className="text-md font-bold text-gray-800">

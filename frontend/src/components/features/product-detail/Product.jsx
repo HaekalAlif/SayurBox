@@ -12,7 +12,7 @@ import SayurboxLoading from "../../base/SayurBoxLoading";
 import { useAuth } from "@/context/AuthContext";
 import { getCart, createCart } from "@/service/cart/cart";
 import { addCartItem } from "@/service/cart/cartItem";
-import { useCartItem } from "@/components/features/cart/CartItem.hooks";
+import { useNavigate } from "react-router-dom";
 
 const Product = () => {
   const {
@@ -32,55 +32,74 @@ const Product = () => {
     handleChatSayurbox,
   } = useProductDetail();
 
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, cart, fetchCart } = useAuth();
   const userId = user?.id;
-  const { isProductInCart } = useCartItem(userId);
 
   const [cartId, setCartId] = useState(null);
   const [addingToCart, setAddingToCart] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // Ambil cart id user (sekali saja)
   useEffect(() => {
-    const fetchCartId = async () => {
+    const fetchUserCart = async () => {
       if (!userId) return;
       try {
         const res = await getCart(userId);
-        if (res.data && res.data.id) {
-          setCartId(res.data.id);
+        setCartId(res.data?.id || null);
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          try {
+            const newCart = await createCart(userId);
+            setCartId(newCart.data.id);
+          } catch (createErr) {
+            console.error("Gagal membuat keranjang baru:", createErr);
+          }
         } else {
-          const newCart = await createCart(userId);
-          setCartId(newCart.data.id);
+          console.error("Gagal mengambil keranjang:", err);
         }
-      } catch {
-        const newCart = await createCart(userId);
-        setCartId(newCart.data.id);
       }
     };
-    fetchCartId();
+    fetchUserCart();
   }, [userId]);
 
-  // Handle tambah ke cart
   const handleAddToCart = async () => {
-    if (!cartId || !product?.id) return;
-    if (isProductInCart(product.id)) {
-      setToastMessage("Produk sudah ada di keranjang!");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
+    if (!userId) {
+      navigate("/login");
       return;
     }
+
+    if (!cartId || !product?.id) {
+      setToastMessage("Gagal memproses keranjang, coba lagi.");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      return;
+    }
+
+    const isProductInCart = cart?.cart_items?.some(
+      (item) => item.product_id === product.id
+    );
+
+    if (isProductInCart) {
+      setToastMessage("Produk sudah ada di keranjang!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      return;
+    }
+
     setAddingToCart(true);
     try {
       await addCartItem(cartId, product.id, quantity);
-      setToastMessage("Berhasil menambahkan ke keranjang!");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
+      setToastMessage("Berhasil ditambahkan ke keranjang!");
+      if (fetchCart) {
+        await fetchCart();
+      }
     } catch (err) {
-      setToastMessage("Gagal menambahkan ke keranjang!");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2500);
+      setToastMessage("Gagal menambahkan ke keranjang.");
+      console.error("Add to cart error:", err);
     } finally {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
       setAddingToCart(false);
     }
   };

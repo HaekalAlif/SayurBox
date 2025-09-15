@@ -10,9 +10,8 @@ export function useAddAddress() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
-  const { id } = useParams(); // Ambil parameter id dari URL
+  const { id } = useParams(); 
 
-  // Form data with default empty values
   const [formData, setFormData] = useState({
     location: "",
     courierNote: "",
@@ -22,7 +21,6 @@ export function useAddAddress() {
     addressType: "",
   });
 
-  // Fetch address data if id exists (edit mode)
   useEffect(() => {
     if (id) {
       setIsEdit(true);
@@ -77,11 +75,9 @@ export function useAddAddress() {
     try {
       let res;
 
-      // Update existing address if in edit mode
       if (isEdit) {
         res = await updateAddress(id, data);
       } else {
-        // Create new address
         res = await createAddress(data);
       }
 

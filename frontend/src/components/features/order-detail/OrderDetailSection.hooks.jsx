@@ -20,16 +20,10 @@ export const useOrderDetailSection = () => {
     window.history.back();
   };
 
-  const handleTrackShipment = () => {
-    // Implementasi tracking, misal redirect ke halaman tracking
-    alert("Fitur tracking belum tersedia.");
-  };
-
   const handleCancelOrder = async () => {
     if (!orderId) return;
     try {
       await updateOrder(orderId, { order_status: "CANCELLED" });
-      // Refresh data order
       getOrder(orderId).then((res) => setOrder(res.data));
     } catch (err) {
       alert("Gagal membatalkan pesanan!");
@@ -43,7 +37,6 @@ export const useOrderDetailSection = () => {
         payment_status: "PAID",
         order_status: "PACKED",
       });
-      // Refresh data order
       getOrder(orderId).then((res) => setOrder(res.data));
       navigate("/payment-success/" + orderId);
     } catch (err) {
@@ -64,7 +57,6 @@ export const useOrderDetailSection = () => {
     order,
     loading,
     handleBackClick,
-    handleTrackShipment,
     handleCancelOrder,
     handlePayment,
     handleCopyOrderId,

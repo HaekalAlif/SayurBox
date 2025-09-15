@@ -3,13 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   getProductBySlug,
   getImageUrl,
-} from "../../../service/products/product";
+} from "@/service/products/product";
 
 export const useProductDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  // States
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,11 +19,9 @@ export const useProductDetail = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // Variants based on product unit
   const [variants, setVariants] = useState([]);
-  const [maxQuantity, setMaxQuantity] = useState(11); // default
+  const [maxQuantity, setMaxQuantity] = useState(11); 
 
-  // Format currency
   const formatCurrency = (price) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -33,7 +30,6 @@ export const useProductDetail = () => {
     }).format(price);
   };
 
-  // Fetch product data
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -41,7 +37,6 @@ export const useProductDetail = () => {
         const response = await getProductBySlug(slug);
         const productData = response.data;
 
-        // Ambil semua gambar dari relasi images
         const imagesArr = Array.isArray(productData.images)
           ? productData.images.map((img) => ({
               url: getImageUrl(img.image_url),
@@ -49,19 +44,16 @@ export const useProductDetail = () => {
             }))
           : [];
 
-        // Main image: pakai primary jika ada, else pakai pertama
         let mainImageUrl = imagesArr[0]?.url || "/assets/default-product.png";
         if (imagesArr.length > 0) {
           const primary = imagesArr.find((img) => img.is_primary);
           if (primary) mainImageUrl = primary.url;
         }
 
-        // Thumbnails: semua gambar selain main image
         const thumbnails = imagesArr
           .filter((img) => img.url !== mainImageUrl)
           .map((img) => img.url);
 
-        // Create product object with formatted data
         const formattedProduct = {
           id: productData.id,
           title: productData.name,
@@ -83,7 +75,7 @@ export const useProductDetail = () => {
               ? "Stok Terbatas"
               : "Tidak Tersedia",
           category: [productData.category.name],
-          stock: productData.stock ?? 0, // tambahkan stock
+          stock: productData.stock ?? 0,
           images: {
             main: mainImageUrl,
             thumbnails: thumbnails,
@@ -92,7 +84,6 @@ export const useProductDetail = () => {
 
         setProduct(formattedProduct);
 
-        // Set default variant based on product unit
         const defaultVariants = [`1 ${productData.unit.toUpperCase()}`];
         if (
           productData.unit.toLowerCase() === "pcs" ||
@@ -106,7 +97,6 @@ export const useProductDetail = () => {
         setVariants(defaultVariants);
         setSelectedVariant(defaultVariants[0]);
 
-        // Set maksimal quantity dari stock
         setMaxQuantity(productData.stock ?? 11);
 
         setLoading(false);
@@ -121,7 +111,6 @@ export const useProductDetail = () => {
     }
   }, [slug]);
 
-  // Handlers
   const handleBackClick = () => {
     navigate(-1);
   };

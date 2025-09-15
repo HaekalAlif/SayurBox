@@ -13,27 +13,22 @@ export const useProductCatalog = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // State untuk pengurutan dan filter
   const [activeTab, setActiveTab] = useState("latest");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Ambil kategori dari query param
   const [searchParams] = useSearchParams();
   const categorySlug = searchParams.get("category");
 
-  // Fungsi untuk memformat harga
   const formatPrice = (price) => {
     return `Rp ${Number(price).toLocaleString("id-ID")}`;
   };
 
-  // Fungsi untuk menghitung diskon
   const calculateDiscount = (originalPrice, discountedPrice) => {
     if (!originalPrice || !discountedPrice) return 0;
     const discount = ((originalPrice - discountedPrice) / originalPrice) * 100;
     return Math.round(discount);
   };
 
-  // Fungsi untuk memuat produk
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
@@ -48,7 +43,6 @@ export const useProductCatalog = () => {
       }
 
       const formattedProducts = response.data.map((product) => {
-        // Ambil gambar utama dari relasi images (primary atau pertama)
         let imageUrl = "/assets/default-product.png";
         if (Array.isArray(product.images) && product.images.length > 0) {
           const primary = product.images.find((img) => img.is_primary);
@@ -92,7 +86,6 @@ export const useProductCatalog = () => {
     }
   }, [categorySlug, searchQuery, activeTab]);
 
-  // Fungsi untuk mengurut dan memfilter produk
   const sortAndFilterProducts = useCallback((productsToSort, tabId) => {
     let sorted = [...productsToSort];
 

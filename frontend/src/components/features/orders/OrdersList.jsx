@@ -19,22 +19,18 @@ const OrdersList = () => {
 
   const navigate = useNavigate();
 
-  // Modal state
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelOrderId, setCancelOrderId] = useState(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
-  // Function to handle order cancellation
   const handleConfirmCancel = async () => {
     if (!cancelOrderId) return;
 
     setIsCancelling(true);
     try {
       await cancelOrder(cancelOrderId);
-      // Success, modal will close
     } catch (error) {
       console.error("Failed to cancel order:", error);
-      // Error handling if needed
     } finally {
       setIsCancelling(false);
       setShowCancelModal(false);

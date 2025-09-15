@@ -101,7 +101,7 @@ const VoucherCheckoutList = () => {
             <ChevronRight size={32} style={{ color: "#0A4F17" }} />
           </button>
 
-          {/* Voucher List with Limited Height and Scroll */}
+          {/* Voucher List */}
           <div
             className="space-y-3 overflow-y-auto custom-scrollbar w-[115%] pr-15"
             style={{ maxHeight: "490px" }}

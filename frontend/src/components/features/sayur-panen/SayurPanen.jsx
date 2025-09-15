@@ -145,7 +145,6 @@ const SayurPanenSection = () => {
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
   const [showXpInfoModal, setShowXpInfoModal] = useState(false);
 
-  // Scroll ke card yang dipilih
   const scrollToIdx = (idx) => {
     if (!scrollRef.current) return;
     scrollRef.current.scrollTo({
@@ -154,7 +153,6 @@ const SayurPanenSection = () => {
     });
   };
 
-  // Sync activeIdx dengan posisi scroll
   const handleScroll = () => {
     if (!scrollRef.current) return;
     const idx = Math.round(
@@ -171,7 +169,6 @@ const SayurPanenSection = () => {
     };
   }, []);
 
-  // Arrow handler
   const handlePrev = () => {
     if (activeIdx > 0) scrollToIdx(activeIdx - 1);
   };
@@ -187,7 +184,6 @@ const SayurPanenSection = () => {
     setShowXpInfoModal(true);
   };
 
-  // Card carousel
   const CarouselCard = ({ item, idx }) => (
     <div
       className={`flex-shrink-0`}

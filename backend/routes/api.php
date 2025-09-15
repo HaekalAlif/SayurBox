@@ -57,6 +57,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/order-items/{id}', [OrderItemController::class, 'update']);
     Route::delete('/order-items/{id}', [OrderItemController::class, 'destroy']);
     Route::get('/admin/orders', [OrderController::class, 'adminIndex']);
+    Route::get('/admin/orders/{id}', [OrderController::class, 'adminShow']);
+    Route::put('/admin/orders/{id}', [OrderController::class, 'adminUpdate']);
+    
 });
 
 Route::middleware('auth:sanctum')->put('/user/profile', [ProfileController::class, 'update']);

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronLeft, Search, ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronLeft, ChevronUp, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const LandingRecipe = () => {

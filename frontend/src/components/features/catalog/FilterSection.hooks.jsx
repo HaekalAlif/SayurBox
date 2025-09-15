@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getProductsByCategorySlug } from "../../../service/products/product";
+import { getProductsByCategorySlug } from "@/service/products/product";
 
 export const useCatalogFilter = () => {
   const [searchParams] = useSearchParams();
@@ -18,7 +18,6 @@ export const useCatalogFilter = () => {
           const response = await getProductsByCategorySlug(categorySlug);
           setProducts(response.data);
         } else {
-          // fallback: ambil semua produk
         }
         setError(null);
       } catch (err) {

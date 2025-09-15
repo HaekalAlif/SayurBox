@@ -19,7 +19,6 @@ const AddressList = () => {
     setSelectedAddress,
     handleSetDefaultAddress,
     handleDeleteAddress,
-    handleEditAddress,
   } = useAddressList();
 
   const handleBackClick = () => {
@@ -40,7 +39,6 @@ const AddressList = () => {
     setDeleteId(null);
   };
 
-  // Pilih alamat dan set default di backend
   const handleChooseAddress = async () => {
     const address = addresses[selectedAddress];
     if (address) {

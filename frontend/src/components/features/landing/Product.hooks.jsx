@@ -20,7 +20,6 @@ export const useLandingProduct = () => {
         setLoading(true);
         const response = await getProducts();
         const formattedProducts = response.data.map((product) => {
-          // Ambil gambar utama dari relasi images (primary atau pertama)
           let imageUrl = "/assets/default-product.png";
           if (Array.isArray(product.images) && product.images.length > 0) {
             const primary = product.images.find((img) => img.is_primary);
@@ -32,7 +31,7 @@ export const useLandingProduct = () => {
           }
           return {
             id: product.id,
-            slug: product.slug, // Pastikan slug diambil
+            slug: product.slug,
             title: product.name,
             image: imageUrl,
             unit: product.unit,

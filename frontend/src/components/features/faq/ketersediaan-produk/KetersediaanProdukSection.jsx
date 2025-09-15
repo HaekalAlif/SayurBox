@@ -8,16 +8,6 @@ const KetersediaanProdukSection = () => {
     window.history.back();
   };
 
-  const toggleAccordion = (index) => {
-    setExpandedAccordions((prev) => {
-      if (prev.includes(index)) {
-        return prev.filter((i) => i !== index);
-      } else {
-        return [...prev, index];
-      }
-    });
-  };
-
   const handleContactUs = () => {
     console.log("Contact us clicked");
   };

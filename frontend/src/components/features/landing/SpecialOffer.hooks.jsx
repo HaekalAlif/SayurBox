@@ -21,7 +21,7 @@ export const useSpecialOffer = () => {
           }
           return {
             id: product.id,
-            slug: product.slug, // Tambahkan slug di sini
+            slug: product.slug,
             title: product.name,
             image: imageUrl,
             unit: product.unit,

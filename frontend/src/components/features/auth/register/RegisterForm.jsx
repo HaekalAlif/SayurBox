@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 import { ChevronLeft } from "lucide-react";
-import { useRegister } from "./RegisterForm.hooks"; // Tambahkan import hooks
+import { useRegister } from "./RegisterForm.hooks";
 
 const RegisterForm = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState(""); // Tambahkan email
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const { handleRegister, loading, error } = useRegister(); // Pakai hooks
+  const { handleRegister, loading, error } = useRegister();
 
   const handleBackClick = () => {
     window.history.back();
   };
 
-  // Tambahkan logic submit
   const onSubmit = async (e) => {
     e.preventDefault();
     if (password !== repeatPassword) {
